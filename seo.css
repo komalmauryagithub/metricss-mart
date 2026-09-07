@@ -1,0 +1,1034 @@
+@import url("./dev.css?v=20260702-attendance-month-v1");
+
+body .brand-panel.cyan {
+  background: linear-gradient(135deg, #0f766e 0%, #14b8a6 52%, #22d3ee 100%);
+}
+
+.phase-tracker-dialog {
+  width: min(780px, 100%);
+}
+
+.phase-tracker-overview {
+  grid-template-columns: 1fr;
+}
+
+.seo-basic-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.seo-basic-summary > div,
+.seo-basic-field {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.seo-basic-summary > div {
+  padding: 12px;
+}
+
+.seo-basic-summary span,
+.seo-basic-field label {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.seo-basic-summary strong {
+  display: block;
+  color: #0f172a;
+  font-size: 22px;
+  margin-top: 4px;
+}
+
+.seo-basic-tracker {
+  display: grid;
+  gap: 12px;
+}
+
+.seo-basic-row {
+  display: grid;
+  gap: 12px;
+}
+
+.seo-basic-row.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.seo-basic-row.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.seo-basic-field {
+  padding: 12px;
+}
+
+.seo-basic-field input,
+.seo-basic-field select,
+.seo-basic-field textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #0f172a;
+  font-size: 14px;
+  margin-top: 7px;
+  padding: 10px;
+}
+
+.seo-basic-field textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.seo-proof-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  background: #0f766e;
+  color: #ffffff !important;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 10px 12px;
+}
+
+.seo-proof-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.seo-proof-list a,
+.seo-proof-list span {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #475569;
+  font-size: 12px;
+  padding: 7px 9px;
+  text-decoration: none;
+}
+
+.seo-client-share {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.seo-client-share button {
+  align-items: center;
+  background: #0f766e;
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 8px;
+  padding: 10px 12px;
+}
+
+.seo-client-share button:last-child {
+  background: #334155;
+}
+
+.seo-client-share button:hover {
+  filter: brightness(1.05);
+}
+
+.attendance-summary-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.attendance-summary-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.attendance-summary-card span {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.attendance-summary-card strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 28px;
+  line-height: 1;
+  color: #0f172a;
+}
+
+.attendance-summary-card small {
+  display: block;
+  margin-top: 8px;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.attendance-summary-card.present {
+  background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+  border-color: #86efac;
+}
+
+.attendance-summary-card.grace {
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+  border-color: #93c5fd;
+}
+
+.attendance-summary-card.late {
+  background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%);
+  border-color: #fcd34d;
+}
+
+.attendance-summary-card.half-day {
+  background: linear-gradient(180deg, #f5f3ff 0%, #ffffff 100%);
+  border-color: #c4b5fd;
+}
+
+.attendance-summary-card.checkout-pending {
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  border-color: #94a3b8;
+}
+
+.attendance-summary-card.absent {
+  background: linear-gradient(180deg, #fef2f2 0%, #ffffff 100%);
+  border-color: #fca5a5;
+}
+
+.attendance-summary-card.leave {
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  border-color: #cbd5e1;
+}
+
+.attendance-summary-note {
+  margin-top: 12px;
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+  .seo-basic-summary,
+  .seo-basic-row.two,
+  .seo-basic-row.three {
+    grid-template-columns: 1fr;
+  }
+}
+
+.styled-input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.seo-project-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 4px solid var(--primary-blue);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+.seo-project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+.seo-project-card h4 {
+    margin: 0;
+    color: #1a1a2e;
+    font-size: 18px;
+    font-weight: 700;
+}
+.seo-project-card p {
+    margin: 0;
+    color: #555;
+    font-size: 13px;
+    line-height: 1.5;
+}
+.seo-status-active {
+    color: #16a34a;
+    font-weight: 600;
+    background: #dcfce7;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+.seo-status-stopped {
+    color: #dc2626;
+    font-weight: 600;
+    background: #fef2f2;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* Workspace UI styles */
+.dashboard-metrics-4 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+}
+.metric-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+}
+.metric-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e0f2fe;
+    color: #0284c7;
+    font-size: 18px;
+}
+.metric-card span {
+    display: block;
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+.metric-card strong {
+    display: block;
+    font-size: 20px;
+    color: #333;
+}
+
+/* Ads Project Card visual distinction */
+.ads-project-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+.ads-project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(249, 115, 22, 0.18);
+}
+
+/* ==================== ALL USER MODALS SYSTEM STYLES ==================== */
+
+/* Fullscreen Backdrop Overlay */
+body .user-modal,
+body.redsea-company .user-modal {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  z-index: 99999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+body .user-modal.hidden,
+body.redsea-company .user-modal.hidden {
+  display: none !important;
+}
+
+/* Modal Dialog Box Default */
+body .user-modal .user-modal-dialog {
+  background: #ffffff !important;
+  width: min(700px, 95vw) !important;
+  max-height: 88vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
+  margin: auto !important;
+  padding: 0 !important;
+  border: 1px solid #cbd5e1 !important;
+  position: relative !important;
+}
+
+/* Vault Large Dialog Wide Width (1000px) */
+body #seoProjectVaultModal .user-modal-dialog,
+body .seo-vault-modal-dialog,
+#seoProjectVaultModal .seo-vault-modal-dialog {
+  width: min(1000px, 96vw) !important;
+  max-width: 1050px !important;
+  max-height: 90vh !important;
+}
+
+/* Sub Modals Dialog Medium Width */
+#vaultAddLoginModal .user-modal-dialog,
+#vaultAddKeywordModal .user-modal-dialog,
+#vaultBulkKeywordsModal .user-modal-dialog,
+#vaultAddReportModal .user-modal-dialog {
+  width: min(520px, 94vw) !important;
+}
+
+/* Ads Form Dialog */
+#adsProjectFormModal .user-modal-dialog {
+  width: min(720px, 95vw) !important;
+}
+
+/* Modal Header (Metrics Mart Green/Teal Theme Default) */
+body .user-modal .user-modal-header,
+body .seo-vault-modal-header {
+  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%) !important;
+  color: #ffffff !important;
+  padding: 20px 28px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+/* Modal Header (Red Sea Company Red Theme) */
+body.redsea-company .user-modal .user-modal-header,
+body.redsea-company .seo-vault-modal-header,
+body.redsea-company #seoProjectVaultModal .seo-vault-modal-header,
+body.redsea-company #vaultAddLoginModal .user-modal-header,
+body.redsea-company #vaultAddKeywordModal .user-modal-header,
+body.redsea-company #vaultBulkKeywordsModal .user-modal-header,
+body.redsea-company #vaultAddReportModal .user-modal-header,
+body.redsea-company #adsProjectFormModal .user-modal-header {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+  color: #ffffff !important;
+}
+
+body .seo-vault-modal-header h2,
+body .user-modal .user-modal-header h2,
+body #vaultProjectTitle {
+  color: #ffffff !important;
+  font-size: 19px !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin: 0 !important;
+}
+
+body.redsea-company .seo-vault-modal-header h2,
+body.redsea-company .user-modal .user-modal-header h2,
+body.redsea-company #vaultProjectTitle {
+  color: #ffffff !important;
+}
+
+body .seo-vault-modal-header p,
+body .user-modal .user-modal-header p {
+  color: #ccfbf1 !important;
+  font-size: 13px !important;
+  margin: 3px 0 0 0 !important;
+}
+
+body.redsea-company .seo-vault-modal-header p,
+body.redsea-company .user-modal .user-modal-header p,
+body.redsea-company #vaultProjectSubtitle {
+  color: #fee2e2 !important;
+}
+
+/* Close Button */
+body .user-modal .user-modal-close,
+body .user-modal button.user-modal-close,
+body .seo-vault-modal-header .user-modal-close {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background 0.2s !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 0 !important;
+}
+
+body .user-modal .user-modal-close:hover,
+body .seo-vault-modal-header .user-modal-close:hover {
+  background: rgba(255, 255, 255, 0.35) !important;
+}
+
+body .user-modal .user-modal-body,
+body .seo-vault-modal-body {
+  padding: 24px 28px !important;
+  overflow-y: auto !important;
+  background: #ffffff !important;
+  flex: 1 !important;
+}
+
+body .user-modal label {
+  color: #334155 !important;
+  font-weight: 600 !important;
+  font-size: 12.5px !important;
+  margin-bottom: 4px !important;
+  display: block !important;
+}
+
+body .styled-input,
+body input[type="month"],
+body input[type="date"],
+body select.styled-input {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  color: #0f172a !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  padding: 6px 12px !important;
+  outline: none !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.2s ease-in-out !important;
+  height: 36px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+body input[type="month"]:hover,
+body input[type="date"]:hover,
+body .styled-input:hover,
+body select.styled-input:hover {
+  border-color: #94a3b8 !important;
+}
+
+body input[type="month"]:focus,
+body input[type="date"]:focus,
+body .styled-input:focus,
+body select.styled-input:focus {
+  background: #ffffff !important;
+  border-color: #0f766e !important;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15) !important;
+  outline: none !important;
+}
+
+body.redsea-company input[type="month"]:focus,
+body.redsea-company input[type="date"]:focus,
+body.redsea-company .styled-input:focus,
+body.redsea-company select.styled-input:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
+}
+
+/* Vault Tabs Nav */
+.vault-tabs-nav {
+  display: flex !important;
+  gap: 8px !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  margin-bottom: 20px !important;
+  overflow-x: auto !important;
+  padding-bottom: 2px !important;
+}
+
+.vault-tab-btn {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 3px solid transparent !important;
+  padding: 10px 16px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+}
+
+.vault-tab-btn:hover {
+  color: #0f766e !important;
+  background: rgba(15, 118, 110, 0.06) !important;
+  border-radius: 6px 6px 0 0 !important;
+}
+
+.vault-tab-btn.active {
+  color: #0f766e !important;
+  border-bottom-color: #0f766e !important;
+  background: #ffffff !important;
+  border-radius: 6px 6px 0 0 !important;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.03) !important;
+}
+
+.vault-badge {
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 12px !important;
+}
+
+.vault-tab-btn.active .vault-badge {
+  background: #ccfbf1 !important;
+  color: #0f766e !important;
+}
+
+/* Red Sea Company Tab Overrides */
+body.redsea-company .vault-tab-btn:hover {
+  color: #dc2626 !important;
+  background: rgba(220, 38, 38, 0.06) !important;
+}
+
+body.redsea-company .vault-tab-btn.active {
+  color: #dc2626 !important;
+  border-bottom-color: #dc2626 !important;
+}
+
+body.redsea-company .vault-tab-btn.active .vault-badge {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+}
+
+/* Force All Primary Buttons to Red in Redsea Company */
+body.redsea-company .btn[style*="0f766e"],
+body.redsea-company .btn[style*="0f9d58"],
+body.redsea-company button[style*="0f766e"],
+body.redsea-company button[style*="0f9d58"],
+body.redsea-company #vaultSaveDriveBtn,
+body.redsea-company #saveAdsProjectBtn {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* Tab Panes */
+.vault-tab-pane {
+  display: none !important;
+}
+
+.vault-tab-pane.active {
+  display: block !important;
+}
+
+.vault-pane-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 16px !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+}
+
+.vault-pane-header h3 {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin: 0 !important;
+}
+
+.vault-subtext {
+  font-size: 13px !important;
+  color: #64748b !important;
+  margin-top: 2px !important;
+}
+
+.vault-actions-group {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+/* Data Tables */
+.vault-table-container {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+
+.vault-data-table {
+  width: 100 !important;
+  border-collapse: collapse !important;
+  text-align: left !important;
+  font-size: 13.5px !important;
+}
+
+body .vault-data-table th,
+body.redsea-company .vault-data-table th,
+table.vault-data-table th,
+.vault-data-table thead th {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  font-weight: 700 !important;
+  padding: 12px 14px !important;
+  border-bottom: 2px solid #cbd5e1 !important;
+  font-size: 12px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+}
+
+.vault-data-table td {
+  padding: 12px 14px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #1e293b !important;
+  vertical-align: middle !important;
+}
+
+.vault-data-table tbody tr:hover {
+  background: #f8fafc !important;
+}
+
+/* Passwords & Copy Buttons */
+.pass-wrapper {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: #f1f5f9 !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  font-family: monospace !important;
+  font-size: 13px !important;
+}
+
+.copy-icon-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #64748b !important;
+  cursor: pointer !important;
+  padding: 2px 6px !important;
+  font-size: 13px !important;
+  border-radius: 4px !important;
+  transition: all 0.15s !important;
+}
+
+.copy-icon-btn:hover {
+  color: #0f766e !important;
+  background: #e2e8f0 !important;
+}
+
+/* Rank & Status Badges */
+.rank-badge {
+  display: inline-block !important;
+  padding: 3px 8px !important;
+  border-radius: 12px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+}
+
+.rank-badge.top3 { background: #dcfce7 !important; color: #15803d !important; }
+.rank-badge.top10 { background: #e0f2fe !important; color: #0369a1 !important; }
+.rank-badge.page2 { background: #fef3c7 !important; color: #b45309 !important; }
+.rank-badge.none { background: #f1f5f9 !important; color: #64748b !important; }
+
+/* Stats Strip */
+.vault-stats-strip {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  gap: 12px !important;
+  margin-bottom: 16px !important;
+}
+
+.vault-stat-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  padding: 12px 16px !important;
+}
+
+.vault-stat-card span {
+  display: block !important;
+  font-size: 12px !important;
+  color: #64748b !important;
+  font-weight: 600 !important;
+}
+
+.vault-stat-card strong {
+  display: block !important;
+  font-size: 22px !important;
+  color: #0f172a !important;
+  margin-top: 2px !important;
+}
+
+.vault-stat-card.green strong { color: #16a34a !important; }
+.vault-stat-card.blue strong { color: #0284c7 !important; }
+
+/* Reports Grid */
+.vault-reports-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.vault-report-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  transition: transform 0.15s, box-shadow 0.15s !important;
+}
+
+.vault-report-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 16px -4px rgba(0,0,0,0.08) !important;
+}
+
+.vault-report-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 8px !important;
+  background: #f0fdf4 !important;
+  color: #16a34a !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 20px !important;
+  margin-bottom: 12px !important;
+}
+
+.vault-report-card h4 {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin: 0 0 6px 0 !important;
+}
+
+.vault-report-card p {
+  font-size: 12.5px !important;
+  color: #64748b !important;
+  margin: 0 0 12px 0 !important;
+}
+
+.vault-report-actions {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  border-top: 1px solid #f1f5f9 !important;
+  padding-top: 12px !important;
+  margin-top: auto !important;
+}
+
+.vault-card-box {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+}
+
+/* Ads Master Table Styles */
+.ads-filter-bar {
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+  margin-bottom: 16px !important;
+  flex-wrap: wrap !important;
+  background: #ffffff !important;
+  padding: 12px 16px !important;
+  border-radius: 12px !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.ads-master-table th {
+  white-space: nowrap !important;
+}
+
+.ads-platform-badge {
+  display: inline-block !important;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%) !important;
+  color: #c2410c !important;
+  border: 1px solid #ffedd5 !important;
+  font-weight: 700 !important;
+  font-size: 11.5px !important;
+  padding: 3px 8px !important;
+  border-radius: 12px !important;
+}
+
+.ads-obj-badge {
+  display: inline-block !important;
+  background: #f0fdf4 !important;
+  color: #15803d !important;
+  border: 1px solid #dcfce7 !important;
+  font-weight: 700 !important;
+  font-size: 11.5px !important;
+  padding: 3px 8px !important;
+  border-radius: 12px !important;
+}
+
+/* Global Sidebar Override */
+.sidebar { width: 220px !important; }
+.sidebar li { font-size: 14px !important; }
+.sidebar-nav { width: 220px !important; }
+.sidebar-link { font-size: 14px !important; }
+
+
+/* ----------------------------------------------
+   GLOBAL TABLE COMPACT STYLE (font 14px, wrap)
+   ---------------------------------------------- */
+
+/* All generic tables in panel */
+.data-table th,
+.data-table td,
+.leads-table th,
+.leads-table td,
+.accounts-table th,
+.accounts-table td,
+.attendance-table th,
+.attendance-table td,
+.summary-table th,
+.summary-table td,
+.vault-data-table th,
+.vault-data-table td,
+.deal-payments-table th,
+.deal-payments-table td,
+.deal-ack-table th,
+.deal-ack-table td,
+.compact-table th,
+.compact-table td,
+.ads-master-table th,
+.ads-master-table td,
+table th,
+table td {
+    font-size: 14px !important;
+    padding: 8px 10px !important;
+    vertical-align: top;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Limit column width so text wraps at ~3 lines instead of stretching wide */
+.data-table td,
+.leads-table td,
+.accounts-table td,
+.attendance-table td,
+.summary-table td,
+.vault-data-table td,
+.deal-payments-table td,
+.deal-ack-table td,
+.compact-table td,
+.ads-master-table td,
+table td {
+    max-width: 200px;
+}
+
+/* But let action/button columns be narrow */
+.data-table td:last-child,
+.leads-table td:last-child,
+table td:last-child {
+    max-width: 120px;
+}
+
+/* Header font stays consistent */
+.data-table th,
+.leads-table th,
+.accounts-table th,
+.attendance-table th,
+.summary-table th,
+.vault-data-table th,
+.deal-payments-table th,
+.deal-ack-table th,
+.compact-table th,
+.ads-master-table th,
+table th {
+    font-size: 13px !important;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ----------------------------------------------
+   GLOBAL TABLE COMPACT STYLE (font 14px, wrap)
+   ---------------------------------------------- */
+
+.data-table th,
+.data-table td,
+.leads-table th,
+.leads-table td,
+.accounts-table th,
+.accounts-table td,
+.attendance-table th,
+.attendance-table td,
+.summary-table th,
+.summary-table td,
+.vault-data-table th,
+.vault-data-table td,
+.deal-payments-table th,
+.deal-payments-table td,
+.deal-ack-table th,
+.deal-ack-table td,
+.compact-table th,
+.compact-table td,
+.ads-master-table th,
+.ads-master-table td,
+table th,
+table td {
+    font-size: 14px !important;
+    padding: 8px 10px !important;
+    vertical-align: top;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+}
+
+/* Limit column width — text wraps at word boundaries only */
+.data-table td,
+.leads-table td,
+.accounts-table td,
+.attendance-table td,
+.summary-table td,
+.vault-data-table td,
+.deal-payments-table td,
+.deal-ack-table td,
+.compact-table td,
+.ads-master-table td,
+table td {
+    max-width: 160px;
+    min-width: 60px;
+}
+
+/* Action/button last column stays compact */
+.data-table td:last-child,
+.leads-table td:last-child,
+table td:last-child {
+    max-width: 110px;
+    min-width: unset;
+}
+
+/* Headers: single line, no wrapping */
+.data-table th,
+.leads-table th,
+.accounts-table th,
+.attendance-table th,
+.summary-table th,
+.vault-data-table th,
+.deal-payments-table th,
+.deal-ack-table th,
+.compact-table th,
+.ads-master-table th,
+table th {
+    font-size: 13px !important;
+    font-weight: 700;
+    white-space: nowrap !important;
+}

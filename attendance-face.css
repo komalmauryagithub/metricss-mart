@@ -1,0 +1,249 @@
+.attendance-face-open {
+  overflow: hidden;
+}
+
+.attendance-face-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+  background: rgba(15, 23, 42, 0.58);
+}
+
+.attendance-face-dialog {
+  width: min(420px, 100%);
+  max-height: calc(100vh - 36px);
+  max-height: calc(100dvh - 36px);
+  overflow: auto;
+  border: 1px solid rgba(148, 163, 184, 0.34);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.32);
+  padding: 18px;
+}
+
+.attendance-face-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.attendance-face-kicker {
+  margin: 0 0 4px;
+  color: #0f766e;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.attendance-face-head h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.attendance-face-icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border: 1px solid #dbe6ea;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #334155;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.attendance-face-video-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #0f172a;
+}
+
+.attendance-face-video-wrap video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.attendance-face-frame {
+  position: absolute;
+  inset: 13%;
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 999px rgba(15, 23, 42, 0.22),
+    0 0 24px rgba(20, 184, 166, 0.22);
+  pointer-events: none;
+}
+
+.attendance-face-status {
+  min-height: 20px;
+  margin: 14px 0 0;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.attendance-face-status[data-type="success"] {
+  color: #15803d;
+}
+
+.attendance-face-status[data-type="error"] {
+  color: #dc2626;
+}
+
+.attendance-face-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.attendance-face-primary,
+.attendance-face-secondary,
+.attendance-face-capture-btn {
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+}
+
+.attendance-face-primary,
+.attendance-face-capture-btn {
+  background: #0f766e;
+  color: #ffffff;
+  box-shadow: 0 12px 26px rgba(15, 118, 110, 0.22);
+}
+
+.attendance-face-secondary {
+  border-color: #dbe6ea;
+  background: #ffffff;
+  color: #334155;
+}
+
+.attendance-face-primary:hover:not(:disabled),
+.attendance-face-secondary:hover:not(:disabled),
+.attendance-face-capture-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.attendance-face-primary:disabled,
+.attendance-face-secondary:disabled,
+.attendance-face-capture-btn:disabled {
+  opacity: 0.62;
+  cursor: wait;
+  transform: none;
+  box-shadow: none;
+}
+
+.attendance-face-enrollment-card {
+  border-color: rgba(15, 118, 110, 0.16);
+  background: #f8fdfc;
+}
+
+.attendance-face-enrollment-card .attendance-face-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.attendance-face-enrollment-card .attendance-face-copy {
+  min-width: 220px;
+  flex: 1 1 260px;
+}
+
+.attendance-face-enrollment-card .attendance-face-copy h3,
+.attendance-face-enrollment-card .attendance-face-copy p {
+  margin: 0;
+}
+
+.attendance-face-enrollment-card .attendance-face-copy p {
+  margin-top: 6px;
+  color: #5f7285;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.attendance-face-enrollment-status {
+  width: 100%;
+  margin: 10px 0 0;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.attendance-face-enrollment-status[data-type="success"] {
+  color: #15803d;
+}
+
+.attendance-face-enrollment-status[data-type="error"] {
+  color: #dc2626;
+}
+
+@media (max-width: 560px) {
+  .attendance-face-modal {
+    padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+    align-items: end;
+  }
+
+  .attendance-face-dialog {
+    border-radius: 14px;
+    padding: 14px;
+    width: 100%;
+  }
+
+  .attendance-face-video-wrap {
+    aspect-ratio: 3 / 4;
+    max-height: min(58vh, 390px);
+    max-height: min(58dvh, 390px);
+  }
+
+  .attendance-face-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .attendance-face-enrollment-card .attendance-face-row {
+    align-items: stretch;
+  }
+
+  .attendance-face-capture-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .attendance-face-head h2 {
+    font-size: 18px;
+  }
+
+  .attendance-face-primary,
+  .attendance-face-secondary,
+  .attendance-face-capture-btn {
+    min-height: 42px;
+    padding: 9px 12px;
+  }
+}

@@ -1,0 +1,152 @@
+@import url("./dev.css");
+
+body .brand-panel.cyan {
+  background: linear-gradient(135deg, #0f766e 0%, #14b8a6 52%, #22d3ee 100%);
+}
+
+.phase-tracker-dialog {
+  width: min(780px, 100%);
+}
+
+.phase-tracker-overview {
+  grid-template-columns: 1fr;
+}
+
+.seo-basic-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.seo-basic-summary > div,
+.seo-basic-field {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.seo-basic-summary > div {
+  padding: 12px;
+}
+
+.seo-basic-summary span,
+.seo-basic-field label {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.seo-basic-summary strong {
+  display: block;
+  color: #0f172a;
+  font-size: 22px;
+  margin-top: 4px;
+}
+
+.seo-basic-tracker {
+  display: grid;
+  gap: 12px;
+}
+
+.seo-basic-row {
+  display: grid;
+  gap: 12px;
+}
+
+.seo-basic-row.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.seo-basic-row.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.seo-basic-field {
+  padding: 12px;
+}
+
+.seo-basic-field input,
+.seo-basic-field select,
+.seo-basic-field textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #0f172a;
+  font-size: 14px;
+  margin-top: 7px;
+  padding: 10px;
+}
+
+.seo-basic-field textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.seo-proof-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  background: #0f766e;
+  color: #ffffff !important;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 10px 12px;
+}
+
+.seo-proof-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.seo-proof-list a,
+.seo-proof-list span {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #475569;
+  font-size: 12px;
+  padding: 7px 9px;
+  text-decoration: none;
+}
+
+.seo-client-share {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.seo-client-share button {
+  align-items: center;
+  background: #0f766e;
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 8px;
+  padding: 10px 12px;
+}
+
+.seo-client-share button:last-child {
+  background: #334155;
+}
+
+.seo-client-share button:hover {
+  filter: brightness(1.05);
+}
+
+@media (max-width: 560px) {
+  .seo-basic-summary,
+  .seo-basic-row.two,
+  .seo-basic-row.three {
+    grid-template-columns: 1fr;
+  }
+}

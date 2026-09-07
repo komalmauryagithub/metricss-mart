@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SEO Dashboard</title>
+    <link rel="icon" type="image/png" href="logo_.png" />
+
+    <link rel="stylesheet" href="attendance-face.css" />
+    <link rel="stylesheet" href="seo.css" />
+    <link rel="stylesheet" href="payroll-management.css" />
+    <link rel="stylesheet" href="leave-management.css" />
+    <link rel="stylesheet" href="crm-security.css?v=20260527-proposal-actions-scroll" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-left">
+        <div class="brand-title">
+          <img src="logo_.png" alt="Metrics Mart" class="brand-logo" />
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="welcome">
+          Welcome, <span id="userName">Loading...</span>
+        </div>
+
+        <div class="user-info">
+          <img id="userAvatar" class="avatar" alt="User Avatar" />
+          <span class="role">SEO</span>
+        </div>
+
+        <button onclick="logout()" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <ul>
+          <li class="active" onclick="showSection('dashboard')">
+            <i class="fas fa-gauge-high"></i> Dashboard
+          </li>
+          <li onclick="showSection('assigned')">
+            <i class="fas fa-tasks"></i> Project Assignments
+          </li>
+          <li onclick="showSection('ongoing')">
+            <i class="fas fa-spinner"></i> Ongoing Projects
+          </li>
+          <li onclick="showSection('completed')">
+            <i class="fas fa-check-circle"></i> Completed Projects
+          </li>
+          <li onclick="showSection('attendance')">
+            <i class="fas fa-user-check"></i> Attendance
+          </li>
+          <li onclick="showSection('salary')">
+            <i class="fas fa-wallet"></i> Salary
+          </li>
+        </ul>
+      </aside>
+
+      <main class="main-content">
+        <div id="dashboard" class="section active">
+          <div class="dashboard-title-row">
+            <div>
+              <h2>Dashboard</h2>
+              <p>SEO delivery overview & performance</p>
+            </div>
+            <button
+              type="button"
+              class="refresh-dashboard-btn"
+              onclick="loadDevDashboard()"
+            >
+              <i class="fas fa-rotate-right"></i>
+            </button>
+          </div>
+
+          <div class="dashboard-metrics dashboard-metrics-4">
+            <div
+              class="metric-card assigned"
+              role="button"
+              tabindex="0"
+              onclick="showSection('assigned')"
+              onkeydown="handleDashboardShortcutKey(event, 'assigned')"
+            >
+              <div class="metric-icon"><i class="fas fa-tasks"></i></div>
+              <div>
+                <span>Assignments</span>
+                <strong id="dashboardAssignedCount">0</strong>
+                <small>Projects</small>
+              </div>
+            </div>
+            <div
+              class="metric-card ongoing"
+              role="button"
+              tabindex="0"
+              onclick="showSection('ongoing')"
+              onkeydown="handleDashboardShortcutKey(event, 'ongoing')"
+            >
+              <div class="metric-icon"><i class="fas fa-spinner"></i></div>
+              <div>
+                <span>Ongoing</span>
+                <strong id="dashboardOngoingCount">0</strong>
+                <small>In progress</small>
+              </div>
+            </div>
+            <div
+              class="metric-card completed"
+              role="button"
+              tabindex="0"
+              onclick="showSection('completed')"
+              onkeydown="handleDashboardShortcutKey(event, 'completed')"
+            >
+              <div class="metric-icon"><i class="fas fa-check-circle"></i></div>
+              <div>
+                <span>Completed</span>
+                <strong id="dashboardCompletedCount">0</strong>
+                <small>Delivered</small>
+              </div>
+            </div>
+            <div
+              class="metric-card attendance"
+              role="button"
+              tabindex="0"
+              onclick="showSection('attendance')"
+              onkeydown="handleDashboardShortcutKey(event, 'attendance')"
+            >
+              <div class="metric-icon"><i class="fas fa-user-check"></i></div>
+              <div>
+                <span>Attendance</span>
+                <strong id="dashboardAttendance">Not marked</strong>
+                <small id="dashboardAttendanceTime">Check in pending</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-panels">
+            <div class="dashboard-panel chart-panel">
+              <div class="panel-heading">
+                <h3>Work Distribution</h3>
+                <span>Assigned vs ongoing vs completed</span>
+              </div>
+              <canvas id="devDashboardChart"></canvas>
+            </div>
+            <div class="dashboard-panel funnel-panel-dashboard">
+              <div class="panel-heading">
+                <h3>Work Funnel</h3>
+                <span id="devDashboardFunnelRate">0% completion</span>
+              </div>
+              <div class="admin-funnel">
+                <div id="workFunnelAssignedRow" class="funnel-row funnel-blue" role="button" tabindex="0" onclick="showSection('assigned')" onkeydown="handleDashboardShortcutKey(event, 'assigned')"><span>Assigned</span><b id="workFunnelAssigned">0</b></div>
+                <div id="workFunnelOngoingRow" class="funnel-row funnel-green" role="button" tabindex="0" onclick="showSection('ongoing')" onkeydown="handleDashboardShortcutKey(event, 'ongoing')"><span>Ongoing</span><b id="workFunnelOngoing">0</b></div>
+                <div id="workFunnelCompletedRow" class="funnel-row funnel-orange" role="button" tabindex="0" onclick="showSection('completed')" onkeydown="handleDashboardShortcutKey(event, 'completed')"><span>Completed</span><b id="workFunnelCompleted">0</b></div>
+                <div id="workFunnelAttendanceRow" class="funnel-row funnel-pink" role="button" tabindex="0" onclick="showSection('attendance')" onkeydown="handleDashboardShortcutKey(event, 'attendance')"><span>Checked In</span><b id="workFunnelAttendance">0</b></div>
+              </div>
+              <div class="conversion-pill">Completion Rate: <strong id="devFunnelConversionRate">0%</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="assigned" class="section">
+          <h2>Project Assignments</h2>
+          <input
+            type="text"
+            id="assignedSearch"
+            placeholder="Search assigned projects..."
+            onkeyup="filterCards('assignedContainer', 'assignedSearch')"
+            class="search-box"
+          />
+          <div class="card-grid" id="assignedContainer">
+            <p class="loading">Loading assigned projects...</p>
+          </div>
+        </div>
+
+        <div id="ongoing" class="section">
+          <h2>Ongoing Projects</h2>
+          <input
+            type="text"
+            id="ongoingSearch"
+            placeholder="Search ongoing projects..."
+            onkeyup="filterCards('ongoingContainer', 'ongoingSearch')"
+            class="search-box"
+          />
+          <div class="card-grid" id="ongoingContainer">
+            <p class="loading">Loading ongoing projects...</p>
+          </div>
+        </div>
+
+        <div id="completed" class="section">
+          <h2>Completed Projects</h2>
+          <input
+            type="text"
+            id="completedSearch"
+            placeholder="Search completed projects..."
+            onkeyup="filterCards('completedContainer', 'completedSearch')"
+            class="search-box"
+          />
+          <div class="card-grid" id="completedContainer">
+            <p class="loading">Loading completed projects...</p>
+          </div>
+        </div>
+
+        <div id="attendance" class="section">
+          <h2>Attendance</h2>
+          <input
+            type="text"
+            id="attendanceSearch"
+            placeholder="Search attendance..."
+            onkeyup="filterTable('attendanceTableBody', 'attendanceSearch')"
+            class="search-box"
+          />
+          <div class="attendance-actions" id="attendanceActions"></div>
+          <div class="table-responsive" id="attendanceContainer">
+            <table class="summary-table attendance-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Check In</th>
+                  <th>Check Out</th>
+                  <th>Check-in Location</th>
+                  <th>Working Hours</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceTableBody">
+                <tr>
+                  <td colspan="6">No attendance records found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="salary" class="section">
+          <div data-payroll-scope="self" data-payroll-role-label="SEO"></div>
+        </div>
+
+        <div id="reports" class="section">
+          <h2>Performance Reports</h2>
+
+          <div class="report-grid">
+            <div class="report-card">
+              <h3>Assigned</h3>
+              <h2 id="totalAssigned">0</h2>
+            </div>
+
+            <div class="report-card">
+              <h3>Ongoing</h3>
+              <h2 id="totalOngoing">0</h2>
+            </div>
+
+            <div class="report-card">
+              <h3>Completed</h3>
+              <h2 id="totalCompleted">0</h2>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="reportChart"></canvas>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div id="popup" class="popup hidden">
+      <div class="popup-content">
+        <i id="popupIcon"></i>
+        <h3 id="popupTitle"></h3>
+        <p id="popupMessage"></p>
+      </div>
+    </div>
+
+    <div id="statusModal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Update Project Status</h2>
+        <p>Select current status</p>
+
+        <div class="modal-actions">
+          <button
+            class="btn in-progress"
+            onclick="updateProjectStatus('ongoing')"
+          >
+            In Progress
+          </button>
+
+          <button
+            class="btn completed"
+            onclick="updateProjectStatus('completed')"
+          >
+            Completed
+          </button>
+        </div>
+
+        <button class="close-btn" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+
+    <div id="phaseTrackerModal" class="modal phase-tracker-modal hidden">
+      <div class="phase-tracker-dialog">
+        <div class="phase-tracker-header">
+          <div>
+            <span class="phase-tracker-kicker">Simple Workflow</span>
+            <h2 id="phaseTrackerTitle">Loading project...</h2>
+            <p id="phaseTrackerSubtitle">
+              Update Work -> Upload Proof -> Submit
+            </p>
+          </div>
+          <button
+            type="button"
+            class="phase-tracker-close"
+            onclick="closePhaseTracker()"
+            aria-label="Close phase tracker"
+          >
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+
+        <div id="phaseTrackerOverview" class="phase-tracker-overview">
+          <div class="phase-tracker-loading">Loading project overview...</div>
+        </div>
+
+        <div id="phaseTrackerBody" class="phase-tracker-body">
+          <div class="phase-tracker-loading">Loading phase details...</div>
+        </div>
+
+        <div class="phase-tracker-footer">
+          <span id="phaseTrackerSaveNote">
+            Saving here updates the overall project stage and progress automatically.
+          </span>
+
+          <div class="phase-tracker-actions">
+            <button type="button" class="btn gray" onclick="closePhaseTracker()">
+              Close
+            </button>
+            <button
+              type="button"
+              id="phaseTrackerSaveBtn"
+              class="btn cyan-btn"
+              onclick="savePhaseTracker()"
+            >
+              Save Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="payroll-management.js"></script>
+    <script src="attendance-face.js?v=20260523-profile-face"></script>
+    <script src="seo.js"></script>
+    <script src="dev.js"></script>
+    <script src="attendance-auto-checkout.js"></script>
+    <script src="leave-management.js"></script>
+    <script src="crm-security.js?v=20260527-section-scroll"></script>
+  </body>
+</html>

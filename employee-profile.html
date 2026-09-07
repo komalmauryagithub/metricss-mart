@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Complete Profile | Metrics Mart</title>
+    <link rel="stylesheet" href="complete-profile.css?v=20260603-doc-tabs-v1" />
+    <link rel="stylesheet" href="attendance-face.css?v=20260602-live-face-v1" />
+      <link rel="stylesheet" href="profile-sidebar.css" />
+  </head>
+  <body>
+    <main class="profile-shell">
+      <section class="hero-card">
+        <p class="hero-kicker">Metrics Mart</p>
+        <h1>Complete Your Employee Profile</h1>
+        <p class="hero-copy">
+          Fill the remaining documents and payroll details once. Your saved profile
+          will stay ready for future panels.
+        </p>
+      </section>
+
+      <section class="summary-card">
+        <div class="summary-head">
+          <div>
+            <h2>Basic Details</h2>
+            <p>Your admin has already created the main account.</p>
+          </div>
+          <span id="statusBadge" class="status-badge">Loading...</span>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <span class="summary-label">Full Name</span>
+            <strong id="summaryName">-</strong>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Email</span>
+            <strong id="summaryEmail">-</strong>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Contact</span>
+            <strong id="summaryContact">-</strong>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Role</span>
+            <strong id="summaryRole">-</strong>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Company</span>
+            <strong id="summaryCompany">-</strong>
+          </div>
+        </div>
+      </section>
+
+      <section id="statusBanner" class="status-banner hidden"></section>
+
+      <form id="completeProfileForm" class="profile-form" enctype="multipart/form-data" novalidate>
+        <section class="form-card profile-type-card">
+          <div class="form-head">
+            <div>
+              <h3>Profile Documents</h3>
+              <p>Select your profile type and upload the required documents.</p>
+            </div>
+          </div>
+
+          <!-- profile type tabs removed, handled by backend -->
+          <input id="profile_type" type="hidden" name="profile_type" value="fresher" />
+
+          <div class="grid-2 profile-doc-grid">
+            <div class="input-group">
+              <label for="prof_img">Profile Image</label>
+              <input id="prof_img" type="file" name="prof_img" accept="image/*,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif" />
+              <p class="field-hint" id="profImgHint"></p>
+            </div>
+            <div class="input-group">
+              <label for="joining_date">Joining Date</label>
+              <input id="joining_date" type="date" name="joining_date" />
+            </div>
+            <div class="input-group" data-profile-field="experience">
+              <label for="total_experience">Total Experience</label>
+              <input id="total_experience" type="text" name="total_experience" placeholder="Example: 2 years 6 months" />
+            </div>
+            <div class="input-group" data-profile-field="experience">
+              <label for="experience_file">Experience Letter</label>
+              <input id="experience_file" type="file" name="experience_file" accept="image/*,.pdf,.doc,.docx,.jpg,.jpeg,.png,.webp,.heic,.heif" />
+              <p class="field-hint" id="experienceFileHint"></p>
+            </div>
+            <div class="input-group">
+              <label for="aadhar_no">Aadhar Number *</label>
+              <input id="aadhar_no" type="text" name="aadhar_no" autocomplete="off" required />
+            </div>
+            <div class="input-group">
+              <label for="aadhar_img">Aadhar Image</label>
+              <input id="aadhar_img" type="file" name="aadhar_img" accept="image/*,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.pdf" />
+              <p class="field-hint" id="aadharImgHint"></p>
+            </div>
+            <div class="input-group">
+              <label for="resume_file">Resume File</label>
+              <input id="resume_file" type="file" name="resume_file" accept="image/*,.pdf,.doc,.docx,.jpg,.jpeg,.png,.webp,.heic,.heif" />
+              <p class="field-hint" id="resumeFileHint"></p>
+            </div>
+            <div class="input-group">
+              <label for="cancelled_cheque">Cancelled Cheque Image (Optional)</label>
+              <input id="cancelled_cheque" type="file" name="cancelled_cheque" accept="image/*,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.pdf" />
+              <p class="field-hint" id="cancelledChequeHint"></p>
+            </div>
+            <div class="input-group">
+              <label for="pan_number">PAN Card Number</label>
+              <input id="pan_number" type="text" name="pan_number" autocomplete="off" />
+            </div>
+            <div class="input-group form-full-width">
+              <label for="pan_img">PAN Card Image</label>
+              <input id="pan_img" type="file" name="pan_img" accept="image/*,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.pdf" />
+              <p class="field-hint" id="panImgHint"></p>
+            </div>
+            <div class="input-group form-full-width" data-profile-field="experience">
+              <label for="certification_file">Offer Letter</label>
+              <input id="certification_file" type="file" name="certification_file" accept="image/*,.pdf,.doc,.docx,.jpg,.jpeg,.png,.webp,.heic,.heif" />
+              <p class="field-hint" id="certificationFileHint"></p>
+            </div>
+          </div>
+          <div class="profile-skills-block">
+            <label class="profile-skills-label">Skills</label>
+            <div class="skills-grid">
+              <label class="skill-chip"><input type="checkbox" name="skills[]" value="web" /> <span>Web</span></label>
+              <label class="skill-chip"><input type="checkbox" name="skills[]" value="seo" /> <span>SEO</span></label>
+              <label class="skill-chip"><input type="checkbox" name="skills[]" value="smo" /> <span>SMO</span></label>
+              <label class="skill-chip"><input type="checkbox" name="skills[]" value="ads" /> <span>Ads</span></label>
+              <label class="skill-chip"><input type="checkbox" name="skills[]" value="app" /> <span>App</span></label>
+              <label class="skill-chip"><input type="checkbox" name="skills[]" value="erp_crm" /> <span>ERP/CRM</span></label>
+              <label class="skill-chip"><input type="checkbox" name="skills[]" value="tme" /> <span>TME</span></label>
+              <label class="skill-chip"><input type="checkbox" name="skills[]" value="me" /> <span>ME</span></label>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <div class="form-head">
+            <div>
+              <h3>Bank Details</h3>
+              <p>Share payment and account information for payroll readiness.</p>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="input-group">
+              <label for="account_no">Bank Account Number</label>
+              <input id="account_no" type="text" name="account_no" inputmode="numeric" />
+            </div>
+            <div class="input-group">
+              <label for="bank_name">Bank Name</label>
+              <input id="bank_name" type="text" name="bank_name" />
+            </div>
+            <div class="input-group">
+              <label for="ifsc_code">IFSC Code</label>
+              <input id="ifsc_code" type="text" name="ifsc_code" autocomplete="off" />
+            </div>
+            <div class="input-group">
+              <label for="beneficiary_name">Beneficiary Name</label>
+              <input id="beneficiary_name" type="text" name="beneficiary_name" />
+            </div>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <div class="form-head">
+            <div>
+              <h3>PF Details</h3>
+              <p>Select PF status and share the required payroll values.</p>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="input-group">
+              <label for="pf_enabled">PF Enable</label>
+              <select id="pf_enabled" name="pf_enabled">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+          </div>
+          <div id="pfDetails" class="grid-2 hidden">
+            <div class="input-group">
+              <label for="pf_number">PF Number</label>
+              <input id="pf_number" type="text" name="pf_number" autocomplete="off" />
+            </div>
+            <div class="input-group">
+              <label for="uan_number">UAN Number</label>
+              <input id="uan_number" type="text" name="uan_number" autocomplete="off" />
+            </div>
+            <div class="input-group">
+              <label for="employee_pf_amount">Employee PF Amount</label>
+              <input id="employee_pf_amount" type="number" name="employee_pf_amount" min="0" step="0.01" />
+            </div>
+            <div class="input-group">
+              <label for="employer_pf_amount">Employer PF Amount</label>
+              <input id="employer_pf_amount" type="number" name="employer_pf_amount" min="0" step="0.01" />
+            </div>
+            <div class="input-group form-full-width">
+              <label for="pf_joining_date">PF Joining Date</label>
+              <input id="pf_joining_date" type="date" name="pf_joining_date" />
+            </div>
+          </div>
+        </section>
+
+        
+
+        <section class="form-card terms-card">
+          <div class="form-head">
+            <div>
+              <h3>Terms & Conditions</h3>
+              <p>Please review both documents before submitting your profile.</p>
+            </div>
+          </div>
+          <div class="terms-document-list">
+            <a class="terms-document-link" href="policy-documents/hr-policy.html" target="_blank" rel="noopener">
+              <span>HR Policy</span>
+              <strong>View Document</strong>
+            </a>
+            <a class="terms-document-link" href="policy-documents/employment-terms-dev.html" target="_blank" rel="noopener">
+              <span>Employment Terms</span>
+              <strong>View Document</strong>
+            </a>
+          </div>
+          <label class="terms-acceptance">
+            <input id="policy_acceptance" type="checkbox" name="policy_acceptance" value="accepted" required />
+            <span>I have read and agree to the HR Policy and Employment Terms & Conditions.</span>
+          </label>
+        </section>
+
+        <div id="formMessage" class="form-message hidden"></div>
+
+        <button id="submitBtn" type="submit" class="submit-btn">
+          Submit Details
+        </button>
+      </form>
+    </main>
+
+    
+    <script src="employee-profile.js"></script>
+      <script src="profile-sidebar.js"></script>
+  </body>
+</html>

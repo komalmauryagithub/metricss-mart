@@ -1,0 +1,1479 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SEO Dashboard</title>
+    <link rel="icon" type="image/png" href="logo_.png" />
+
+    <link rel="stylesheet" href="attendance-face.css?v=20260602-live-face-v1" />
+    <link rel="stylesheet" href="seo.css?v=1787220423310" />
+    <link rel="stylesheet" href="payroll-management.css" />
+    <link rel="stylesheet" href="leave-management.css" />
+    <link rel="stylesheet" href="crm-security.css?v=20260527-proposal-actions-scroll" />
+    <link rel="stylesheet" href="panel-layout.css?v=20260607-fixed-sidebar-v1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="profile-sidebar.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-left">
+        <div class="brand-title">
+          <img src="logo_.png" alt="Metrics Mart" class="brand-logo" />
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="welcome">
+          Welcome, <span id="userName">Loading...</span>
+        </div>
+
+        <div class="user-info">
+          <img id="userAvatar" class="avatar" alt="User Avatar" onclick="toggleProfileSidebar()" style="cursor: pointer;" title="View Profile Progress" />
+          <span class="role">SEO</span>
+        </div>
+
+        
+        
+        
+        <div class="header-action-btns" style="display: flex; flex-direction: column; gap: 8px;">
+          <button onclick="logout()" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+          
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <ul>
+          <li class="active" onclick="showSection('dashboard')">
+            <i class="fas fa-gauge-high"></i> Dashboard
+          </li>
+          <li onclick="showSection('assigned')">
+            <i class="fas fa-tasks"></i> Project Assignments
+          </li>
+          <li onclick="showSection('ongoing')">
+            <i class="fas fa-spinner"></i> Ongoing Projects
+          </li>
+          <li onclick="showSection('completed')">
+            <i class="fas fa-check-circle"></i> Completed Projects
+          </li>
+          <li onclick="showSection('pending-gmb-reports')">
+            <i class="fas fa-file-invoice" style="color:#f59e0b;"></i> Pending GMB Reports
+          </li>
+          <li onclick="showSection('attendance')">
+            <i class="fas fa-user-check"></i> Attendance
+          </li>
+          <li onclick="showSection('salary')">
+            <i class="fas fa-wallet"></i> Salary
+          </li>
+        </ul>
+      </aside>
+
+      <main class="main-content">
+        <div id="dashboard" class="section active">
+          <div class="dashboard-title-row">
+            <div>
+              <h2>Dashboard</h2>
+              <p>SEO delivery overview & performance</p>
+            </div>
+            <button
+              type="button"
+              class="refresh-dashboard-btn"
+              onclick="loadDevDashboard()"
+            >
+              <i class="fas fa-rotate-right"></i>
+            </button>
+          </div>
+
+          <div class="dashboard-metrics dashboard-metrics-4">
+            <div
+              class="metric-card assigned"
+              role="button"
+              tabindex="0"
+              onclick="showSection('assigned')"
+              onkeydown="handleDashboardShortcutKey(event, 'assigned')"
+            >
+              <div class="metric-icon"><i class="fas fa-tasks"></i></div>
+              <div>
+                <span>Assignments</span>
+                <strong id="dashboardAssignedCount">0</strong>
+                <small>Projects</small>
+              </div>
+            </div>
+            <div
+              class="metric-card ongoing"
+              role="button"
+              tabindex="0"
+              onclick="showSection('ongoing')"
+              onkeydown="handleDashboardShortcutKey(event, 'ongoing')"
+            >
+              <div class="metric-icon"><i class="fas fa-spinner"></i></div>
+              <div>
+                <span>Ongoing</span>
+                <strong id="dashboardOngoingCount">0</strong>
+                <small>In progress</small>
+              </div>
+            </div>
+            <div
+              class="metric-card completed"
+              role="button"
+              tabindex="0"
+              onclick="showSection('completed')"
+              onkeydown="handleDashboardShortcutKey(event, 'completed')"
+            >
+              <div class="metric-icon"><i class="fas fa-check-circle"></i></div>
+              <div>
+                <span>Completed</span>
+                <strong id="dashboardCompletedCount">0</strong>
+                <small>Delivered</small>
+              </div>
+            </div>
+            <div
+              class="metric-card attendance"
+              role="button"
+              tabindex="0"
+              onclick="showSection('attendance')"
+              onkeydown="handleDashboardShortcutKey(event, 'attendance')"
+            >
+              <div class="metric-icon"><i class="fas fa-user-check"></i></div>
+              <div>
+                <span>Attendance</span>
+                <strong id="dashboardAttendance">Not marked</strong>
+                <small id="dashboardAttendanceTime">Check in pending</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-panels">
+            <div class="dashboard-panel chart-panel">
+              <div class="panel-heading">
+                <h3>Work Distribution</h3>
+                <span>Assigned vs ongoing vs completed</span>
+              </div>
+              <canvas id="devDashboardChart"></canvas>
+            </div>
+            <div class="dashboard-panel funnel-panel-dashboard">
+              <div class="panel-heading">
+                <h3>Work Funnel</h3>
+                <span id="devDashboardFunnelRate">0% completion</span>
+              </div>
+              <div class="admin-funnel">
+                <div id="workFunnelAssignedRow" class="funnel-row funnel-blue" role="button" tabindex="0" onclick="showSection('assigned')" onkeydown="handleDashboardShortcutKey(event, 'assigned')"><span>Assigned</span><b id="workFunnelAssigned">0</b></div>
+                <div id="workFunnelOngoingRow" class="funnel-row funnel-green" role="button" tabindex="0" onclick="showSection('ongoing')" onkeydown="handleDashboardShortcutKey(event, 'ongoing')"><span>Ongoing</span><b id="workFunnelOngoing">0</b></div>
+                <div id="workFunnelCompletedRow" class="funnel-row funnel-orange" role="button" tabindex="0" onclick="showSection('completed')" onkeydown="handleDashboardShortcutKey(event, 'completed')"><span>Completed</span><b id="workFunnelCompleted">0</b></div>
+                <div id="workFunnelAttendanceRow" class="funnel-row funnel-pink" role="button" tabindex="0" onclick="showSection('attendance')" onkeydown="handleDashboardShortcutKey(event, 'attendance')"><span>Checked In</span><b id="workFunnelAttendance">0</b></div>
+              </div>
+              <div class="conversion-pill">Completion Rate: <strong id="devFunnelConversionRate">0%</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="assigned" class="section">
+          <h2>Project Assignments</h2>
+          <input
+            type="text"
+            id="assignedSearch"
+            placeholder="Search assigned projects..."
+            onkeyup="filterCards('assignedContainer', 'assignedSearch')"
+            class="search-box"
+          />
+          <div id="assignedContainer">
+            <div style="margin-bottom: 20px;">
+              <h3 style="color:#0057b7; font-size:16px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-globe"></i> SEO & GMB Projects
+              </h3>
+              <div class="card-grid" id="assignedSeoContainer">
+                <p class="loading">Loading SEO projects...</p>
+              </div>
+            </div>
+
+            <div style="margin-top: 25px; border-top: 2px dashed #cbd5e1; padding-top: 20px;">
+              <h3 style="color:#ea580c; font-size:16px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-bullhorn"></i> Digital Ads Projects
+              </h3>
+              <div class="card-grid" id="assignedAdsContainer">
+                <p class="loading">Loading Ads projects...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="ongoing" class="section">
+          <h2>Ongoing Projects</h2>
+          <input
+            type="text"
+            id="ongoingSearch"
+            placeholder="Search ongoing projects..."
+            onkeyup="filterCards('ongoingContainer', 'ongoingSearch')"
+            class="search-box"
+          />
+          <div id="ongoingContainer">
+            <div style="margin-bottom: 20px;">
+              <h3 style="color:#0057b7; font-size:16px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-globe"></i> SEO & GMB Projects
+              </h3>
+              <div class="card-grid" id="ongoingSeoContainer">
+                <p class="loading">Loading SEO projects...</p>
+              </div>
+            </div>
+
+            <div style="margin-top: 25px; border-top: 2px dashed #cbd5e1; padding-top: 20px;">
+              <h3 style="color:#ea580c; font-size:16px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-bullhorn"></i> Digital Ads Projects
+              </h3>
+              <div class="card-grid" id="ongoingAdsContainer">
+                <p class="loading">Loading Ads projects...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="completed" class="section">
+          <h2>Completed Projects</h2>
+          <input
+            type="text"
+            id="completedSearch"
+            placeholder="Search completed projects..."
+            onkeyup="filterCards('completedContainer', 'completedSearch')"
+            class="search-box"
+          />
+          <div id="completedContainer">
+            <div style="margin-bottom: 20px;">
+              <h3 style="color:#0057b7; font-size:16px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-globe"></i> SEO & GMB Projects
+              </h3>
+              <div class="card-grid" id="completedSeoContainer">
+                <p class="loading">Loading SEO projects...</p>
+              </div>
+            </div>
+
+            <div style="margin-top: 25px; border-top: 2px dashed #cbd5e1; padding-top: 20px;">
+              <h3 style="color:#ea580c; font-size:16px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-bullhorn"></i> Digital Ads Projects
+              </h3>
+              <div class="card-grid" id="completedAdsContainer">
+                <p class="loading">Loading Ads projects...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="pending-gmb-reports" class="section">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+            <div>
+              <h2 style="margin:0;"><i class="fas fa-file-invoice" style="color:#f59e0b;"></i> Pending Monthly GMB Reports</h2>
+              <p style="color:#64748b; font-size:13px; margin:4px 0 0 0;">
+                Showing active GMB projects whose monthly report is due for the current cycle. Submitting a report rolls the project over to next month's due date.
+              </p>
+            </div>
+            <button class="btn cyan-btn" onclick="loadPendingGmbReports()"><i class="fas fa-sync"></i> Refresh List</button>
+          </div>
+
+          <div class="card-grid" id="pendingGmbReportsContainer">
+            <p class="loading">Loading pending GMB reports...</p>
+          </div>
+        </div>
+
+        <div id="attendance" class="section">
+          <h2>Attendance</h2>
+          <div class="attendance-filter-bar">
+            <label for="attendanceMonthFilter">
+              <i class="fas fa-calendar-days"></i>
+              <span>Month</span>
+            </label>
+            <input
+              type="month"
+              id="attendanceMonthFilter"
+              onchange="fetchAttendance()"
+              title="Filter attendance by month"
+            />
+          </div>
+          <input
+            type="text"
+            id="attendanceSearch"
+            placeholder="Search attendance..."
+            onkeyup="filterTable('attendanceTableBody', 'attendanceSearch')"
+            class="search-box"
+          />
+          <div class="attendance-actions" id="attendanceActions"></div>
+          <div class="table-responsive" id="attendanceContainer">
+            <table class="summary-table attendance-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Check In</th>
+                  <th>Check Out</th>
+                  <th>Check-in Location</th>
+                  <th>Working Hours</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceTableBody">
+                <tr>
+                  <td colspan="6">No attendance records found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="salary" class="section">
+          <div data-payroll-scope="self" data-payroll-role-label="SEO"></div>
+        </div>
+
+        <div id="reports" class="section">
+          <h2>Performance Reports</h2>
+          <div class="report-grid">
+            <div class="report-card">
+              <h3>Assigned</h3>
+              <h2 id="totalAssigned">0</h2>
+            </div>
+            <div class="report-card">
+              <h3>Ongoing</h3>
+              <h2 id="totalOngoing">0</h2>
+            </div>
+            <div class="report-card">
+              <h3>Completed</h3>
+              <h2 id="totalCompleted">0</h2>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="reportChart"></canvas>
+          </div>
+        </div>
+
+        <div id="seo-workspace" class="section">
+  <div class="dashboard-title-row" style="margin-bottom: 20px;">
+    <div>
+      <h2 id="workspaceProjectTitle">SEO Project</h2>
+      <p id="workspaceProjectClient" style="color:#666;">Client Project Seo</p>
+      <p id="workspaceProjectCoAssignees" style="color:#0f766e; font-weight:600; font-size:13px; margin-top:3px;"></p>
+      <p id="workspaceProjectType" style="color:var(--primary-blue); font-weight:bold; margin-top:5px;"></p>
+    </div>
+    <div style="display: flex; gap: 10px; align-items:center; flex-wrap:wrap;">
+      <button class="btn gray" onclick="showSection('assigned')">&larr; Back</button>
+      <button id="workspaceSheetBtn" class="btn" style="background:#0f9d58; color:white; font-weight:600;" onclick="openWorkspaceSheetAccess()"><i class="fas fa-file-excel"></i> Sheet Access</button>
+      <button id="workspaceAddBtn" class="btn cyan-btn" onclick="openAddDailyWork()">+ Add Daily Work</button>
+      <button id="workspaceStopBtn" class="btn delete-btn" style="background: red; color: white;" onclick="openStopSeoModal()">Stop SEO Work</button>
+      <button id="workspaceReactivateBtn" class="btn cyan-btn" style="background: green; color: white; display: none;" onclick="reactivateSeoAction()">Reactivate SEO</button>
+    </div>
+  </div>
+
+  <!-- GMB Workspace Controls Box -->
+  <div id="gmbControlsWidget" style="display:none; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:15px; margin-bottom:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
+      <div>
+        <h4 style="margin:0 0 5px 0; color:#15803d; font-size:15px; font-weight:700;"><i class="fas fa-calendar-alt"></i> GMB Post Schedule & Monthly Reporting</h4>
+        <p style="margin:0; font-size:13px; color:#334155;">
+          Scheduled Until: <strong id="gmbWsScheduleVal" style="color:#15803d; font-size:14px;">Not Set</strong>
+          &nbsp;|&nbsp; Next Monthly Report Due: <strong id="gmbWsReportVal" style="color:#0284c7; font-size:14px;">Not Set</strong>
+        </p>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <button class="btn" style="background:#16a34a; color:white; font-size:12.5px; font-weight:600;" onclick="extendGmbPostScheduleAction(15)">+15 Days Schedule Extend</button>
+        <input type="date" id="gmbWsScheduleInput" class="styled-input" style="padding:6px 10px; font-size:12.5px;" onchange="updateGmbPostScheduleDateAction(this.value)">
+        <button id="gmbWsSubmitReportBtn" class="btn" style="background:#0284c7; color:white; font-size:12.5px; font-weight:600;" onclick="submitGmbMonthlyReportAction()"><i class="fas fa-paper-plane"></i> Submit Monthly Report (Rollover)</button>
+      </div>
+    </div>
+    <div id="gmbWsListingUrlRow" style="margin-top:10px; border-top:1px dashed #cbd5e1; padding-top:8px; font-size:13px; color:#475569;">
+      <strong>Listing URL:</strong> <a id="gmbWsListingUrlLink" href="#" target="_blank" style="color:#0284c7; font-weight:600; text-decoration:underline;">Click to Open GMB Listing</a>
+      <button class="btn gray" style="padding:2px 8px; font-size:11px; margin-left:8px;" onclick="promptUpdateGmbListingUrl()"><i class="fas fa-edit"></i> Update URL</button>
+    </div>
+  </div>
+
+  <div class="dashboard-metrics dashboard-metrics-4" style="margin-bottom: 30px;">
+    <div class="metric-card assigned">
+      <div class="metric-icon"><i class="fas fa-tasks"></i></div>
+      <div>
+        <span>Total Activities</span>
+        <strong id="wsTotal">0</strong>
+      </div>
+    </div>
+    <div class="metric-card completed">
+      <div class="metric-icon"><i class="fas fa-check-circle"></i></div>
+      <div>
+        <span>Completed</span>
+        <strong id="wsCompleted">0</strong>
+      </div>
+    </div>
+    <div class="metric-card ongoing">
+      <div class="metric-icon"><i class="fas fa-spinner"></i></div>
+      <div>
+        <span>In Progress</span>
+        <strong id="wsInProgress">0</strong>
+      </div>
+    </div>
+    <div class="metric-card attendance">
+      <div class="metric-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <div>
+        <span>Pending / Blocked</span>
+        <strong id="wsPending">0</strong>
+      </div>
+    </div>
+    <div class="metric-card assigned">
+      <div class="metric-icon"><i class="fas fa-layer-group"></i></div>
+      <div>
+        <span>SEO Types Used</span>
+        <strong id="wsTypes">0</strong>
+      </div>
+    </div>
+    <div class="metric-card ongoing">
+      <div class="metric-icon"><i class="fas fa-clock"></i></div>
+      <div>
+        <span>Last Activity</span>
+        <strong id="wsLast" style="font-size:16px;">N/A</strong>
+      </div>
+    </div>
+    <div class="metric-card completed">
+      <div class="metric-icon"><i class="fas fa-calendar-alt"></i></div>
+      <div>
+        <span>Days Active</span>
+        <strong id="wsDays">0</strong>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:20px; margin-bottom:12px;">
+    <h3 style="margin:0;">Daily SEO Work History</h3>
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:6px;">
+        <label style="font-weight:600; font-size:12.5px; color:#334155;"><i class="fas fa-calendar-alt"></i> Filter Month:</label>
+        <input type="month" id="seoHistoryMonthFilter" class="styled-input" style="padding:4px 8px; font-size:13px;" onchange="filterSeoWorkHistoryByMonth()">
+      </div>
+      <button type="button" class="btn" style="background:#16a34a; color:white; font-weight:600; font-size:12.5px;" onclick="downloadSeoMonthlyWorkReportExcel()">
+        <i class="fas fa-file-excel"></i> Download Monthly Report (Excel)
+      </button>
+    </div>
+  </div>
+  
+  <div class="table-responsive">
+      <table class="summary-table">
+          <thead>
+              <tr>
+                  <th>Date</th>
+                  <th>SEO Type</th>
+                  <th>Work Category</th>
+                  <th>Task</th>
+                  <th>URL</th>
+                  <th>Status</th>
+                  <th>Time Spent</th>
+                  <th style="text-align:right;">Actions</th>
+              </tr>
+          </thead>
+          <tbody id="wsHistoryBody">
+          </tbody>
+      </table>
+  </div>
+</div>
+
+        <!-- Ads Workspace Section -->
+        <div id="ads-workspace" class="section">
+          
+          <!-- Workspace Header -->
+          <div class="dashboard-title-row" style="margin-bottom: 20px;">
+            <div>
+              <h2 id="adsWorkspaceProjectTitle" style="display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-bullhorn" style="color:#ea580c;"></i> Ads Workspace
+              </h2>
+              <p id="adsWorkspaceProjectClient" style="color:#64748b; font-size:13.5px; margin-top:2px;">Client Details</p>
+              <p id="adsWorkspaceProjectCoAssignees" style="color:#c026d3; font-weight:600; font-size:13px; margin-top:3px;"></p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items:center; flex-wrap:wrap;">
+              <button type="button" class="btn gray" onclick="showSection('assigned')">&larr; Back to Assignments</button>
+              <button id="adsWorkspaceAddWorkBtn" type="button" class="btn" style="background:linear-gradient(135deg, #16a34a, #15803d); color:white; font-weight:600;" onclick="openAddAdsDailyWorkModal()">
+                <i class="fas fa-plus-circle"></i> + Add Daily Work
+              </button>
+              <button type="button" class="btn" style="background:linear-gradient(135deg, #ea580c, #c026d3); color:white; font-weight:600;" onclick="openEditCurrentAdsProjectModal()">
+                <i class="fas fa-edit"></i> Edit Details
+              </button>
+              <button id="adsWorkspaceStopBtn" class="btn delete-btn" style="background: red; color: white;" onclick="openStopAdsModal()">Stop Ads Work</button>
+              <button id="adsWorkspaceReactivateBtn" class="btn" style="background: green; color: white; display: none;" onclick="reactivateAdsAction()">Reactivate Ads</button>
+            </div>
+          </div>
+
+          <!-- Section 1: Campaign & Account Details Table (13 Google Sheet Fields) -->
+          <div class="vault-card-box" style="margin-bottom: 25px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #e2e8f0; padding-bottom:12px; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+              <h3 style="margin:0; font-size:17px; font-weight:700; color:#0f172a; display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-table" style="color:#ea580c;"></i> Campaign & Account Information (Master Table)
+              </h3>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <button type="button" class="btn" style="background:linear-gradient(135deg, #ea580c, #c026d3); color:white; font-size:12.5px; padding:6px 14px; font-weight:600;" onclick="openEditCurrentAdsProjectModal()">
+                  <i class="fas fa-edit"></i> Edit Table Fields
+                </button>
+                <span id="adsWsStatusBadge" class="rank-badge top10" style="font-size:12px; padding:4px 12px;">Active</span>
+              </div>
+            </div>
+
+            <!-- Table View -->
+            <div class="vault-table-container">
+              <div style="overflow-x:auto;">
+                <table class="vault-data-table ads-master-table">
+                  <thead>
+                    <tr>
+                      <th>Client Details</th>
+                      <th>Campaign Details (Platforms)</th>
+                      <th>Objective</th>
+                      <th>Ad Account Details</th>
+                      <th>Payment Made By</th>
+                      <th>Budget</th>
+                      <th>Location</th>
+                      <th>Other Information</th>
+                      <th>Work Start</th>
+                      <th>Gmail ID</th>
+                      <th>Pass</th>
+                      <th>Remarks</th>
+                      <th style="text-align:right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adsWsMasterTableBody">
+                    <tr><td colspan="13" style="text-align:center; padding:20px; color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading Project Details...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Daily Ads Work History Table -->
+          <div class="vault-card-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #e2e8f0; padding-bottom:12px; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+              <div>
+                <h3 style="margin:0; font-size:17px; font-weight:700; color:#0f172a; display:flex; align-items:center; gap:8px;">
+                  <i class="fas fa-history" style="color:#0284c7;"></i> Daily Ads Work History
+                </h3>
+                <p style="color:#64748b; font-size:13px; margin:2px 0 0 0;">Log daily campaign setups, optimizations, ad copies & performance checks</p>
+              </div>
+              <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <label style="font-weight:600; font-size:12.5px; color:#334155;"><i class="fas fa-calendar-alt"></i> Filter Month:</label>
+                  <input type="month" id="adsHistoryMonthFilter" class="styled-input" style="padding:4px 8px; font-size:13px;" onchange="filterAdsWorkHistoryByMonth()">
+                </div>
+                <button type="button" class="btn" style="background:#16a34a; color:white; font-weight:600; font-size:12.5px;" onclick="downloadAdsMonthlyWorkReportExcel()">
+                  <i class="fas fa-file-excel"></i> Download Monthly Report (Excel)
+                </button>
+                <button type="button" class="btn" style="background:linear-gradient(135deg, #16a34a, #15803d); color:white; font-weight:600;" onclick="openAddAdsDailyWorkModal()">
+                  <i class="fas fa-plus-circle"></i> + Log Today's Ads Work
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="summary-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Platform / Type</th>
+                    <th>Work Description & Links</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    <th style="text-align:right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adsWsHistoryBody">
+                  <tr><td colspan="6" style="text-align:center; padding:24px; color:#888;">No daily work entries logged yet. Click "+ Log Today's Ads Work" above.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+
+<!-- Add Daily Work Modal -->
+<div id="seoAddWorkModal" class="modal hidden">
+  <div class="modal-content" style="max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto; text-align: left;">
+    <div style="position: relative; margin-bottom: 20px;">
+      <h2 id="addDailyWorkModalTitle" style="margin: 0; padding-right: 40px;">Add Daily SEO Work</h2>
+      <button type="button" onclick="document.getElementById('seoAddWorkModal').classList.add('hidden')" style="position: absolute; right: 0; top: -5px; background: #f1f1f1; border: 1px solid #ccc; font-size: 16px; font-weight: bold; cursor: pointer; color: #333; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">&times;</button>
+    </div>
+
+    <div id="seoTypeSelection" style="margin-top: 15px;">
+      <label id="addDailyWorkModalLabel" style="font-weight: bold; margin-bottom: 10px; display: block;">Select SEO Type:</label>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn gray" onclick="selectSeoType('On-Page Optimization')">On-Page Optimization</button>
+        <button class="btn gray" onclick="selectSeoType('Off-Page Optimization')">Off-Page Optimization</button>
+        <button class="btn gray" onclick="selectSeoType('Technical SEO')">Technical SEO</button>
+        <button class="btn gray" onclick="selectSeoType('Keyword Strategy')">Keyword Strategy</button>
+        <button class="btn gray" onclick="selectSeoType('Content Creation')">Content Creation</button>
+        <button class="btn gray" onclick="selectSeoType('Link Building')">Link Building</button>
+        <button class="btn gray" onclick="selectSeoType('SEO Reporting')">SEO Reporting</button>
+      </div>
+    </div>
+
+    <div id="seoWorkFormContainer" class="hidden" style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">
+        <h3 id="selectedSeoTypeTitle" style="color: var(--primary-blue);"></h3>
+
+        <form id="seoDailyForm" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+            <input type="hidden" id="seoTypeField" name="seo_type">
+            <input type="hidden" id="seoAssignmentIdField" name="seo_assignment_id">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Work Date <span style="color:red;">*</span></label>
+                    <input type="date" id="seoWorkDate" required class="styled-input" style="width:100%;">
+                </div>
+                <div>
+                    <label>Time Spent</label>
+                    <input type="text" id="seoTimeSpent" placeholder="e.g. 2 hours" class="styled-input" style="width:100%;">
+                </div>
+            </div>
+
+            <div id="dynamicSeoFields"></div>
+
+            <div>
+                <label>Status <span style="color:red;">*</span></label>
+                <select id="seoWorkStatus" required class="styled-input" style="width:100%;">
+                    <option value="Completed">Completed</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Pending">Pending</option>
+                    <option value="On Hold">On Hold</option>
+                    <option value="Blocked">Blocked</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Remarks / Blocked Reason</label>
+                <textarea id="seoWorkRemarks" class="styled-input" rows="2" style="width:100%;"></textarea>
+            </div>
+
+            <div style="margin-top: 15px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="btn cyan-btn" onclick="saveSeoDailyWork()">Save Daily Work</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add Daily Ads Work Modal -->
+<div id="adsAddWorkModal" class="modal hidden">
+  <div class="modal-content" style="max-width: 600px; width: 90%; text-align: left;">
+    <div style="position: relative; margin-bottom: 15px;">
+      <h2 style="margin: 0; color:#ea580c; font-size:18px;"><i class="fas fa-bullhorn"></i> Save Daily Ads Work</h2>
+      <button type="button" onclick="closeAdsAddWorkModal()" style="position: absolute; right: 0; top: -5px; background: #f1f1f1; border: 1px solid #ccc; font-size: 16px; font-weight: bold; cursor: pointer; color: #333; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">&times;</button>
+    </div>
+
+    <form id="adsDailyWorkForm" style="display: flex; flex-direction: column; gap: 12px;" onsubmit="event.preventDefault(); saveAdsDailyWork();">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div>
+          <label style="font-weight:600; font-size:13px;">Work Date <span style="color:red;">*</span></label>
+          <input type="date" id="adsWorkDate" required class="styled-input" style="width:100%;">
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:13px;">Platform <span style="color:red;">*</span></label>
+          <select id="adsPlatformSelect" required class="styled-input" style="width:100%;">
+            <option value="Google Ads">Google Ads</option>
+            <option value="Meta Ads (FB/Insta)">Meta Ads (FB/Insta)</option>
+            <option value="LinkedIn Ads">LinkedIn Ads</option>
+            <option value="YouTube Ads">YouTube Ads</option>
+            <option value="Twitter/X Ads">Twitter/X Ads</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div>
+          <label style="font-weight:600; font-size:13px;">Campaign Name</label>
+          <input type="text" id="adsCampaignSelect" list="adsCampaignDatalist" placeholder="Select or type campaign name..." class="styled-input" style="width:100%;">
+          <datalist id="adsCampaignDatalist">
+            <option value="Google Ads Search Campaign"></option>
+            <option value="Meta Ads Lead Generation"></option>
+            <option value="Google Ads Performance Max"></option>
+            <option value="Brand Awareness Campaign"></option>
+          </datalist>
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:13px;">Work Type <span style="color:red;">*</span></label>
+          <select id="adsWorkTypeSelect" required class="styled-input" style="width:100%;">
+            <option value="Campaign Setup">Campaign Setup</option>
+            <option value="Ad Copywriting">Ad Copywriting</option>
+            <option value="Keyword Research">Keyword Research</option>
+            <option value="Bid Adjustment">Bid Adjustment</option>
+            <option value="Audience Targeting">Audience Targeting</option>
+            <option value="A/B Testing">A/B Testing</option>
+            <option value="Negative Keywords">Negative Keywords</option>
+            <option value="Performance Review">Performance Review</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label style="font-weight:600; font-size:13px;">Work Description <span style="color:red;">*</span></label>
+        <textarea id="adsWorkDescription" required class="styled-input" rows="3" placeholder="Describe work done today (e.g. Created 3 ad groups, updated negative keyword list...)" style="width:100%;"></textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div>
+          <label style="font-weight:600; font-size:13px;">Status <span style="color:red;">*</span></label>
+          <select id="adsWorkStatusSelect" required class="styled-input" style="width:100%;">
+            <option value="Completed">Completed</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Pending">Pending</option>
+            <option value="On Hold">On Hold</option>
+            <option value="Blocked">Blocked</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:13px;">Demo / Work Link (Optional)</label>
+          <input type="url" id="adsWorkUrlsInput" placeholder="https://..." class="styled-input" style="width:100%;">
+        </div>
+      </div>
+
+      <div>
+        <label style="font-weight:600; font-size:13px;">Remarks / Notes</label>
+        <input type="text" id="adsWorkRemarksInput" placeholder="Additional remarks" class="styled-input" style="width:100%;">
+      </div>
+
+      <div style="margin-top: 10px; display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn gray" onclick="closeAdsAddWorkModal()">Cancel</button>
+        <button type="submit" class="btn" style="background:linear-gradient(135deg, #ea580c, #c026d3); color:white; font-weight:600;">Save Daily Work</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add New Campaign Modal -->
+<div id="adsAddCampaignModal" class="modal hidden">
+  <div class="modal-content" style="max-width: 480px; text-align: left;">
+    <div style="position: relative; margin-bottom: 15px;">
+      <h2 style="margin: 0; color:#0284c7; font-size:18px;"><i class="fas fa-plus-circle"></i> Create New Campaign</h2>
+      <button type="button" onclick="closeAdsAddCampaignModal()" style="position: absolute; right: 0; top: -5px; background: #f1f1f1; border: 1px solid #ccc; font-size: 16px; font-weight: bold; cursor: pointer; color: #333; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">&times;</button>
+    </div>
+
+    <form id="adsCampaignForm" style="display: flex; flex-direction: column; gap: 12px;" onsubmit="event.preventDefault(); saveAdsCampaign();">
+      <div>
+        <label style="font-weight:600; font-size:13px;">Campaign Name <span style="color:red;">*</span></label>
+        <input type="text" id="adsCampaignNameInput" required placeholder="E.g., Q3 Lead Gen Campaign" class="styled-input" style="width:100%;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div>
+          <label style="font-weight:600; font-size:13px;">Platform <span style="color:red;">*</span></label>
+          <select id="adsCampaignPlatformSelect" required class="styled-input" style="width:100%;">
+            <option value="Google Ads">Google Ads</option>
+            <option value="Meta Ads (FB/Insta)">Meta Ads (FB/Insta)</option>
+            <option value="LinkedIn Ads">LinkedIn Ads</option>
+            <option value="YouTube Ads">YouTube Ads</option>
+            <option value="Twitter/X Ads">Twitter/X Ads</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:13px;">Objective</label>
+          <select id="adsCampaignObjectiveSelect" class="styled-input" style="width:100%;">
+            <option value="Lead Generation">Lead Generation</option>
+            <option value="Sales / Conversions">Sales / Conversions</option>
+            <option value="Website Traffic">Website Traffic</option>
+            <option value="Brand Awareness">Brand Awareness</option>
+            <option value="App Promotion">App Promotion</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div>
+          <label style="font-weight:600; font-size:13px;">Budget (₹)</label>
+          <input type="number" step="0.01" id="adsCampaignBudgetInput" placeholder="0.00" class="styled-input" style="width:100%;">
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:13px;">Status</label>
+          <select id="adsCampaignStatusSelect" class="styled-input" style="width:100%;">
+            <option value="Active">Active</option>
+            <option value="Paused">Paused</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top: 10px; display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn gray" onclick="closeAdsAddCampaignModal()">Cancel</button>
+        <button type="submit" class="btn" style="background:#0284c7; color:white; font-weight:600;">Create Campaign</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Log Ads Performance Modal -->
+<div id="adsAddPerformanceModal" class="modal hidden">
+  <div class="modal-content" style="max-width: 600px; text-align: left;">
+    <div style="position: relative; margin-bottom: 15px;">
+      <h2 style="margin: 0; color:#16a34a; font-size:18px;"><i class="fas fa-chart-bar"></i> Log Campaign Performance</h2>
+      <button type="button" onclick="closeAdsAddPerformanceModal()" style="position: absolute; right: 0; top: -5px; background: #f1f1f1; border: 1px solid #ccc; font-size: 16px; font-weight: bold; cursor: pointer; color: #333; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">&times;</button>
+    </div>
+
+    <form id="adsPerformanceForm" style="display: flex; flex-direction: column; gap: 12px;" onsubmit="event.preventDefault(); saveAdsPerformance();">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div>
+          <label style="font-weight:600; font-size:13px;">Record Date <span style="color:red;">*</span></label>
+          <input type="date" id="adsPerformanceDate" required class="styled-input" style="width:100%;">
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:13px;">Campaign</label>
+          <select id="adsPerfCampaignSelect" class="styled-input ads-campaign-select" style="width:100%;">
+            <option value="">All Campaigns</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+        <div>
+          <label style="font-weight:600; font-size:13px;">Spend (₹)</label>
+          <input type="number" step="0.01" id="adsPerfSpendInput" placeholder="0.00" class="styled-input" style="width:100%;">
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:13px;">Clicks</label>
+          <input type="number" id="adsPerfClicksInput" placeholder="0" class="styled-input" style="width:100%;">
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:13px;">Leads</label>
+          <input type="number" id="adsPerfLeadsInput" placeholder="0" class="styled-input" style="width:100%;">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+        <div>
+          <label style="font-weight:600; font-size:13px;">CPL (₹) (Auto if empty)</label>
+          <input type="number" step="0.01" id="adsPerfCplInput" placeholder="Auto" class="styled-input" style="width:100%;">
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:13px;">Conversions</label>
+          <input type="number" id="adsPerfConversionsInput" placeholder="0" class="styled-input" style="width:100%;">
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:13px;">Impressions</label>
+          <input type="number" id="adsPerfImpressionsInput" placeholder="0" class="styled-input" style="width:100%;">
+        </div>
+      </div>
+
+      <div>
+        <label style="font-weight:600; font-size:13px;">CTR (%) (Auto if empty)</label>
+        <input type="number" step="0.01" id="adsPerfCtrInput" placeholder="Auto calculated from clicks/impressions" class="styled-input" style="width:100%;">
+      </div>
+
+      <div>
+        <label style="font-weight:600; font-size:13px;">Remarks</label>
+        <input type="text" id="adsPerfRemarksInput" placeholder="Notes on performance" class="styled-input" style="width:100%;">
+      </div>
+
+      <div style="margin-top: 10px; display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn gray" onclick="closeAdsAddPerformanceModal()">Cancel</button>
+        <button type="submit" class="btn" style="background:#16a34a; color:white; font-weight:600;">Save Performance</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Stop Ads Work Modal -->
+<div id="stopAdsModal" class="modal hidden">
+  <div class="modal-content" style="max-width: 400px; text-align: left;">
+    <h2 style="color:#dc2626; margin-top:0;">Stop Ads Work</h2>
+    <p style="color: #666; margin-bottom: 15px;">Are you sure you want to stop Ads Work for this project?</p>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+        <label style="font-weight:600; font-size:13px;">Stop Date</label>
+        <input type="date" id="adsStopDate" class="styled-input">
+        <label style="font-weight:600; font-size:13px;">Stop Reason</label>
+        <textarea id="adsStopReason" class="styled-input" rows="3"></textarea>
+    </div>
+    <div class="modal-actions" style="margin-top: 20px; display:flex; justify-content:flex-end; gap:10px;">
+        <button class="close-btn" onclick="closeStopAdsModal()">Cancel</button>
+        <button class="btn delete-btn" style="background: red; color: white;" onclick="confirmStopAds()">Confirm Stop</button>
+    </div>
+  </div>
+</div>
+
+<!-- Stop SEO Work Modal -->
+<div id="stopSeoModal" class="modal hidden">
+  <div class="modal-content" style="max-width: 400px;">
+    <h2>Stop SEO Work</h2>
+    <p style="color: #666; margin-bottom: 15px;">Are you sure you want to stop SEO Work for this project?</p>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+        <label>Stop Date</label>
+        <input type="date" id="seoStopDate" class="styled-input">
+        <label>Stop Reason</label>
+        <textarea id="seoStopReason" class="styled-input" rows="3"></textarea>
+    </div>
+    <div class="modal-actions" style="margin-top: 20px;">
+        <button class="btn delete-btn" style="background: red; color: white;" onclick="confirmStopSeo()">Confirm Stop</button>
+        <button class="close-btn" onclick="document.getElementById('stopSeoModal').classList.add('hidden')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add / Edit Ads Project -->
+<div id="adsProjectFormModal" class="user-modal hidden">
+  <div class="user-modal-dialog" style="max-width: 650px;">
+    <div class="user-modal-header" style="background:linear-gradient(135deg, #ea580c 0%, #c026d3 100%); color:white;">
+      <h2 id="adsFormModalTitle" style="color:white; margin:0; font-size:17px;"><i class="fas fa-bullhorn"></i> Add Ads Project</h2>
+      <button type="button" class="user-modal-close" onclick="document.getElementById('adsProjectFormModal').classList.add('hidden')" style="color:white;"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="user-modal-body" style="padding:20px;">
+      <form id="adsProjectForm" onsubmit="saveAdsProject(event)">
+        <input type="hidden" id="adsProjectId">
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          
+          <div style="grid-column:1/-1;">
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Client Details (Company / Client Name) *</label>
+            <input type="text" id="adsClientName" placeholder="e.g. Elite Care Centre" class="styled-input" required style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Campaign Details (Platforms) *</label>
+            <input type="text" id="adsPlatform" list="adsPlatformSuggestions" placeholder="e.g. Google Ads: Search Ad" class="styled-input" required style="width:100%; padding:8px 10px;">
+            <datalist id="adsPlatformSuggestions">
+              <option value="Google Ads: Search Ad"></option>
+              <option value="Meta Ads (FB+IG)"></option>
+              <option value="Google Ads + Meta Ads"></option>
+              <option value="Google Ads + Meta Ads + TikTok"></option>
+              <option value="Google Ads: Display & Video"></option>
+            </datalist>
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Objective</label>
+            <input type="text" id="adsObjective" list="adsObjSuggestions" placeholder="e.g. Lead Generation" class="styled-input" style="width:100%; padding:8px 10px;">
+            <datalist id="adsObjSuggestions">
+              <option value="Lead Generation"></option>
+              <option value="Sales / E-commerce"></option>
+              <option value="Brand Awareness"></option>
+              <option value="Website Traffic"></option>
+              <option value="App Install"></option>
+            </datalist>
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Ad Account Details</label>
+            <input type="text" id="adsAccountDetails" placeholder="Ad Account ID / Name" class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Payment Made By</label>
+            <input type="text" id="adsPaymentMadeBy" placeholder="e.g. Client, Sachin, Agency" class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Budget</label>
+            <input type="text" id="adsBudget" placeholder="e.g. 2000, 1000, Not Decided" class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Location</label>
+            <input type="text" id="adsLocation" placeholder="e.g. UAE, Mumbai, Delhi NCR" class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div style="grid-column:1/-1;">
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Other Information (Website / Phone)</label>
+            <input type="text" id="adsOtherInfo" placeholder="Website: https://... / Phone: +91 ..." class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Work Start Date</label>
+            <input type="date" id="adsWorkStart" class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Gmail ID / Login Email</label>
+            <input type="text" id="adsGmailId" placeholder="account@gmail.com" class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Pass (Password)</label>
+            <div style="display:flex; gap:6px;">
+              <input type="text" id="adsPass" placeholder="Enter password" class="styled-input" style="flex:1; padding:8px 10px;">
+              <button type="button" class="btn" style="background:#f1f5f9; color:#475569;" onclick="generateRandomAdsPass()" title="Generate Random Password"><i class="fas fa-random"></i></button>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Access Link / Vault URL</label>
+            <input type="url" id="adsAccessUrl" placeholder="https://drive.google.com/..." class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div style="grid-column:1/-1;">
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Remarks</label>
+            <textarea id="adsRemarks" placeholder="Needs to create ad accounts, special notes" class="styled-input" rows="2" style="width:100%; padding:8px 10px;"></textarea>
+          </div>
+
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+          <button type="button" class="btn" style="background:#f1f5f9; color:#475569;" onclick="document.getElementById('adsProjectFormModal').classList.add('hidden')">Cancel</button>
+          <button type="submit" id="saveAdsProjectBtn" class="btn" style="background:linear-gradient(135deg, #ea580c, #c026d3); color:white; font-weight:600;">Save Ads Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add Daily Ads Work Modal -->
+<div id="adsDailyWorkModal" class="user-modal hidden">
+  <div class="user-modal-dialog" style="width: min(650px, 94vw) !important;">
+    <div class="user-modal-header" style="background: linear-gradient(135deg, #ea580c 0%, #c026d3 100%) !important;">
+      <div>
+        <h2 style="color:white; margin:0;"><i class="fas fa-bullhorn"></i> Log Daily Ads Work</h2>
+        <p style="color:#ffedd5; font-size:12.5px; margin-top:2px;">Record campaign setup, ad copy, bidding, or budget optimization</p>
+      </div>
+      <button type="button" class="user-modal-close" onclick="document.getElementById('adsDailyWorkModal').classList.add('hidden')"><i class="fas fa-times"></i></button>
+    </div>
+
+    <form id="adsDailyWorkForm" onsubmit="saveAdsDailyWork(event)" style="padding: 20px 24px;">
+      <input type="hidden" id="adsDailyAssignmentId">
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+        <div>
+          <label style="font-weight:600; font-size:12.5px; color:#334155;">Work Date <span style="color:red;">*</span></label>
+          <input type="date" id="adsDailyWorkDate" required class="styled-input" style="width:100%; padding:8px 10px;">
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:12.5px; color:#334155;">Work Type / Category <span style="color:red;">*</span></label>
+          <select id="adsDailyWorkType" required class="styled-input" style="width:100%; padding:8px 10px;">
+            <option value="Campaign Setup & Launch">Campaign Setup & Launch</option>
+            <option value="Ad Copy & Creative Upload">Ad Copy & Creative Upload</option>
+            <option value="Bid & Budget Optimization">Bid & Budget Optimization</option>
+            <option value="Audience & Location Targeting">Audience & Location Targeting</option>
+            <option value="Negative Keywords Search Terms">Negative Keywords Search Terms</option>
+            <option value="Conversion Tracking & Analytics">Conversion Tracking & Analytics</option>
+            <option value="Performance Audit & Client Report">Performance Audit & Client Report</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-weight:600; font-size:12.5px; color:#334155;">Platform <span style="color:red;">*</span></label>
+        <select id="adsDailyPlatform" required class="styled-input" style="width:100%; padding:8px 10px;">
+          <option value="Google Ads">Google Ads</option>
+          <option value="Meta Ads (FB+IG)">Meta Ads (FB+IG)</option>
+          <option value="Google Ads + Meta Ads">Google Ads + Meta Ads</option>
+          <option value="TikTok Ads">TikTok Ads</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-weight:600; font-size:12.5px; color:#334155;">Work Description & Activity Details <span style="color:red;">*</span></label>
+        <textarea id="adsDailyDescription" required placeholder="Describe what campaign work was done today (e.g. Created 3 search ad copies, set ₹1500 daily budget, added 15 negative keywords)..." class="styled-input" rows="3" style="width:100%; padding:8px 10px;"></textarea>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-weight:600; font-size:12.5px; color:#334155;">Proof Links / URLs (Optional)</label>
+        <input type="url" id="adsDailyUrls" placeholder="https://ads.google.com/... or Google Drive proof link" class="styled-input" style="width:100%; padding:8px 10px;">
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+        <div>
+          <label style="font-weight:600; font-size:12.5px; color:#334155;">Status <span style="color:red;">*</span></label>
+          <select id="adsDailyStatus" required class="styled-input" style="width:100%; padding:8px 10px;">
+            <option value="Completed">Completed</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Pending">Pending</option>
+            <option value="On Hold">On Hold</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:12.5px; color:#334155;">Remarks / Notes</label>
+          <input type="text" id="adsDailyRemarks" placeholder="Any special notes" class="styled-input" style="width:100%; padding:8px 10px;">
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+        <button type="button" class="btn" style="background:#f1f5f9; color:#475569;" onclick="document.getElementById('adsDailyWorkModal').classList.add('hidden')">Cancel</button>
+        <button type="submit" id="saveAdsDailyWorkBtn" class="btn" style="background:linear-gradient(135deg, #16a34a, #15803d); color:white; font-weight:600;">Save Daily Work Log</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- SEO Project Vault / Assets Modal -->
+<div id="seoProjectVaultModal" class="user-modal hidden">
+  <div class="user-modal-dialog seo-vault-modal-dialog">
+    <div class="seo-vault-modal-header">
+      <div>
+        <h2 id="vaultProjectTitle"><i class="fas fa-folder-open"></i> Project Access & Assets Vault</h2>
+        <p id="vaultProjectSubtitle">Managing Logins, Keywords List & Reports</p>
+      </div>
+      <button type="button" class="user-modal-close" onclick="closeSeoProjectVaultModal()" style="color:white;"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="seo-vault-modal-body">
+      <!-- Tabs Navigation -->
+      <div class="vault-tabs-nav">
+        <button type="button" class="vault-tab-btn active" data-vault-tab="logins" onclick="switchVaultTab('logins')">
+          <i class="fas fa-key"></i> Login Details <span id="vaultLoginsBadge" class="vault-badge">0</span>
+        </button>
+        <button type="button" class="vault-tab-btn" data-vault-tab="keywords" onclick="switchVaultTab('keywords')">
+          <i class="fas fa-list-check"></i> Keywords List <span id="vaultKeywordsBadge" class="vault-badge">0</span>
+        </button>
+        <button type="button" class="vault-tab-btn" data-vault-tab="reports" onclick="switchVaultTab('reports')">
+          <i class="fas fa-file-pdf"></i> Reports <span id="vaultReportsBadge" class="vault-badge">0</span>
+        </button>
+        <button type="button" class="vault-tab-btn" data-vault-tab="drive" onclick="switchVaultTab('drive')">
+          <i class="fab fa-google-drive"></i> External Drive / Sheet
+        </button>
+      </div>
+
+      <!-- Tab Content Containers -->
+      <div class="vault-tab-content-wrapper">
+        
+        <!-- TAB 1: LOGINS -->
+        <div id="vaultTabLogins" class="vault-tab-pane active">
+          <div class="vault-pane-header">
+            <div>
+              <h3>Login Credentials & Access Links</h3>
+              <p class="vault-subtext">Store website admin, cPanel, GMB, Search Console, Analytics & social logins safely.</p>
+            </div>
+            <div class="vault-actions-group">
+              <button type="button" class="btn" style="background:#16a34a; color:white; font-weight:600;" onclick="exportVaultLoginsToCsv()">
+                <i class="fas fa-file-excel"></i> Export Excel
+              </button>
+              <button type="button" class="btn" style="background:#0f766e; color:white; font-weight:600;" onclick="openAddLoginModal()">
+                <i class="fas fa-plus"></i> Add Login Detail
+              </button>
+            </div>
+          </div>
+
+          <div class="vault-table-container">
+            <table class="vault-data-table">
+              <thead>
+                <tr>
+                  <th>Platform / Service</th>
+                  <th>Login URL</th>
+                  <th>Username / Email</th>
+                  <th>Password</th>
+                  <th>Notes</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="vaultLoginsTableBody">
+                <tr><td colspan="6" style="text-align:center; padding:20px; color:#64748b;">Loading login details...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 2: KEYWORDS LIST -->
+        <div id="vaultTabKeywords" class="vault-tab-pane">
+          <div class="vault-pane-header">
+            <div>
+              <h3>Targeted Keywords List</h3>
+              <p class="vault-subtext">Track targeted keywords, target pages, search volume and ranking positions.</p>
+            </div>
+            <div class="vault-actions-group">
+              <button type="button" class="btn" style="background:#16a34a; color:white; font-weight:600;" onclick="exportVaultKeywordsToCsv()">
+                <i class="fas fa-file-excel"></i> Export Excel
+              </button>
+              <button type="button" class="btn" style="background:#e0f2fe; color:#0369a1; font-weight:600;" onclick="openBulkKeywordsModal()">
+                <i class="fas fa-bolt"></i> Bulk Add Keywords
+              </button>
+              <button type="button" class="btn" style="background:#0f766e; color:white; font-weight:600;" onclick="openAddKeywordModal()">
+                <i class="fas fa-plus"></i> Add Keyword
+              </button>
+            </div>
+          </div>
+
+          <!-- Keyword Stats -->
+          <div class="vault-stats-strip">
+            <div class="vault-stat-card">
+              <span>Total Keywords</span>
+              <strong id="vaultStatTotalKw">0</strong>
+            </div>
+            <div class="vault-stat-card green">
+              <span>Active Keywords</span>
+              <strong id="vaultStatActiveKw">0</strong>
+            </div>
+            <div class="vault-stat-card blue">
+              <span>Top 10 Ranked</span>
+              <strong id="vaultStatTop10Kw">0</strong>
+            </div>
+          </div>
+
+          <div class="vault-table-container">
+            <table class="vault-data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Keyword</th>
+                  <th>Target Page URL</th>
+                  <th>Search Vol</th>
+                  <th>Target Rank</th>
+                  <th>Current Rank</th>
+                  <th>Status</th>
+                  <th>Notes</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="vaultKeywordsTableBody">
+                <tr><td colspan="9" style="text-align:center; padding:20px; color:#64748b;">Loading keywords list...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 3: REPORTS -->
+        <div id="vaultTabReports" class="vault-tab-pane">
+          <div class="vault-pane-header">
+            <div>
+              <h3>Project Reports & Audits</h3>
+              <p class="vault-subtext">Upload or link monthly performance reports, audits & deliverable PDFs/spreadsheets.</p>
+            </div>
+            <button type="button" class="btn" style="background:#0f766e; color:white; font-weight:600;" onclick="openAddReportModal()">
+              <i class="fas fa-upload"></i> Upload / Add Report
+            </button>
+          </div>
+
+          <div id="vaultReportsGrid" class="vault-reports-grid">
+            <!-- Cards populated dynamically -->
+          </div>
+        </div>
+
+        <!-- TAB 4: EXTERNAL DRIVE -->
+        <div id="vaultTabDrive" class="vault-tab-pane">
+          <div class="vault-pane-header">
+            <div>
+              <h3>External Google Drive / Sheet Link</h3>
+              <p class="vault-subtext">Optional fallback link to external Google Sheet or Google Drive folder.</p>
+            </div>
+          </div>
+
+          <div class="vault-card-box">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label style="font-weight:600; font-size:13px; color:#334155;"><i class="fab fa-google-drive"></i> Google Drive / Sheet URL</label>
+              <input type="url" id="vaultSheetUrlInput" placeholder="https://drive.google.com/drive/folders/..." class="styled-input" style="padding:10px;">
+            </div>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+              <button type="button" class="btn" style="background:#0f766e; color:white; font-weight:600;" onclick="saveVaultSheetUrl()">
+                <i class="fas fa-save"></i> Save Drive Link
+              </button>
+              <button type="button" id="vaultOpenSheetBtn" class="btn" style="background:#f1f5f9; color:#334155; font-weight:600; display:none;" onclick="openVaultSheetUrlExternal()">
+                <i class="fas fa-external-link-alt"></i> Open Link in New Tab
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add/Edit Login Detail -->
+<div id="vaultAddLoginModal" class="user-modal hidden">
+  <div class="user-modal-dialog" style="max-width: 480px;">
+    <div class="user-modal-header" style="background:#0f766e; color:white;">
+      <h2 id="loginModalTitle" style="color:white; margin:0; font-size:17px;"><i class="fas fa-key"></i> Add Login Detail</h2>
+      <button type="button" class="user-modal-close" onclick="document.getElementById('vaultAddLoginModal').classList.add('hidden')" style="color:white;"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="user-modal-body" style="padding:18px;">
+      <form id="vaultLoginForm" onsubmit="saveVaultLogin(event)">
+        <input type="hidden" id="loginDetailId">
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Platform / Service Name *</label>
+            <input type="text" id="loginPlatform" list="platformSuggestions" placeholder="e.g. WordPress Admin, cPanel, GMB, Search Console" class="styled-input" required style="width:100%; padding:8px 10px;">
+            <datalist id="platformSuggestions">
+              <option value="WordPress Admin"></option>
+              <option value="cPanel / Hosting"></option>
+              <option value="Google My Business"></option>
+              <option value="Google Search Console"></option>
+              <option value="Google Analytics"></option>
+              <option value="Facebook Page"></option>
+              <option value="Instagram Business"></option>
+              <option value="Shopify Admin"></option>
+              <option value="SEO Tool / Ahrefs"></option>
+            </datalist>
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Login URL</label>
+            <input type="url" id="loginUrl" placeholder="https://example.com/wp-admin" class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Username / Email</label>
+            <input type="text" id="loginUsername" placeholder="admin@example.com" class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Password</label>
+            <div style="display:flex; gap:6px;">
+              <input type="text" id="loginPassword" placeholder="Enter password" class="styled-input" style="flex:1; padding:8px 10px;">
+              <button type="button" class="btn" style="background:#f1f5f9; color:#475569;" onclick="generateRandomPass()" title="Generate Random Password"><i class="fas fa-random"></i></button>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Notes / Remarks</label>
+            <textarea id="loginNotes" placeholder="Additional details, 2FA notes, or pins" class="styled-input" rows="2" style="width:100%; padding:8px 10px;"></textarea>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+          <button type="button" class="btn" style="background:#f1f5f9; color:#475569;" onclick="document.getElementById('vaultAddLoginModal').classList.add('hidden')">Cancel</button>
+          <button type="submit" class="btn" style="background:#0f766e; color:white; font-weight:600;">Save Credentials</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add/Edit Keyword -->
+<div id="vaultAddKeywordModal" class="user-modal hidden">
+  <div class="user-modal-dialog" style="max-width: 480px;">
+    <div class="user-modal-header" style="background:#0f766e; color:white;">
+      <h2 id="keywordModalTitle" style="color:white; margin:0; font-size:17px;"><i class="fas fa-list-check"></i> Add Keyword</h2>
+      <button type="button" class="user-modal-close" onclick="document.getElementById('vaultAddKeywordModal').classList.add('hidden')" style="color:white;"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="user-modal-body" style="padding:18px;">
+      <form id="vaultKeywordForm" onsubmit="saveVaultKeyword(event)">
+        <input type="hidden" id="keywordDetailId">
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Keyword Name *</label>
+            <input type="text" id="kwName" placeholder="e.g. digital marketing agency near me" class="styled-input" required style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Target Page URL</label>
+            <input type="url" id="kwTargetUrl" placeholder="https://example.com/services" class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <label style="font-weight:600; font-size:12.5px; color:#334155;">Search Volume</label>
+              <input type="text" id="kwVolume" placeholder="e.g. 1,200/mo" class="styled-input" style="width:100%; padding:8px 10px;">
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:12.5px; color:#334155;">Target Rank</label>
+              <input type="text" id="kwTargetRank" placeholder="e.g. Top 3" class="styled-input" style="width:100%; padding:8px 10px;">
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <label style="font-weight:600; font-size:12.5px; color:#334155;">Current Rank</label>
+              <input type="text" id="kwCurrentRank" placeholder="e.g. #5 or Page 2" class="styled-input" style="width:100%; padding:8px 10px;">
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:12.5px; color:#334155;">Status</label>
+              <select id="kwStatus" class="styled-input" style="width:100%; padding:8px 10px;">
+                <option value="Active">Active</option>
+                <option value="Paused">Paused</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Notes</label>
+            <input type="text" id="kwNotes" placeholder="Primary keyword, competitor notes" class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+          <button type="button" class="btn" style="background:#f1f5f9; color:#475569;" onclick="document.getElementById('vaultAddKeywordModal').classList.add('hidden')">Cancel</button>
+          <button type="submit" class="btn" style="background:#0f766e; color:white; font-weight:600;">Save Keyword</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Bulk Add Keywords -->
+<div id="vaultBulkKeywordsModal" class="user-modal hidden">
+  <div class="user-modal-dialog" style="max-width: 500px;">
+    <div class="user-modal-header" style="background:#0284c7; color:white;">
+      <h2 style="color:white; margin:0; font-size:17px;"><i class="fas fa-bolt"></i> Bulk Add Keywords</h2>
+      <button type="button" class="user-modal-close" onclick="document.getElementById('vaultBulkKeywordsModal').classList.add('hidden')" style="color:white;"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="user-modal-body" style="padding:18px;">
+      <form onsubmit="saveVaultBulkKeywords(event)">
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <p style="font-size:13px; color:#475569; margin:0;">Paste multiple keywords below (one keyword per line or separated by commas):</p>
+          <textarea id="bulkKeywordsTextarea" class="styled-input" rows="8" placeholder="best seo agency in delhi&#10;website design company&#10;local gmb optimization" required style="width:100%; padding:10px; font-family:monospace; font-size:13px;"></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+          <button type="button" class="btn" style="background:#f1f5f9; color:#475569;" onclick="document.getElementById('vaultBulkKeywordsModal').classList.add('hidden')">Cancel</button>
+          <button type="submit" class="btn" style="background:#0284c7; color:white; font-weight:600;">Add All Keywords</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add/Upload Report -->
+<div id="vaultAddReportModal" class="user-modal hidden">
+  <div class="user-modal-dialog" style="max-width: 480px;">
+    <div class="user-modal-header" style="background:#0f766e; color:white;">
+      <h2 style="color:white; margin:0; font-size:17px;"><i class="fas fa-file-upload"></i> Upload / Add Report</h2>
+      <button type="button" class="user-modal-close" onclick="document.getElementById('vaultAddReportModal').classList.add('hidden')" style="color:white;"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="user-modal-body" style="padding:18px;">
+      <form id="vaultReportForm" onsubmit="saveVaultReport(event)">
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Report Title *</label>
+            <input type="text" id="reportTitle" placeholder="e.g. Monthly SEO Report - August 2026" class="styled-input" required style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Report Date</label>
+            <input type="date" id="reportDate" class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Upload Report File (PDF / DOCX / Image)</label>
+            <input type="file" id="reportFileInput" class="styled-input" style="width:100%; padding:6px 10px;">
+          </div>
+
+          <div style="text-align:center; font-size:12px; color:#94a3b8; font-weight:bold;">— OR PASTE LINK —</div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">External Report URL / Drive Link</label>
+            <input type="url" id="reportFileUrl" placeholder="https://drive.google.com/file/d/..." class="styled-input" style="width:100%; padding:8px 10px;">
+          </div>
+
+          <div>
+            <label style="font-weight:600; font-size:12.5px; color:#334155;">Remarks / Highlights</label>
+            <textarea id="reportRemarks" placeholder="Key achievements or summary notes for client" class="styled-input" rows="2" style="width:100%; padding:8px 10px;"></textarea>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+          <button type="button" class="btn" style="background:#f1f5f9; color:#475569;" onclick="document.getElementById('vaultAddReportModal').classList.add('hidden')">Cancel</button>
+          <button type="submit" id="saveReportBtn" class="btn" style="background:#0f766e; color:white; font-weight:600;">Save & Upload Report</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Popup (required by dev.js showPopup/logout) -->
+<div id="popup" class="popup hidden">
+  <div class="popup-content">
+    <i id="popupIcon"></i>
+    <h3 id="popupTitle"></h3>
+    <p id="popupMessage"></p>
+    <div id="popupActions" class="popup-actions hidden"></div>
+  </div>
+</div>
+
+    <script src="payroll-management.js"></script>
+
+    <script src="attendance-face.js?v=20260602-live-face-v1"></script>
+    <script src="dev.js?v=20260821-null-safe-v3"></script>
+    <script src="seo.js?v=20260821-seo-fixed-html-v13"></script>
+    <script src="ads.js?v=20260822-ads-v1"></script>
+    <script src="attendance-auto-checkout.js"></script>
+    <script src="leave-management.js"></script>
+    <script src="crm-security.js?v=20260601-fetch-scope-v2"></script>
+
+  <script src="profile-sidebar.js"></script>
+</body>
+</html>

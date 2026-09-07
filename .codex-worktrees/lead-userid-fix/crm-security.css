@@ -1,0 +1,1111 @@
+.crm-watermark-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.9;
+  display: none !important;
+}
+
+.crm-watermark-grid {
+  position: absolute;
+  inset: -20%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 64px 48px;
+  transform: rotate(-28deg);
+  transform-origin: center;
+}
+
+.crm-watermark-item {
+  color: rgba(15, 23, 42, 0.09);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.45;
+  text-align: center;
+  white-space: pre-line;
+  user-select: none;
+}
+
+.crm-security-shield {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  color: #ffffff;
+  font: 700 22px/1.4 Arial, sans-serif;
+  text-align: center;
+  pointer-events: all;
+}
+
+.crm-security-shield.is-visible {
+  display: flex;
+}
+
+html.crm-screen-hidden body > :not(.crm-security-shield) {
+  opacity: 0;
+  visibility: hidden;
+}
+
+html.crm-screen-hidden .crm-security-shield {
+  display: flex;
+}
+
+html.crm-blackout .crm-security-shield {
+  display: flex;
+}
+
+html.crm-blackout body > :not(.crm-security-shield) {
+  opacity: 0;
+  visibility: hidden;
+}
+
+@media print {
+  body > :not(.crm-security-shield) {
+    display: none !important;
+  }
+
+  .crm-security-shield {
+    display: flex !important;
+    position: fixed;
+    inset: 0;
+  }
+}
+
+body.redsea-company {
+  --admin-accent: #dc2626;
+  --admin-accent-dark: #991b1b;
+  --admin-accent-deep: #7f1d1d;
+  --admin-accent-light: #ef4444;
+  --admin-accent-soft: #fee2e2;
+  --admin-accent-soft-2: #fff5f5;
+  --admin-accent-shadow: rgba(220, 38, 38, 0.18);
+  --admin-accent-shadow-strong: rgba(220, 38, 38, 0.32);
+  --admin-accent-gradient: linear-gradient(135deg, #991b1b 0%, #dc2626 54%, #ef4444 100%);
+  --admin-accent-gradient-soft: linear-gradient(135deg, rgba(153, 27, 27, 0.14) 0%, rgba(220, 38, 38, 0.08) 45%, rgba(239, 68, 68, 0.12) 100%);
+}
+
+body.redsea-company .header {
+  border-bottom-color: #dc2626 !important;
+}
+
+body.redsea-company .cyan,
+body.redsea-company .section h2,
+body.redsea-company .dashboard-header h2,
+body.redsea-company .panel-heading h3 {
+  color: #b91c1c !important;
+}
+
+body.redsea-company .brand-panel.cyan,
+body.redsea-company .role,
+body.redsea-company .role-badge,
+body.redsea-company .status-badge.deal_closed,
+body.redsea-company .save-btn,
+body.redsea-company .submit-btn,
+body.redsea-company .btn-save,
+body.redsea-company .add-btn,
+body.redsea-company .refresh-dashboard-btn {
+  background: linear-gradient(135deg, #991b1b 0%, #dc2626 58%, #ef4444 100%) !important;
+  color: #ffffff !important;
+}
+
+body.redsea-company .avatar,
+body.redsea-company .user-avatar,
+body.redsea-company .profile-avatar {
+  border-color: #dc2626 !important;
+}
+
+body.redsea-company .sidebar li.active,
+body.redsea-company .sidebar li:hover,
+body.redsea-company .nav-item.active,
+body.redsea-company .nav-item:hover {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+body.redsea-company .dashboard-card,
+body.redsea-company .stat-card,
+body.redsea-company .metric-card,
+body.redsea-company .dashboard-panel,
+body.redsea-company .form-card,
+body.redsea-company .table-card {
+  border-color: rgba(220, 38, 38, 0.16) !important;
+  box-shadow: 0 16px 34px rgba(153, 27, 27, 0.08) !important;
+}
+
+body.redsea-company input:focus,
+body.redsea-company select:focus,
+body.redsea-company textarea:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12) !important;
+}
+
+body.redsea-company table thead,
+body.redsea-company table th,
+body.redsea-company .summary-table th,
+body.redsea-company .data-table th,
+body.redsea-company .admin-table th,
+body.redsea-company .accounts-table th {
+  background: #fee2e2 !important;
+  color: #7f1d1d !important;
+  border-color: #fecaca !important;
+}
+
+body.redsea-company table,
+body.redsea-company .table-wrapper,
+body.redsea-company .table-responsive {
+  border-color: rgba(220, 38, 38, 0.18) !important;
+}
+
+body.redsea-company table td,
+body.redsea-company .summary-table td,
+body.redsea-company .data-table td,
+body.redsea-company .admin-table td,
+body.redsea-company .accounts-table td {
+  border-color: #fee2e2 !important;
+}
+
+body.redsea-company table tbody tr:hover,
+body.redsea-company .summary-table tbody tr:hover,
+body.redsea-company .data-table tbody tr:hover {
+  background: #fff5f5 !important;
+}
+
+body.redsea-company .table-toolbar,
+body.redsea-company .table-header,
+body.redsea-company .list-header {
+  border-color: rgba(220, 38, 38, 0.18) !important;
+}
+
+body.redsea-company .status-badge.appointment,
+body.redsea-company .status-badge.followup,
+body.redsea-company .status-pill,
+body.redsea-company .badge {
+  border-color: #fecaca !important;
+}
+
+body.redsea-company .leave-shell,
+body.redsea-company .payroll-shell {
+  --leave-border: #fecaca;
+  --leave-shadow: 0 24px 50px rgba(153, 27, 27, 0.08);
+  --payroll-accent: #dc2626;
+  --payroll-accent-soft: rgba(220, 38, 38, 0.12);
+  --payroll-line: #fecaca;
+}
+
+body.redsea-company .leave-hero,
+body.redsea-company .leave-shell.admin-mode .leave-hero,
+body.redsea-company .leave-shell.employee-mode .leave-hero,
+body.redsea-company .payroll-hero {
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.2), transparent 34%),
+    linear-gradient(135deg, #450a0a 0%, #991b1b 42%, #dc2626 100%) !important;
+  box-shadow: 0 26px 58px rgba(153, 27, 27, 0.24) !important;
+}
+
+body.redsea-company .leave-hero h2,
+body.redsea-company .leave-hero h3,
+body.redsea-company .leave-hero p,
+body.redsea-company .leave-eyebrow,
+body.redsea-company .payroll-hero h2,
+body.redsea-company .payroll-hero h3,
+body.redsea-company .payroll-hero p {
+  color: #ffffff !important;
+}
+
+body.redsea-company .leave-chip-note,
+body.redsea-company .payroll-hero-chip {
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+}
+
+body.redsea-company .leave-chip-note-soft,
+body.redsea-company .leave-ghost-btn,
+body.redsea-company .payroll-btn.secondary {
+  background: #fff5f5 !important;
+  border-color: #fecaca !important;
+  color: #991b1b !important;
+}
+
+body.redsea-company .leave-table thead th,
+body.redsea-company .payroll-table th,
+body.redsea-company .payroll-history-table th {
+  background: linear-gradient(135deg, #450a0a 0%, #991b1b 54%, #dc2626 100%) !important;
+  color: #ffffff !important;
+  border-color: #7f1d1d !important;
+}
+
+body.redsea-company .leave-table tbody tr:hover td,
+body.redsea-company .payroll-table tbody tr:hover {
+  background: #fff5f5 !important;
+}
+
+body.redsea-company .leave-search-input:focus,
+body.redsea-company .leave-select:focus,
+body.redsea-company .leave-date-input:focus,
+body.redsea-company .leave-textarea:focus,
+body.redsea-company .leave-file-input:focus,
+body.redsea-company .leave-text-input:focus,
+body.redsea-company .payroll-field input:focus,
+body.redsea-company .payroll-field select:focus,
+body.redsea-company .payroll-field textarea:focus,
+body.redsea-company .payroll-inline-input:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12) !important;
+}
+
+body.redsea-company .leave-primary-btn,
+body.redsea-company .leave-modal-foot .leave-primary-btn,
+body.redsea-company .payroll-btn.primary {
+  background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 14px 28px rgba(153, 27, 27, 0.18) !important;
+}
+
+body.redsea-company .payroll-btn.ghost,
+body.redsea-company .leave-link-btn,
+body.redsea-company .leave-type-badge.work_from_home {
+  background: #fee2e2 !important;
+  border-color: #fecaca !important;
+  color: #991b1b !important;
+}
+
+body.redsea-company .payroll-btn.warning {
+  background: #fff1f2 !important;
+  border-color: #fecaca !important;
+  color: #be123c !important;
+}
+
+body.redsea-company .leave-status-tab.active,
+body.redsea-company .leave-action-btn.delete {
+  background: #991b1b !important;
+  border-color: #991b1b !important;
+  color: #ffffff !important;
+}
+
+body.redsea-company .leave-summary-card,
+body.redsea-company .leave-table-card,
+body.redsea-company .payroll-kpi-card,
+body.redsea-company .payroll-panel,
+body.redsea-company .payroll-summary-tile {
+  border-color: rgba(220, 38, 38, 0.16) !important;
+  box-shadow: 0 16px 34px rgba(153, 27, 27, 0.08) !important;
+}
+
+body.redsea-company .leave-summary-card.total .leave-summary-icon,
+body.redsea-company .leave-summary-card.onleave .leave-summary-icon,
+body.redsea-company .leave-summary-card.balance .leave-summary-icon,
+body.redsea-company .leave-summary-card.credit .leave-summary-icon,
+body.redsea-company .payroll-pill {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+body.redsea-company .leave-summary-card.approved .leave-summary-icon,
+body.redsea-company .leave-status-badge.approved,
+body.redsea-company .leave-action-btn.approved {
+  background: #fff5f5 !important;
+  color: #b91c1c !important;
+}
+
+html,
+body {
+  max-width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.header,
+.dashboard-container,
+.main-content,
+.section,
+.dashboard-panel,
+.admin-panel,
+.form-card,
+.table-card,
+.modal-content,
+.leave-shell,
+.payroll-shell,
+.project-tracker-shell {
+  min-width: 0;
+}
+
+.brand-panel,
+.role,
+.role-badge {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.table-responsive,
+.table-wrapper,
+.accounts-table-wrap,
+.leave-table-card,
+.payroll-table-card {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive table,
+.table-wrapper table,
+.summary-table,
+.data-table,
+.admin-table,
+.accounts-table,
+.leads-table,
+.leave-table,
+.payroll-table {
+  min-width: 720px;
+}
+
+@media (max-width: 900px) {
+  .dashboard-container {
+    display: block !important;
+    width: 100%;
+  }
+
+  .sidebar {
+    width: 100% !important;
+    max-width: 100%;
+    border-right: 0 !important;
+    border-bottom: 1px solid #e2e8f0;
+    overflow-x: auto;
+    padding: 10px 8px !important;
+  }
+
+  .sidebar ul {
+    display: flex !important;
+    flex-wrap: nowrap;
+    gap: 6px;
+    min-width: max-content;
+    padding: 0 4px !important;
+  }
+
+  .sidebar li {
+    flex: 0 0 auto;
+    border-radius: 8px;
+    padding: 10px 12px !important;
+    white-space: nowrap;
+  }
+
+  .main-content {
+    width: 100% !important;
+    padding: 16px !important;
+    overflow-x: hidden;
+  }
+
+  .dashboard-metrics,
+  .dashboard-cards,
+  .admin-kpi-grid,
+  .sales-target-strip,
+  .report-grid,
+  .attendance-summary-strip,
+  .attendance-support-grid,
+  .leave-summary-grid,
+  .payroll-kpi-grid,
+  .payroll-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .dashboard-panels,
+  .admin-dashboard-grid,
+  .admin-dashboard-bottom,
+  .target-progress-layout,
+  .form-grid,
+  .admin-proposal-form-grid,
+  .proposal-template-grid,
+  .attendance-request-modal-grid,
+  .payroll-grid,
+  .leave-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-proposal-form-grid textarea,
+  .proposal-template-grid textarea {
+    grid-column: auto !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .header,
+  .header-right,
+  .user-info,
+  .dashboard-title-row,
+  .section-heading-row,
+  .admin-section-row,
+  .attendance-header,
+  .panel-heading,
+  .table-toolbar,
+  .list-header,
+  .proposal-template-header,
+  .proposal-template-actions,
+  .admin-proposal-header,
+  .admin-proposal-editor-toolbar,
+  .admin-proposal-panel-heading {
+    align-items: stretch !important;
+    flex-direction: column !important;
+    gap: 10px;
+  }
+
+  .header {
+    padding: 12px 14px !important;
+  }
+
+  .brand-logo {
+    width: min(180px, 60vw) !important;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .dashboard-title-actions,
+  .admin-dashboard-actions,
+  .attendance-filters,
+  .attendance-actions,
+  .attendance-request-summary,
+  .admin-proposal-actions,
+  .admin-proposal-toolbar-actions,
+  .admin-proposal-table-actions,
+  .proposal-template-action-buttons,
+  .leave-actions,
+  .payroll-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .dashboard-search,
+  .search-box,
+  .attendance-filters select,
+  .attendance-filters input[type="date"],
+  .attendance-actions button,
+  .admin-dashboard-actions button,
+  .primary-action-btn,
+  .wide-action-btn,
+  .section-add-btn,
+  .save-btn,
+  .cancel-btn,
+  .submit-btn {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .dashboard-metrics,
+  .dashboard-cards,
+  .admin-kpi-grid,
+  .sales-target-strip,
+  .report-grid,
+  .attendance-summary-strip,
+  .attendance-support-grid,
+  .leave-summary-grid,
+  .payroll-kpi-grid,
+  .payroll-summary-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dashboard-card,
+  .stat-card,
+  .metric-card,
+  .dashboard-panel,
+  .admin-panel,
+  .form-section-card,
+  .leave-summary-card,
+  .payroll-kpi-card,
+  .payroll-panel {
+    width: 100%;
+    min-width: 0 !important;
+  }
+
+  .modal-content,
+  .attendance-request-modal-card,
+  .auth-modal-card {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    max-height: calc(100vh - 24px);
+    overflow: auto;
+    padding: 16px !important;
+  }
+
+  .attendance-calendar-weekdays,
+  .attendance-calendar-grid {
+    grid-template-columns: repeat(7, minmax(34px, 1fr)) !important;
+  }
+
+  .attendance-day {
+    min-height: 54px;
+    padding: 6px 4px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .main-content {
+    padding: 12px !important;
+  }
+
+  .sidebar li {
+    font-size: 13px !important;
+  }
+
+  .table-responsive table,
+  .table-wrapper table,
+  .summary-table,
+  .data-table,
+  .admin-table,
+  .accounts-table,
+  .leads-table,
+  .leave-table,
+  .payroll-table {
+    min-width: 640px;
+  }
+}
+
+:where(
+  .table-responsive,
+  .table-wrapper,
+  .table-wrap,
+  .accounts-table-wrap,
+  .leave-table-wrapper,
+  .payroll-table-wrap,
+  .project-tracker-phase-table-wrap,
+  [class*="table-wrap"],
+  [class*="table-wrapper"]
+) {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto !important;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-inline: contain;
+}
+
+@media (max-width: 900px) {
+  html,
+  body,
+  .dashboard-container,
+  .main-content,
+  .section,
+  .section.active,
+  .panel-card,
+  .admin-panel,
+  .dashboard-panel,
+  .modal-content {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  :where(
+    .table-responsive,
+    .table-wrapper,
+    .table-wrap,
+    .accounts-table-wrap,
+    .leave-table-wrapper,
+    .payroll-table-wrap,
+    .project-tracker-phase-table-wrap,
+    [class*="table-wrap"],
+    [class*="table-wrapper"]
+  ) {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+  }
+
+  :where(
+    .table-responsive,
+    .table-wrapper,
+    .table-wrap,
+    .accounts-table-wrap,
+    .leave-table-wrapper,
+    .payroll-table-wrap,
+    .project-tracker-phase-table-wrap,
+    [class*="table-wrap"],
+    [class*="table-wrapper"]
+  ) > table {
+    width: max-content !important;
+    min-width: max(720px, 100%) !important;
+    max-width: none !important;
+    white-space: nowrap;
+  }
+
+  :where(
+    .main-content,
+    .section,
+    .section.active,
+    .panel-card,
+    .admin-panel,
+    .dashboard-panel,
+    .modal-content,
+    .form-card,
+    .leave-table-card,
+    .payroll-table-panel
+  ) > table {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-inline: contain;
+  }
+
+  :where(
+    .main-content,
+    .section,
+    .section.active,
+    .panel-card,
+    .admin-panel,
+    .dashboard-panel,
+    .modal-content,
+    .form-card,
+    .leave-table-card,
+    .payroll-table-panel
+  ) > table > :is(thead, tbody, tfoot) {
+    display: table !important;
+    width: max-content !important;
+    min-width: max(720px, 100%) !important;
+  }
+}
+
+@media (max-width: 420px) {
+  :where(
+    .table-responsive,
+    .table-wrapper,
+    .table-wrap,
+    .accounts-table-wrap,
+    .leave-table-wrapper,
+    .payroll-table-wrap,
+    .project-tracker-phase-table-wrap,
+    [class*="table-wrap"],
+    [class*="table-wrapper"]
+  ) > table,
+  :where(
+    .main-content,
+    .section,
+    .section.active,
+    .panel-card,
+    .admin-panel,
+    .dashboard-panel,
+    .modal-content,
+    .form-card,
+    .leave-table-card,
+    .payroll-table-panel
+  ) > table > :is(thead, tbody, tfoot) {
+    min-width: max(640px, 100%) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body:has(#adminTotalLeads) .header {
+    align-items: center !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+
+  body:has(#adminTotalLeads) .header-left {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  body:has(#adminTotalLeads) .brand-logo {
+    width: min(42vw, 170px) !important;
+    max-width: 170px !important;
+  }
+
+  body:has(#adminTotalLeads) .header-right,
+  body:has(#adminTotalLeads) .user-info {
+    align-items: center !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
+
+  body:has(#adminTotalLeads) .header-right {
+    flex: 0 0 auto !important;
+    gap: 7px !important;
+    justify-content: flex-end !important;
+    width: auto !important;
+  }
+
+  body:has(#adminTotalLeads) .welcome {
+    display: none !important;
+  }
+
+  body:has(#adminTotalLeads) .logout-btn {
+    max-width: max-content !important;
+    min-width: 0 !important;
+    width: auto !important;
+    white-space: nowrap !important;
+  }
+
+  body:has(#adminTotalLeads) .admin-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  body:has(#attendanceActions) .attendance-actions,
+  body:has(#attendanceContainer) .attendance-actions {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  body:has(#attendanceActions) .attendance-actions button,
+  body:has(#attendanceContainer) .attendance-actions button {
+    font-size: 12px !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    padding-left: 7px !important;
+    padding-right: 7px !important;
+    white-space: nowrap !important;
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 380px) {
+  body:has(#adminTotalLeads) .brand-logo {
+    width: min(38vw, 145px) !important;
+  }
+
+  body:has(#adminTotalLeads) .logout-btn {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+}
+
+/* Fixed sidebar with scrollable work area across every CRM panel */
+html,
+body {
+  height: 100%;
+}
+
+body:has(.dashboard-container > .sidebar) {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  min-height: 100vh;
+  overflow: hidden !important;
+}
+
+body:has(.dashboard-container > .sidebar) > .header {
+  flex: 0 0 auto;
+  position: relative !important;
+  top: auto !important;
+}
+
+body:has(.dashboard-container > .sidebar) > .dashboard-container {
+  display: flex !important;
+  flex: 1 1 auto;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  width: 100%;
+}
+
+body:has(.dashboard-container > .sidebar) .sidebar {
+  align-self: stretch;
+  flex: 0 0 240px;
+  height: auto !important;
+  max-height: none;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+body:has(.dashboard-container > .sidebar) .main-content {
+  flex: 1 1 auto;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+body:has(.dashboard-container > .sidebar) .section.active,
+body:has(.dashboard-container > .sidebar) .hr-section.active {
+  min-height: 0;
+}
+
+@media (min-width: 901px) {
+  body:has(.dashboard-container > .sidebar) .sidebar {
+    position: sticky;
+    top: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  body:has(.dashboard-container > .sidebar) > .dashboard-container {
+    flex-direction: column !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) .sidebar {
+    align-self: stretch;
+    flex: 0 0 auto;
+    max-height: 74px;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) .sidebar ul {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    min-width: max-content;
+  }
+
+  body:has(.dashboard-container > .sidebar) .sidebar li {
+    flex: 0 0 auto;
+  }
+}
+
+/* Final mobile layout guards for headers, proposal actions, and ME tables */
+#dealsContainer .table-wrapper,
+#proposalListContainer .table-wrapper,
+.admin-proposal-list-panel .table-wrapper {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-inline: contain;
+}
+
+#dealsContainer .data-table,
+#proposalListContainer .data-table,
+.admin-proposal-list-panel .data-table {
+  width: max-content !important;
+  min-width: max(880px, 100%) !important;
+  max-width: none !important;
+  table-layout: auto !important;
+  white-space: nowrap;
+}
+
+.admin-proposal-table-actions,
+.proposal-table-actions,
+.admin-proposal-toolbar-actions,
+.proposal-toolbar-actions,
+.invoice-actions {
+  align-items: center !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-proposal-table-actions .btn,
+.proposal-table-actions .btn,
+.admin-proposal-toolbar-actions .btn,
+.proposal-toolbar-actions .btn,
+.invoice-actions .btn,
+.invoice-actions .invoice-btn {
+  align-items: center !important;
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  justify-content: center !important;
+  margin-top: 0 !important;
+  min-width: 34px !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 640px) {
+  body:has(.dashboard-container > .sidebar) > .header {
+    align-items: center !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    padding: 10px 12px !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) > .header .header-left {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) > .header .brand-logo {
+    height: auto !important;
+    max-width: 150px !important;
+    width: min(38vw, 150px) !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) > .header .header-right {
+    align-items: center !important;
+    display: flex !important;
+    flex: 0 0 auto !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    justify-content: flex-end !important;
+    min-width: 0 !important;
+    width: auto !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) > .header .welcome {
+    display: none !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) > .header .user-info {
+    align-items: center !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 5px !important;
+    min-width: 0 !important;
+    width: auto !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) > .header .avatar,
+  body:has(.dashboard-container > .sidebar) > .header .user-avatar,
+  body:has(.dashboard-container > .sidebar) > .header .profile-avatar {
+    flex: 0 0 32px !important;
+    height: 32px !important;
+    width: 32px !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) > .header .role,
+  body:has(.dashboard-container > .sidebar) > .header .role-badge {
+    flex: 0 0 auto !important;
+    font-size: 11px !important;
+    line-height: 1 !important;
+    max-width: 96px !important;
+    overflow: hidden !important;
+    padding: 6px 8px !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    width: auto !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) > .header .logout-btn {
+    align-items: center !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    font-size: 11px !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    max-width: max-content !important;
+    min-width: 0 !important;
+    padding: 8px 9px !important;
+    white-space: nowrap !important;
+    width: auto !important;
+  }
+
+  body:has(#adminTotalLeads) .dashboard-metrics,
+  body:has(#adminTotalLeads) .admin-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .admin-proposal-table-actions,
+  .proposal-table-actions,
+  .invoice-actions {
+    padding-bottom: 2px;
+  }
+
+  .admin-proposal-table-actions .btn,
+  .proposal-table-actions .btn,
+  .invoice-actions .btn,
+  .invoice-actions .invoice-btn {
+    height: 34px !important;
+    padding: 0 !important;
+    width: 34px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  body:has(.dashboard-container > .sidebar) > .header {
+    gap: 5px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) > .header .brand-logo {
+    max-width: 125px !important;
+    width: min(34vw, 125px) !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) > .header .avatar,
+  body:has(.dashboard-container > .sidebar) > .header .user-avatar,
+  body:has(.dashboard-container > .sidebar) > .header .profile-avatar {
+    flex-basis: 30px !important;
+    height: 30px !important;
+    width: 30px !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) > .header .role,
+  body:has(.dashboard-container > .sidebar) > .header .role-badge {
+    font-size: 10px !important;
+    max-width: 74px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  body:has(.dashboard-container > .sidebar) > .header .logout-btn {
+    font-size: 10px !important;
+    padding-left: 7px !important;
+    padding-right: 7px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #createProposal,
+  #createProposal .proposal-shell,
+  #createProposal .proposal-list-panel,
+  #proposalListContainer {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  #proposalListContainer .table-wrapper {
+    display: block !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    padding-bottom: 4px;
+    width: 100% !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #proposalListContainer .table-wrapper > .data-table {
+    display: table !important;
+    min-width: max(880px, 100%) !important;
+    table-layout: auto !important;
+    width: max-content !important;
+  }
+
+  .proposal-toolbar-actions :is(.btn-proposal-pdf, .btn-proposal-png, .btn-whatsapp, .btn-gmail),
+  .proposal-table-actions :is(.btn-save, .btn-proposal-pdf, .btn-proposal-png, .btn-whatsapp, .btn-gmail),
+  .admin-proposal-table-actions :is(.tab-btn, .btn-proposal-pdf, .btn-proposal-png, .btn-whatsapp, .btn-gmail) {
+    align-items: center !important;
+    aspect-ratio: 1 / 1 !important;
+    display: inline-flex !important;
+    flex: 0 0 34px !important;
+    font-size: 14px !important;
+    height: 34px !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    max-height: 34px !important;
+    max-width: 34px !important;
+    min-height: 34px !important;
+    min-width: 34px !important;
+    padding: 0 !important;
+    width: 34px !important;
+  }
+}

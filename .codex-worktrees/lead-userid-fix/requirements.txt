@@ -1,0 +1,92 @@
+create database mm_new;
+use mm_new
+create table users(
+    id int primary key auto_increment,
+    name varchar(100),
+    prof_img varchar(999),
+    email varchar(100),
+    contact varchar(10),
+    spswd varchar(8),
+    cpswd varchar(8),
+    role varchar(100),
+    comp_name varchar(100)
+);
+
+CREATE TABLE leads (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    -- Basic Information
+    company_name VARCHAR(255) NOT NULL,
+    client_name VARCHAR(255) NOT NULL,
+    contact VARCHAR(20) NOT NULL,
+    alternate_contact VARCHAR(20),
+    telephone VARCHAR(20),
+    email VARCHAR(255),
+    gst_no VARCHAR(50),
+    -- Address
+    flat_no VARCHAR(50),
+    building_name VARCHAR(255),
+    locality VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    pincode VARCHAR(10) NOT NULL,
+    state VARCHAR(100) NOT NULL,
+    -- Source & Industry
+    source_lead VARCHAR(100) NOT NULL,
+    industry_type VARCHAR(100) NOT NULL,
+    -- Services (Stored as JSON for flexibility)
+    web_type JSON,
+    seo_type JSON,
+    smo_type JSON,
+    app_type JSON,
+    erp_type JSON,
+    services JSON,
+    service_notes TEXT,
+    -- Status
+    action_type ENUM('appointment', 'followup') DEFAULT 'appointment',
+    -- Appointment Details
+    app_date DATE,
+    app_time TIME,
+    assign_emp VARCHAR(255),
+    location VARCHAR(255),
+    -- Followup Details
+    follow_date DATE,
+    follow_time TIME,
+    reason TEXT,
+    -- Additional Notes
+    additional_notes TEXT,
+    -- Metadata
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE leads ADD COLUMN maps_lnk TEXT;
+
+ALTER TABLE leads 
+ADD COLUMN lead_status VARCHAR(30) DEFAULT 'active',
+ADD COLUMN closed_date DATETIME DEFAULT NULL,
+ADD COLUMN payment_method VARCHAR(50) DEFAULT NULL,
+ADD COLUMN deal_amount DECIMAL(12,2) DEFAULT NULL,
+ADD COLUMN payment_notes TEXT DEFAULT NULL,
+ADD COLUMN invoice_id VARCHAR(50) DEFAULT NULL;
+
+ALTER TABLE leads 
+ADD COLUMN transaction_id VARCHAR(100) DEFAULT NULL,
+ADD COLUMN cheque_number VARCHAR(50) DEFAULT NULL,
+ADD COLUMN cheque_date DATE DEFAULT NULL,
+ADD COLUMN bank_name VARCHAR(100) DEFAULT NULL,
+ADD COLUMN payment_proof VARCHAR(255) DEFAULT NULL; 
+
+ALTER TABLE leads 
+ADD COLUMN branch_name VARCHAR(100) DEFAULT NULL,
+ADD COLUMN received_by VARCHAR(100) DEFAULT NULL,
+
+CREATE TABLE deals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    lead_id INT NOT NULL,
+    deal_amount DECIMAL(12,2) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    payment_notes TEXT,
+    invoice_id VARCHAR(50),
+    invoice_generated TINYINT(1) DEFAULT 0,
+    closed_by INT,                    -- ME ka user id
+    closed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (lead_id) REFERENCES leads(id)
+);

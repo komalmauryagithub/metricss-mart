@@ -1,0 +1,1520 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HR Panel</title>
+    <link rel="icon" type="image/png" href="logo_.png" />
+    <link rel="stylesheet" href="admin.css" />
+    <link rel="stylesheet" href="hr.css?v=20260702-employee-status-v1" />
+    <link rel="stylesheet" href="crm-security.css?v=20260527-proposal-actions-scroll" />
+    <link rel="stylesheet" href="attendance-face.css?v=20260602-live-face-v1" />
+    <link rel="stylesheet" href="panel-layout.css?v=20260607-fixed-sidebar-v1" />
+    <link rel="stylesheet" href="payroll-management.css?v=20260730-responsive-v1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="attendance-face.js?v=20260602-live-face-v1"></script>
+    <script defer src="payroll-management.js?v=20260730-responsive-v1"></script>
+    <script defer src="hr.js?v=20260710-attendance-all-panels-v1"></script>
+    <script defer src="crm-security.js?v=20260601-fetch-scope-v2"></script>
+    <link rel="stylesheet" href="profile-sidebar.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-left">
+        <div class="brand-title">
+          <img src="logo_.png" alt="Metrics Mart" class="brand-logo" />
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="welcome">
+          Welcome, <span id="hrUserName">Loading...</span>
+        </div>
+
+        <div class="user-info">
+          <img id="hrUserAvatar" class="avatar" alt="User Avatar" onclick="toggleProfileSidebar()" style="cursor: pointer;" title="View Profile Progress" />
+          <span class="role">HR</span>
+        </div>
+
+        
+        <div class="header-action-btns" style="display: flex; flex-direction: column; gap: 8px;">
+          <button type="button" class="logout-btn" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+          
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <ul>
+          <li class="active" data-section="dashboard">
+            <i class="fas fa-gauge-high"></i> Dashboard
+          </li>
+          <li data-section="employees">
+            <i class="fas fa-user-group"></i> Employees
+          </li>
+          <li data-section="recruitment">
+            <i class="fas fa-user-plus"></i> Recruitment
+          </li>
+          <li data-section="attendance">
+            <i class="fas fa-calendar-check"></i> Attendance & Leave Management
+          </li>
+          <li data-section="payroll">
+            <i class="fas fa-wallet"></i> Payroll
+          </li>
+          <li data-section="salary">
+            <i class="fas fa-money-check-dollar"></i> My Salary
+          </li>
+          <li data-section="performance">
+            <i class="fas fa-chart-line"></i> Performance
+          </li>
+          <li data-section="tasks">
+            <i class="fas fa-list-check"></i> Tasks
+          </li>
+          <li data-section="documents">
+            <i class="fas fa-folder-open"></i> Documents
+          </li>
+          <li data-section="reports">
+            <i class="fas fa-chart-column"></i> Reports
+          </li>
+          <li data-section="announcements">
+            <i class="fas fa-bullhorn"></i> Announcements
+          </li>
+        </ul>
+      </aside>
+
+      <main class="main-content hr-main-content">
+        <section id="hrPayrollToolbar" class="hr-shell-toolbar hidden">
+          <div class="hr-panel-intro">
+            <span class="section-kicker">People Operations</span>
+            <h1>HR Command Center</h1>
+            <p>
+              Professional workforce management dashboard for people,
+              payroll, recruitment, compliance, and daily HR operations.
+            </p>
+          </div>
+
+          <div class="hr-toolbar-actions">
+            <div class="header-chip">
+              <i class="fas fa-calendar-day"></i>
+              <span id="hrTodayLabel">Today</span>
+            </div>
+            <label class="month-picker">
+              <span>Payroll Month</span>
+              <input type="month" id="hrMonthPicker" />
+            </label>
+            <button type="button" class="ghost-btn" id="hrRefreshBtn">
+              <i class="fas fa-rotate-right"></i> Refresh
+            </button>
+          </div>
+        </section>
+
+        <section id="dashboard" class="hr-section active">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Overview Dashboard</span>
+              <h2>People Pulse Overview</h2>
+              <p>Monitor workforce health, attendance momentum, hiring demand, and urgent HR actions in one place.</p>
+            </div>
+            <div class="section-actions">
+              <span class="pill-tag success">Live Summary</span>
+            </div>
+          </div>
+
+          <div class="metric-grid metric-grid-wide">
+            <article class="metric-card dashboard-link-card" data-dashboard-target="employees">
+              <span>Total Employees</span>
+              <strong id="metricTotalEmployees">0</strong>
+              <small>All registered non-admin team members</small>
+            </article>
+            <article class="metric-card dashboard-link-card" data-dashboard-target="employees">
+              <span>Active Employees</span>
+              <strong id="metricActiveEmployees">0</strong>
+              <small>Currently active in workforce roster</small>
+            </article>
+            <article class="metric-card dashboard-link-card" data-dashboard-target="employees">
+              <span>New Joiners</span>
+              <strong id="metricNewJoiners">0</strong>
+              <small>Joined during the current month</small>
+            </article>
+            <article class="metric-card dashboard-link-card" data-dashboard-target="attendance">
+              <span>Employees on Leave</span>
+              <strong id="metricEmployeesOnLeave">0</strong>
+              <small>Approved leave cases for today</small>
+            </article>
+            <article class="metric-card dashboard-link-card" data-dashboard-target="recruitment">
+              <span>Open Positions</span>
+              <strong id="metricOpenPositions">0</strong>
+              <small>Derived from headcount demand</small>
+            </article>
+            <article class="metric-card dashboard-link-card" data-dashboard-target="attendance">
+              <span>Attendance Status</span>
+              <strong id="metricAttendanceStatus">0%</strong>
+              <small>Present/grace coverage for today</small>
+            </article>
+            <article class="metric-card dashboard-link-card" data-dashboard-target="recruitment">
+              <span>Pending Interviews</span>
+              <strong id="metricPendingInterviews">0</strong>
+              <small>Slots awaiting scheduling attention</small>
+            </article>
+            <article class="metric-card dashboard-link-card" data-dashboard-target="reports">
+              <span>Monthly Resignations</span>
+              <strong id="metricMonthlyResignations">0</strong>
+              <small>Current month attrition tracker</small>
+            </article>
+          </div>
+
+          <div class="panel-grid two-up">
+            <article class="panel-card dashboard-link-card" data-dashboard-target="employees">
+              <div class="panel-head">
+                <div>
+                  <h3>Department Headcount</h3>
+                  <p>Employee distribution by department / role group</p>
+                </div>
+              </div>
+              <canvas id="hrDepartmentChart"></canvas>
+            </article>
+
+            <article class="panel-card dashboard-link-card" data-dashboard-target="attendance">
+              <div class="panel-head">
+                <div>
+                  <h3>Attendance Status</h3>
+                  <p>Present, late, half-day, and leave visibility</p>
+                </div>
+              </div>
+              <canvas id="hrAttendanceChart"></canvas>
+            </article>
+          </div>
+
+          <div class="panel-grid three-up">
+            <article class="panel-card dashboard-link-card" data-dashboard-target="employees">
+              <div class="panel-head">
+                <div>
+                  <h3>Recent Joiners</h3>
+                  <p>Newest additions to the team</p>
+                </div>
+              </div>
+              <div id="recentJoinersList" class="stack-list"></div>
+            </article>
+
+            <article class="panel-card dashboard-link-card" data-dashboard-target="attendance">
+              <div class="panel-head">
+                <div>
+                  <h3>Employees on Leave</h3>
+                  <p>Who is currently away from work</p>
+                </div>
+              </div>
+              <div id="employeesOnLeaveList" class="stack-list"></div>
+            </article>
+
+            <article class="panel-card dashboard-link-card" data-dashboard-target="tasks">
+              <div class="panel-head">
+                <div>
+                  <h3>Priority Actions</h3>
+                  <p>Immediate HR follow-ups</p>
+                </div>
+              </div>
+              <div id="dashboardTasksList" class="stack-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="employees" class="hr-section">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Employee Management</span>
+              <h2>Employee Directory & Profiles</h2>
+              <p>Track employee records, department ownership, reporting managers, and document readiness.</p>
+            </div>
+            <div class="section-actions employee-section-actions">
+              <select id="hrEmployeeStatusFilter" class="section-filter" aria-label="Employee status filter">
+                <option value="active">Active Employees</option>
+                <option value="inactive">Deactive Employees</option>
+                <option value="all">All Employees</option>
+              </select>
+              <input type="search" id="hrEmployeeSearch" class="section-search" placeholder="Search by name, email, role, department" />
+              <button type="button" id="hrCreateUserBtn" class="add-user-btn">
+                <i class="fas fa-user-plus"></i> Create User
+              </button>
+            </div>
+          </div>
+
+          <div id="employeeStatusGrid" class="metric-grid"></div>
+
+          <div class="panel-grid two-up">
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Employee Directory</h3>
+                  <p>Add/edit readiness, employee status tracking, and profiles view</p>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table table-head-contrast">
+                  <thead>
+                    <tr>
+                      <th>Employee</th>
+                      <th>Role</th>
+                      <th>Department</th>
+                      <th>Status</th>
+                      <th>Manager</th>
+                      <th>Docs</th>
+                      <th>Access</th>
+                      <th>Profile</th>
+                    </tr>
+                  </thead>
+                  <tbody id="employeeDirectoryBody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Department Management</h3>
+                  <p>Headcount, active workforce, and joiner flow by department</p>
+                </div>
+              </div>
+              <div id="departmentManagementGrid" class="card-grid"></div>
+            </article>
+          </div>
+
+          <div class="panel-grid two-up">
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Reporting Managers</h3>
+                  <p>Chain of responsibility and leadership visibility</p>
+                </div>
+              </div>
+              <div id="reportingManagersGrid" class="stack-list"></div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Employee Profiles</h3>
+                  <p>Profile completion, onboarding, and access setup status</p>
+                </div>
+              </div>
+              <div id="employeeProfilesGrid" class="card-grid"></div>
+            </article>
+          </div>
+
+          <article class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>Document Management</h3>
+                <p>Aadhaar, PAN, cheque, resume, experience, and certifications status</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Employee</th>
+                    <th>Profile</th>
+                    <th>ID Proofs</th>
+                    <th>Banking</th>
+                    <th>Career Docs</th>
+                    <th>Completion</th>
+                  </tr>
+                </thead>
+                <tbody id="documentDirectoryBody"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section id="recruitment" class="hr-section">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Recruitment & Hiring</span>
+              <h2>Hiring Demand & Talent Pipeline</h2>
+              <p>Manage job openings, candidate pipeline, interview scheduling signals, resume coverage, and offer actions.</p>
+            </div>
+            <div class="section-actions">
+              <span class="pill-tag">Hiring View</span>
+            </div>
+          </div>
+
+          <div id="recruitmentMetricGrid" class="metric-grid"></div>
+
+          <div class="panel-grid two-up">
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Job Openings</h3>
+                  <p>Headcount gap by role and hiring priority</p>
+                </div>
+              </div>
+              <div id="jobOpeningsGrid" class="card-grid"></div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Candidate Pipeline Tracking</h3>
+                  <p>Pipeline stages derived from onboarding and resume coverage</p>
+                </div>
+              </div>
+              <div class="table-wrap compact-table">
+                <table class="data-table table-head-contrast">
+                  <thead>
+                    <tr>
+                      <th>Stage</th>
+                      <th>Count</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="candidatePipelineBody"></tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+
+          <div class="panel-grid two-up">
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Interview Scheduling</h3>
+                  <p>Upcoming interview and screening follow-up queue</p>
+                </div>
+              </div>
+              <div id="interviewScheduleList" class="stack-list"></div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Resume Management</h3>
+                  <p>Resume archive visibility and talent profile coverage</p>
+                </div>
+              </div>
+              <div id="resumeManagementList" class="stack-list"></div>
+            </article>
+          </div>
+
+          <article class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>Offer Letter Management</h3>
+                <p>Offer and hiring status updates for the active onboarding stream</p>
+              </div>
+            </div>
+            <div id="offerLetterGrid" class="card-grid"></div>
+          </article>
+        </section>
+
+        <section id="attendance" class="hr-section">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Attendance & Leave Management</span>
+              <h2>Daily Attendance, Shifts & Leave Control</h2>
+              <p>Watch daily attendance, shifts, leave approvals, leave balances, and attendance exception patterns.</p>
+            </div>
+          </div>
+
+          <div id="attendanceMetricGrid" class="metric-grid"></div>
+
+          <article class="panel-card hr-self-attendance-card">
+            <div class="panel-head">
+              <div>
+                <h3>My Attendance</h3>
+                <p id="hrSelfAttendanceStatus">Location-based check-in is pending.</p>
+              </div>
+              <div class="section-actions" id="hrSelfAttendanceActions"></div>
+            </div>
+          </article>
+
+          <div class="panel-grid two-up">
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Daily Attendance</h3>
+                  <p>Check-in / check-out and daily status for the workforce</p>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table table-head-contrast">
+                  <thead>
+                    <tr>
+                      <th>Employee</th>
+                      <th>Role</th>
+                      <th>Check In</th>
+                      <th>Check Out</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attendanceTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Shift Management</h3>
+                  <p>Scheduled login/logout expectations by role</p>
+                </div>
+              </div>
+              <div id="shiftManagementGrid" class="card-grid"></div>
+            </article>
+          </div>
+
+          <div class="panel-grid two-up">
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Leave Applications & Approvals</h3>
+                  <p>Pending queue, approval status, and current leave context</p>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Employee</th>
+                      <th>Role</th>
+                      <th>Type</th>
+                      <th>Dates</th>
+                      <th>Status</th>
+                      <th>Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody id="leaveQueueBody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Leave Balance Tracking</h3>
+                  <p>Available leave, carry-forward, and monthly credit balance</p>
+                </div>
+              </div>
+              <div id="leaveBalanceGrid" class="card-grid"></div>
+            </article>
+          </div>
+
+        </section>
+
+        <section id="payroll" class="hr-section">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Payroll Management</span>
+              <h2>Salary Structures, Processing & Payout Readiness</h2>
+              <p>Review salary structure, payslips, bonus/incentive activity, deductions, reimbursements, and payroll processing status.</p>
+            </div>
+          </div>
+
+          <div id="payrollMetricGrid" class="metric-grid"></div>
+
+          <div class="panel-grid two-up">
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Payroll Processing</h3>
+                  <p>Monthly payroll overview by employee</p>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table table-head-contrast">
+                  <thead>
+                    <tr>
+                      <th>Employee</th>
+                      <th>Role</th>
+                      <th>Basic Salary</th>
+                      <th>Bonus + Incentive</th>
+                      <th>Deductions</th>
+                      <th>Final Salary</th>
+                    </tr>
+                  </thead>
+                  <tbody id="payrollTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Bonuses, Incentives & Reimbursements</h3>
+                  <p>Where money moved beyond fixed salaries</p>
+                </div>
+              </div>
+              <div id="payrollExtrasList" class="stack-list"></div>
+            </article>
+          </div>
+
+          <article class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>Deductions & Taxes Snapshot</h3>
+                  <p>Leave deductions, penalty exposure, and average payout health</p>
+              </div>
+            </div>
+            <div id="payrollDeductionGrid" class="card-grid"></div>
+          </article>
+        </section>
+
+        <section id="performance" class="hr-section">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Performance & Productivity Tracking</span>
+              <h2>KPI Tracking, Ratings & Promotion Watch</h2>
+              <p>Measure productivity health using attendance, documentation, lead contribution, and role ownership indicators.</p>
+            </div>
+          </div>
+
+          <div id="performanceMetricGrid" class="metric-grid"></div>
+
+          <div class="panel-grid two-up">
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Top Productivity Signals</h3>
+                  <p>KPI-based standout team members this month</p>
+                </div>
+              </div>
+              <div id="productivityHighlights" class="card-grid"></div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Promotion Recommendations</h3>
+                  <p>Employees with strong consistency and readiness indicators</p>
+                </div>
+              </div>
+              <div id="promotionRecommendations" class="stack-list"></div>
+            </article>
+          </div>
+
+          <article class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>Employee Ratings & Task Monitoring</h3>
+                <p>Performance review-style snapshot across the active workforce</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table table-head-contrast">
+                <thead>
+                  <tr>
+                    <th>Employee</th>
+                    <th>Role</th>
+                    <th>KPI Score</th>
+                    <th>Rating</th>
+                    <th>Task Monitoring Note</th>
+                    <th>Recommendation</th>
+                  </tr>
+                </thead>
+                <tbody id="performanceTableBody"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section id="tasks" class="hr-section">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Tasks</span>
+              <h2>HR Operational Task Board</h2>
+              <p>Sort pending people-ops work into immediate, this-week, and strategic follow-up buckets.</p>
+            </div>
+          </div>
+
+          <div class="task-board">
+            <article class="task-column">
+              <div class="task-column-head urgent">
+                <h3>Today</h3>
+                <span id="taskTodayCount">0</span>
+              </div>
+              <div id="taskTodayList" class="task-list"></div>
+            </article>
+
+            <article class="task-column">
+              <div class="task-column-head progress">
+                <h3>This Week</h3>
+                <span id="taskWeekCount">0</span>
+              </div>
+              <div id="taskWeekList" class="task-list"></div>
+            </article>
+
+            <article class="task-column">
+              <div class="task-column-head planned">
+                <h3>Planned</h3>
+                <span id="taskPlannedCount">0</span>
+              </div>
+              <div id="taskPlannedList" class="task-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="documents" class="hr-section">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Documents & Compliance</span>
+              <h2>Compliance Library & Employee Records</h2>
+              <p>Track offer letters, contracts, certificates, identity proofs, HR policies, and NDA readiness.</p>
+            </div>
+          </div>
+
+          <div id="complianceMetricGrid" class="metric-grid"></div>
+
+          <div class="panel-grid two-up">
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Employee Document Readiness</h3>
+                  <p>Proofs, finance docs, and career paperwork at a glance</p>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table table-head-contrast">
+                  <thead>
+                    <tr>
+                      <th>Employee</th>
+                      <th>Offer / Contract</th>
+                      <th>ID Proofs</th>
+                      <th>Certificates</th>
+                      <th>NDA / Policy</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="complianceTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Policy & Compliance Library</h3>
+                  <p>Reusable HR policy cards for operations and governance</p>
+                </div>
+              </div>
+              <div id="policyLibraryGrid" class="card-grid"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="reports" class="hr-section">
+          <div class="section-head">
+            <div>
+              <h2>Operational Reports & Decision Signals</h2>
+              <p>Summaries that help HR review headcount, attendance, leave, payroll, and compliance direction.</p>
+            </div>
+          </div>
+
+          <div id="reportsMetricGrid" class="metric-grid reports-metric-grid"></div>
+
+          <div class="panel-grid two-up">
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Role Mix Report</h3>
+                  <p>Headcount spread by function</p>
+                </div>
+              </div>
+              <canvas id="hrRoleMixChart"></canvas>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Document Compliance Report</h3>
+                  <p>Completion coverage across employees</p>
+                </div>
+              </div>
+              <canvas id="hrComplianceChart"></canvas>
+            </article>
+          </div>
+
+          <article class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>Report Highlights</h3>
+                <p>Ready-to-review narrative report points for management updates</p>
+              </div>
+            </div>
+            <div id="reportHighlightsList" class="stack-list report-highlights-list"></div>
+          </article>
+        </section>
+
+        <section id="announcements" class="hr-section">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Announcements</span>
+              <h2>Company Announcements & HR Updates</h2>
+              <p>Holiday notices, meeting alerts, birthday highlights, and internal people updates prepared for HR visibility.</p>
+            </div>
+          </div>
+
+          <div class="panel-grid two-up">
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Announcements Feed</h3>
+                  <p>Company updates and HR communication drafts</p>
+                </div>
+              </div>
+              <div id="announcementsGrid" class="stack-list"></div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Birthdays & Notices</h3>
+                  <p>Celebrations, holiday notices, and upcoming reminders</p>
+                </div>
+              </div>
+              <div id="birthdayNoticesList" class="stack-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="salary" class="hr-section">
+          <div data-payroll-scope="self" data-payroll-role-label="HR"></div>
+        </section>
+      
+        <div id="daily-work" class="section">
+          <div class="log-table-container">
+            <div class="log-table-header">
+              <h2><i class="fas fa-calendar-check"></i> Daily Work Log</h2>
+              <button class="action-btn" onclick="openDailyWorkModal()" style="background:var(--admin-accent, #0f766e); color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:bold;"><i class="fas fa-plus"></i> Add Work</button>
+            </div>
+            
+            <div class="log-table-filters">
+              <div>
+                <label>Month</label><br>
+                <input type="month" id="dwMonthFilter" onchange="loadDailyWork()" />
+              </div>
+              <div>
+                <label>Date</label><br>
+                <input type="date" id="dwDateFilter" onchange="loadDailyWork()" />
+              </div>
+              <div class="log-table-filter-sep"></div>
+              <div>
+                <label>Search</label><br>
+                <input type="text" id="dwSearch" placeholder="Search..." onkeyup="filterTable('dwTableBody', 'dwSearch')" class="search-box" style="width:200px;" />
+              </div>
+            </div>
+
+            <div class="log-table-wrapper">
+              <table class="log-table">
+                <thead>
+                  <tr id="dwTableHead">
+                    <!-- Dynamic headers injected here -->
+                  </tr>
+                </thead>
+                <tbody id="dwTableBody">
+                  <tr><td colspan="10" style="text-align:center; padding: 20px;">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <div
+      id="hrEmployeeProfileModal"
+      class="employee-profile-modal hidden"
+      aria-hidden="true"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="hrEmployeeProfileTitle"
+    >
+      <div class="employee-profile-modal-dialog">
+        <div class="employee-profile-modal-head">
+          <div>
+            <span class="section-kicker">Employee Record</span>
+            <h2 id="hrEmployeeProfileTitle">Employee Profile</h2>
+            <p>Admin-created account details and submitted onboarding data.</p>
+          </div>
+          <button
+            type="button"
+            class="user-modal-close"
+            id="hrEmployeeProfileCloseBtn"
+            aria-label="Close employee profile"
+          >
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+        <div id="hrEmployeeProfileBody" class="employee-profile-modal-body">
+          <div class="profile-record-empty">Select an employee to view profile details.</div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="hrUserRegistrationModal"
+      class="user-modal hidden"
+      aria-hidden="true"
+    >
+      <div
+        class="user-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="hrUserRegistrationTitle"
+      >
+        <div class="user-modal-header">
+          <div>
+            <h2 id="hrUserRegistrationTitle">Create User</h2>
+            <p id="hrUserRegistrationSubtitle">Register a new employee directly from the HR panel.</p>
+          </div>
+          <button
+            type="button"
+            class="user-modal-close"
+            id="hrUserModalCloseBtn"
+            aria-label="Close create user modal"
+          >
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+        <div class="user-modal-body">
+          <div class="form-card user-form-card">
+            <div class="right-section user-form-panel">
+              <form id="hrRegisterForm" class="user-profile-form" enctype="multipart/form-data">
+                <section class="form-section-card">
+                  <div class="form-section-head">
+                    <div>
+                      <h3 class="form-section-title">Personal Details</h3>
+                      <p class="form-section-note">Basic identity and contact details for the employee login.</p>
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="input-group">
+                      <label>Full Name *</label>
+                      <input type="text" name="name" autocomplete="name" required />
+                    </div>
+                    <div class="input-group">
+                      <label>Employee Code</label>
+                      <input type="text" name="employee_code" autocomplete="off" readonly />
+                    </div>
+                    <div class="input-group">
+                      <label>Email *</label>
+                      <input type="email" name="email" autocomplete="username" required />
+                    </div>
+                    <div class="input-group">
+                      <label>Contact Number *</label>
+                      <input type="tel" name="contact" autocomplete="tel" required />
+                    </div>
+                    <div class="input-group">
+                      <label>Family Number</label>
+                      <input type="tel" name="alt_contact" autocomplete="tel-national" />
+                    </div>
+                    <div class="input-group">
+                      <label>Joining Date</label>
+                      <input type="date" name="joining_date" />
+                    </div>
+                  </div>
+                </section>
+
+                <section class="form-section-card">
+                  <div class="form-section-head">
+                    <div>
+                      <h3 class="form-section-title">Employment Details</h3>
+                      <p class="form-section-note">Role, company, payroll, and daily work timing.</p>
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="input-group">
+                      <label>Role *</label>
+                      <select name="role" required>
+                        <option value="">Select Role</option>
+                        <option value="hr">HR</option>
+                        <option value="tme">TME</option>
+                        <option value="me">ME</option>
+                        <option value="dev">Developer</option>
+                        <option value="seo">SEO</option>
+                        <option value="smo">SMO</option>
+                        <option value="accounts">Accounts</option>
+                        <option value="dm">DM</option>
+                      </select>
+                    </div>
+                    <div class="input-group">
+                      <label>Company *</label>
+                      <select name="comp_name" required>
+                        <option value="Metrics Mart Infoline Pvt Ltd" selected>Metrics Mart Infoline Pvt Ltd</option>
+                        <option value="RedSea">Red Sea Digitals Pvt. Ltd</option>
+                      </select>
+                    </div>
+                    <div class="input-group">
+                      <label>Profile Type</label>
+                      <select name="profile_type">
+                        <option value="fresher">Fresher / Intern</option>
+                        <option value="experience">Experienced</option>
+                      </select>
+                    </div>
+                    <div class="input-group hidden" id="hrUserCompensationTypeGroup">
+                      <label>Payment Type *</label>
+                      <select name="compensation_type" id="hrUserCompensationType">
+                        <option value="salary" selected>Salary</option>
+                        <option value="commission">Commission</option>
+                      </select>
+                    </div>
+                    <div class="input-group" id="hrUserSalaryGroup">
+                      <label>Monthly Salary *</label>
+                      <input type="number" name="salary" min="0" step="0.01" required />
+                    </div>
+                    <div class="input-group hidden" id="hrUserCommissionGroup">
+                      <label>Commission Percent (Fixed)</label>
+                      <input
+                        type="number"
+                        name="commission_percent"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value="10"
+                        readonly
+                        placeholder="10"
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label>Login Time *</label>
+                      <input type="time" name="login_time" value="10:00" required />
+                    </div>
+                    <div class="input-group">
+                      <label>Logout Time *</label>
+                      <input type="time" name="logout_time" value="18:00" required />
+                    </div>
+                    <div class="input-group form-full-width">
+                      <label>Address</label>
+                      <textarea name="address" rows="4" placeholder="Full residential address"></textarea>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="form-section-card">
+                  <div class="form-section-head">
+                    <div>
+                      <h3 class="form-section-title">Security</h3>
+                      <p class="form-section-note">Set login password for the new employee account.</p>
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="input-group">
+                      <label>Password *</label>
+                      <input type="password" name="spswd" autocomplete="new-password" required />
+                    </div>
+                    <div class="input-group">
+                      <label>Confirm Password *</label>
+                      <input type="password" name="cpswd" autocomplete="new-password" required />
+                    </div>
+                  </div>
+                </section>
+
+                <button type="submit" class="submit-btn" id="hrRegisterBtn">
+                  <i class="fas fa-user-plus"></i> Create User
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="hrProfileSetupPopup"
+      class="popup hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="hrProfileSetupPopupTitle"
+    >
+      <div class="popup-content">
+        <i id="hrProfileSetupPopupIcon" class="fas fa-envelope-circle-check"></i>
+        <h3 id="hrProfileSetupPopupTitle">Profile Form</h3>
+        <p id="hrProfileSetupPopupMessage">Profile setup link is ready.</p>
+        <div id="hrProfileSetupPopupActions" class="popup-actions hidden"></div>
+      </div>
+    </div>
+
+    <div id="hrToast" class="hr-toast hidden" role="status" aria-live="polite"></div>
+    <script src="daily-work.js"></script>
+  
+<!-- USER EDIT MODAL FOR HR -->
+<div
+      id="userRegistrationModal"
+      class="user-modal hidden"
+      aria-hidden="true"
+      onclick="handleUserModalBackdrop(event)"
+    >
+      <div
+        class="user-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="userRegistrationTitle"
+      >
+        <div class="user-modal-header">
+          <div>
+            <h2 id="userRegistrationTitle">User Registration</h2>
+            <p id="userRegistrationSubtitle">
+              Create new team members (Admin only)
+            </p>
+          </div>
+          <button
+            type="button"
+            class="user-modal-close"
+            onclick="closeUserForm()"
+            aria-label="Close registration modal"
+          >
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+        <div id="userFormBox" class="user-modal-body">
+          <div class="form-card user-form-card">
+            <div class="right-section user-form-panel">
+              <form
+                id="adminRegisterForm"
+                class="user-profile-form"
+                enctype="multipart/form-data"
+              >
+                <section class="form-section-card">
+                  <div class="form-section-head">
+                    <div>
+                      <h3 class="form-section-title">Personal Details</h3>
+                      <p class="form-section-note">
+                        Basic identity details for the employee profile.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="input-group">
+                      <label>Full Name *</label>
+                      <input
+                        type="text"
+                        name="name"
+                        autocomplete="name"
+                        required
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label>Employee Code</label>
+                      <input
+                        type="text"
+                        name="employee_code"
+                        autocomplete="off"
+                        readonly
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label>Date of Birth</label>
+                      <input type="date" name="date_of_birth" />
+                    </div>
+                    <div class="input-group">
+                      <label>Gender</label>
+                      <select name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                        <option value="prefer_not_to_say">
+                          Prefer Not To Say
+                        </option>
+                      </select>
+                    </div>
+                    <div class="input-group">
+                      <label>Nationality</label>
+                      <input type="text" name="nationality" value="Indian" />
+                    </div>
+                  </div>
+                </section>
+
+                <section class="form-section-card">
+                  <div class="form-section-head">
+                    <div>
+                      <h3 class="form-section-title">Contact Details</h3>
+                      <p class="form-section-note">
+                        Phone, email and residential address used for employee
+                        records.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="input-group">
+                      <label>Email *</label>
+                      <input
+                        type="email"
+                        name="email"
+                        autocomplete="username"
+                        required
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label id="userFormPasswordLabel">Password *</label>
+                      <input
+                        type="password"
+                        name="spswd"
+                        id="adminRegisterPassword"
+                        placeholder="Enter password"
+                        required
+                        autocomplete="new-password"
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label id="userFormConfirmPasswordLabel"
+                        >Confirm Password *</label
+                      >
+                      <input
+                        type="password"
+                        name="cpswd"
+                        id="adminRegisterConfirmPassword"
+                        placeholder="Re-enter password"
+                        required
+                        autocomplete="new-password"
+                      />
+                      <small id="userPasswordHint" class="hidden"></small>
+                    </div>
+                    <div class="input-group">
+                      <label>Contact *</label>
+                      <input
+                        type="tel"
+                        name="contact"
+                        autocomplete="tel"
+                        required
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label>Family Number</label>
+                      <input type="tel" name="alt_contact" />
+                    </div>
+                    <div class="input-group form-full-width">
+                      <label>Address</label>
+                      <textarea
+                        name="address"
+                        rows="4"
+                        placeholder="Full residential address"
+                      ></textarea>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="form-section-card">
+                  <div class="form-section-head">
+                    <div>
+                      <h3 class="form-section-title">Employment Details</h3>
+                      <p class="form-section-note">
+                        Role, company and working schedule for internal
+                        operations.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="input-group">
+                      <label>Role *</label>
+                      <select name="role" required>
+                        <option value="">Select Role</option>
+                        <option value="hr">HR</option>
+                        <option value="tme">TME</option>
+                        <option value="me">ME</option>
+                        <option value="dev">DEV</option>
+                        <option value="seo">SEO</option>
+                        <option value="smo">SMO</option>
+                        <option value="accounts">ACC</option>
+                      </select>
+                    </div>
+                    <div class="input-group">
+                      <label>Company *</label>
+                      <select name="comp_name" required>
+                        <option value="">Select Company</option>
+                        <option value="Metrics Mart Infoline Pvt Ltd">
+                          Metrics Mart Infoline Pvt Ltd
+                        </option>
+                        <option value="RedSea">Red Sea Digitals Pvt. Ltd</option>
+                      </select>
+                    </div>
+                    <div class="input-group">
+                      <label style="margin-top:28px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+                        <input type="checkbox" name="is_team_lead" id="adminRegisterIsTeamLead" value="1" style="width:16px; height:16px; margin:0;" />
+                        <span>Is Team Lead</span>
+                      </label>
+                    </div>
+                    <div class="input-group">
+                      <label>Profile Type</label>
+                      <select name="profile_type">
+                        <option value="fresher">Fresher / Intern</option>
+                        <option value="experience">Experienced</option>
+                      </select>
+                    </div>
+                    <div class="input-group hidden" id="userCompensationTypeGroup">
+                      <label>Payment Type *</label>
+                      <select name="compensation_type" id="userCompensationType" required>
+                        <option value="salary" selected>Salary</option>
+                        <option value="commission">Commission</option>
+                      </select>
+                    </div>
+                    <div class="input-group" id="userSalaryGroup">
+                      <label>Monthly Salary *</label>
+                      <input
+                        type="number"
+                        name="salary"
+                        min="0"
+                        step="0.01"
+                        required
+                      />
+                    </div>
+                    <div class="input-group hidden" id="userCommissionGroup">
+                      <label>Commission Percent (Fixed)</label>
+                      <input
+                        type="number"
+                        name="commission_percent"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value="10"
+                        readonly
+                        placeholder="10"
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label>Login Time *</label>
+                      <input
+                        type="time"
+                        name="login_time"
+                        value="10:00"
+                        required
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label>Logout Time *</label>
+                      <input
+                        type="time"
+                        name="logout_time"
+                        value="18:00"
+                        required
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                <div style="display: flex; gap: 12px; width: 100%; margin-top: 18px;">
+<button type="submit" class="submit-btn" id="registerBtn" style="flex: 1; margin-top: 0;">
+                  <i class="fas fa-user-plus"></i> Create User
+                </button>
+                <button type="button" id="unlockProfileBtn" style="display: none; flex: 1; background: #f59e0b; color: white; border: none; padding: 18px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 16px; text-transform: uppercase; transition: all 0.3s; text-align: center; justify-content: center; align-items: center; gap: 8px; margin-top: 0;" style="display: none;  background: #f59e0b; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.2s; text-align: center; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.background='#d97706'" onmouseout="this.style.background='#f59e0b'" onclick="unlockUserProfile()"><i class="fas fa-unlock"></i> Unlock Profile Setup</button>
+</div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="adminLeadModal"
+      class="user-modal hidden"
+      aria-hidden="true"
+      onclick="handleAdminLeadModalBackdrop(event)"
+    >
+      <div
+        class="user-modal-dialog admin-lead-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="adminLeadModalTitle"
+      >
+        <div class="user-modal-header">
+          <div>
+            <h2 id="adminLeadModalTitle">Add Client</h2>
+            <p>Use the same client form available in TME leads.</p>
+          </div>
+          <button
+            type="button"
+            class="user-modal-close"
+            onclick="closeAdminLeadForm()"
+            aria-label="Close lead form"
+            title="Cancel"
+          >
+            <i class="fas fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="user-modal-body admin-lead-modal-body">
+          <form id="adminLeadForm" class="admin-lead-form">
+            <h3>Basic Information</h3>
+            <div class="form-grid">
+              <input
+                type="text"
+                placeholder="Company Name"
+                name="company"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Client Name"
+                name="client"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Contact"
+                name="contact"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Alternate Contact"
+                name="alt_contact"
+              />
+              <input type="text" placeholder="Telephone" name="telephone" />
+              <input type="email" placeholder="Email" name="email" />
+              <input type="text" placeholder="GST Number" name="gst_no" />
+            </div>
+
+            <h3>Full Address</h3>
+            <div class="form-grid">
+              <input
+                type="text"
+                placeholder="Flat/Office No"
+                name="flat_no"
+                onchange="generateAdminLeadMapLink()"
+              />
+              <input
+                type="text"
+                placeholder="Building Name"
+                name="building_name"
+                onchange="generateAdminLeadMapLink()"
+              />
+              <input
+                type="text"
+                placeholder="Locality"
+                name="locality"
+                onchange="generateAdminLeadMapLink()"
+              />
+              <input
+                type="text"
+                placeholder="City"
+                name="city"
+                onchange="generateAdminLeadMapLink()"
+              />
+              <input
+                type="text"
+                placeholder="Pincode"
+                name="pincode"
+                onchange="generateAdminLeadMapLink()"
+              />
+              <input
+                type="text"
+                placeholder="State"
+                name="state"
+                onchange="generateAdminLeadMapLink()"
+              />
+              <input
+                type="text"
+                placeholder="Maps Link (Auto Generated)"
+                name="maps_lnk"
+                id="adminLeadMapsLink"
+                readonly
+              />
+            </div>
+
+            <div class="form-grid">
+              <select name="sales_type" required>
+                <option value="new" selected>New Sale</option>
+                <option value="renewal">Renewal</option>
+              </select>
+              <select name="source_lead" required>
+                <option value="">Select Source Lead</option>
+                <option value="website">Website Inquiry</option>
+                <option value="referral">Referral</option>
+                <option value="coldcall">Cold Call</option>
+                <option value="facebook">Facebook</option>
+                <option value="instagram">Instagram</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="walkin">Walk-in</option>
+                <option value="other">Other</option>
+              </select>
+              <select name="industry_type" required>
+                <option value="">Select Industry Type</option>
+                <option value="retail">Retail</option>
+                <option value="manufacturing">Manufacturing</option>
+                <option value="it">IT &amp; Software</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="education">Education</option>
+                <option value="realestate">Real Estate</option>
+                <option value="ecommerce">E-commerce</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <h3>Services Approach</h3>
+            <div class="service-item">
+              <div id="adminLeadProductCatalog" class="lead-product-catalog" aria-live="polite">
+                <div class="lead-products-empty">Loading active products...</div>
+              </div>
+
+              <div class="admin-lead-service-notes">
+                <textarea
+                  name="service_notes"
+                  rows="3"
+                  placeholder="Any specific requirements or notes about selected services..."
+                ></textarea>
+              </div>
+            </div>
+
+            <div
+              id="adminLeadFollowupSection"
+              class="admin-lead-subsection hidden"
+            >
+              <h3>Follow Up Details</h3>
+              <div class="form-grid">
+                <input
+                  type="date"
+                  name="follow_date"
+                  id="adminLeadFollowDate"
+                />
+                <input
+                  type="time"
+                  name="follow_time"
+                  id="adminLeadFollowTime"
+                />
+                <input
+                  type="text"
+                  placeholder="Reason"
+                  name="reason"
+                  id="adminLeadReason"
+                  class="admin-lead-full-width"
+                />
+              </div>
+            </div>
+
+            <h3>Additional Notes</h3>
+            <textarea
+              name="additional_notes"
+              rows="8"
+              placeholder="Any additional notes about the lead..."
+            ></textarea>
+
+            <div class="btn-group admin-lead-actions">
+              <button
+                type="submit"
+                class="submit-btn save-btn"
+                id="adminLeadSubmitBtn"
+              >
+                Add Client
+              </button>
+              <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeAdminLeadForm()"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    
+  <script src="profile-sidebar.js"></script>
+</body>
+</html>

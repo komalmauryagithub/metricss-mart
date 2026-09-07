@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DEV Dashboard</title>
+    <link rel="icon" type="image/png" href="logo_.png" />
+
+    <link rel="stylesheet" href="attendance-face.css?v=20260602-live-face-v1" />
+    <link rel="stylesheet" href="dev.css?v=20260702-attendance-month-v1" />
+    <link rel="stylesheet" href="payroll-management.css?v=20260730-responsive-v1" />
+    <link rel="stylesheet" href="leave-management.css" />
+    <link rel="stylesheet" href="crm-security.css?v=20260527-proposal-actions-scroll" />
+    <link rel="stylesheet" href="panel-layout.css?v=20260607-fixed-sidebar-v1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="profile-sidebar.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="brand-title">
+          <img src="logo_.png" alt="Metrics Mart" class="brand-logo" />
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="welcome">
+          Welcome, <span id="userName">Loading...</span>
+        </div>
+
+        <div class="user-info">
+         <img id="userAvatar" class="avatar" alt="User Avatar" onclick="toggleProfileSidebar()" style="cursor: pointer;" title="View Profile Progress" />
+          <span class="role">DEV</span>
+        </div>
+
+        
+        
+        
+        <div class="header-action-btns" style="display: flex; flex-direction: column; gap: 8px;">
+          <button onclick="logout()" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+          
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <ul>
+          <li class="active" onclick="showSection('dashboard')">
+            <i class="fas fa-gauge-high"></i> Dashboard
+          </li>
+          <li onclick="showSection('assigned')">
+            <i class="fas fa-tasks"></i> Assigned Projects
+          </li>
+          <li onclick="showSection('ongoing')">
+            <i class="fas fa-spinner"></i> Ongoing Projects
+          </li>
+          <li onclick="showSection('completed')">
+            <i class="fas fa-check-circle"></i> Completed Projects
+          </li>
+          <li onclick="showSection('attendance')">
+            <i class="fas fa-user-check"></i> Attendance
+          </li>
+          <li onclick="showSection('salary')">
+            <i class="fas fa-wallet"></i> Salary
+          </li>
+          <li onclick="showSection('daily-work')" style="display: flex; align-items: center; justify-content: space-between; padding-right: 15px;">
+            <div><i class="fas fa-calendar-day"></i> Daily Work</div>
+            <span id="dailyWorkTaskBadge" style="display: none; background: #ef4444; color: white; border-radius: 50%; min-width: 20px; height: 20px; text-align: center; line-height: 20px; font-size: 11px; font-weight: bold; padding: 0 4px;"></span>
+          </li>
+          <li id="taskManagementNav" onclick="showSection('task-management')" style="display: none; align-items: center; justify-content: space-between; padding-right: 15px;">
+            <div><i class="fas fa-clipboard-list"></i> Task Management</div>
+            <span id="taskBadge" style="display: none; background: #ef4444; color: white; border-radius: 50%; min-width: 20px; height: 20px; text-align: center; line-height: 20px; font-size: 11px; font-weight: bold; padding: 0 4px;"></span>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Main -->
+      <main class="main-content">
+        <div id="dashboard" class="section active">
+          <div class="dashboard-title-row">
+            <div>
+              <h2>Dashboard</h2>
+              <p>Project overview & performance</p>
+            </div>
+            <button
+              type="button"
+              class="refresh-dashboard-btn"
+              onclick="loadDevDashboard()"
+            >
+              <i class="fas fa-rotate-right"></i>
+            </button>
+          </div>
+
+          <div class="dashboard-metrics dashboard-metrics-4">
+            <div
+              class="metric-card assigned"
+              role="button"
+              tabindex="0"
+              onclick="showSection('assigned')"
+              onkeydown="handleDashboardShortcutKey(event, 'assigned')"
+            >
+              <div class="metric-icon"><i class="fas fa-tasks"></i></div>
+              <div>
+                <span>Assigned</span>
+                <strong id="dashboardAssignedCount">0</strong>
+                <small>Projects</small>
+              </div>
+            </div>
+            <div
+              class="metric-card ongoing"
+              role="button"
+              tabindex="0"
+              onclick="showSection('ongoing')"
+              onkeydown="handleDashboardShortcutKey(event, 'ongoing')"
+            >
+              <div class="metric-icon"><i class="fas fa-spinner"></i></div>
+              <div>
+                <span>Ongoing</span>
+                <strong id="dashboardOngoingCount">0</strong>
+                <small>In progress</small>
+              </div>
+            </div>
+            <div
+              class="metric-card completed"
+              role="button"
+              tabindex="0"
+              onclick="showSection('completed')"
+              onkeydown="handleDashboardShortcutKey(event, 'completed')"
+            >
+              <div class="metric-icon"><i class="fas fa-check-circle"></i></div>
+              <div>
+                <span>Completed</span>
+                <strong id="dashboardCompletedCount">0</strong>
+                <small>Delivered</small>
+              </div>
+            </div>
+            <div
+              class="metric-card attendance"
+              role="button"
+              tabindex="0"
+              onclick="showSection('attendance')"
+              onkeydown="handleDashboardShortcutKey(event, 'attendance')"
+            >
+              <div class="metric-icon"><i class="fas fa-user-check"></i></div>
+              <div>
+                <span>Attendance</span>
+                <strong id="dashboardAttendance">Not marked</strong>
+                <small id="dashboardAttendanceTime">Check in pending</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-panels">
+            <div class="dashboard-panel chart-panel">
+              <div class="panel-heading">
+                <h3>Work Distribution</h3>
+                <span>Assigned vs ongoing vs completed</span>
+              </div>
+              <canvas id="devDashboardChart"></canvas>
+            </div>
+            <div class="dashboard-panel funnel-panel-dashboard">
+              <div class="panel-heading">
+                <h3>Work Funnel</h3>
+                <span id="devDashboardFunnelRate">0% completion</span>
+              </div>
+              <div class="admin-funnel">
+                <div id="workFunnelAssignedRow" class="funnel-row funnel-blue" role="button" tabindex="0" onclick="showSection('assigned')" onkeydown="handleDashboardShortcutKey(event, 'assigned')"><span>Assigned</span><b id="workFunnelAssigned">0</b></div>
+                <div id="workFunnelOngoingRow" class="funnel-row funnel-green" role="button" tabindex="0" onclick="showSection('ongoing')" onkeydown="handleDashboardShortcutKey(event, 'ongoing')"><span>Ongoing</span><b id="workFunnelOngoing">0</b></div>
+                <div id="workFunnelCompletedRow" class="funnel-row funnel-orange" role="button" tabindex="0" onclick="showSection('completed')" onkeydown="handleDashboardShortcutKey(event, 'completed')"><span>Completed</span><b id="workFunnelCompleted">0</b></div>
+                <div id="workFunnelAttendanceRow" class="funnel-row funnel-pink" role="button" tabindex="0" onclick="showSection('attendance')" onkeydown="handleDashboardShortcutKey(event, 'attendance')"><span>Checked In</span><b id="workFunnelAttendance">0</b></div>
+              </div>
+              <div class="conversion-pill">Completion Rate: <strong id="devFunnelConversionRate">0%</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="assigned" class="section">
+          <h2>Assigned Projects</h2>
+          <input
+            type="text"
+            id="assignedSearch"
+            placeholder="Search assigned projects..."
+            onkeyup="filterCards('assignedContainer', 'assignedSearch')"
+            class="search-box"
+          />
+          <div class="card-grid" id="assignedContainer">
+            <p class="loading">Loading assigned projects...</p>
+          </div>
+        </div>
+
+        <div id="ongoing" class="section">
+          <h2>Ongoing Projects</h2>
+          <input
+            type="text"
+            id="ongoingSearch"
+            placeholder="Search ongoing projects..."
+            onkeyup="filterCards('ongoingContainer', 'ongoingSearch')"
+            class="search-box"
+          />
+          <div class="card-grid" id="ongoingContainer">
+            <p class="loading">Loading ongoing projects...</p>
+          </div>
+        </div>
+
+        <div id="completed" class="section">
+          <h2>Completed Projects</h2>
+          <input
+            type="text"
+            id="completedSearch"
+            placeholder="Search completed projects..."
+            onkeyup="filterCards('completedContainer', 'completedSearch')"
+            class="search-box"
+          />
+          <div class="card-grid" id="completedContainer">
+            <p class="loading">Loading completed projects...</p>
+          </div>
+        </div>
+
+        <div id="attendance" class="section">
+          <h2>Attendance</h2>
+          <div class="attendance-filter-bar">
+            <label for="attendanceMonthFilter">
+              <i class="fas fa-calendar-days"></i>
+              <span>Month</span>
+            </label>
+            <input
+              type="month"
+              id="attendanceMonthFilter"
+              onchange="fetchAttendance()"
+              title="Filter attendance by month"
+            />
+          </div>
+          <input
+            type="text"
+            id="attendanceSearch"
+            placeholder="Search attendance..."
+            onkeyup="filterTable('attendanceTableBody', 'attendanceSearch')"
+            class="search-box"
+          />
+          <div class="attendance-actions" id="attendanceActions"></div>
+          <div class="table-responsive" id="attendanceContainer">
+            <table class="summary-table attendance-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Check In</th>
+                  <th>Check Out</th>
+                  <th>Check-in Location</th>
+                  <th>Working Hours</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceTableBody">
+                <tr>
+                  <td colspan="6">No attendance records found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        
+                        <div id="daily-work" class="section">
+          <div class="log-table-container">
+            <div class="log-table-header">
+              <h2><i class="fas fa-calendar-check"></i> Daily Work Log</h2>
+              <button class="action-btn" onclick="openDailyWorkModal()" style="background:var(--admin-accent, #0f766e); color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:bold;"><i class="fas fa-plus"></i> Add Work</button>
+            </div>
+            
+            <div class="log-table-filters">
+              <div>
+                <label>Month</label><br>
+                <input type="month" id="dwMonthFilter" onchange="loadDailyWork()" />
+              </div>
+              <div>
+                <label>Date</label><br>
+                <input type="date" id="dwDateFilter" onchange="loadDailyWork()" />
+              </div>
+              <div class="log-table-filter-sep"></div>
+              <div>
+                <label>Search</label><br>
+                <input type="text" id="dwSearch" placeholder="Search..." onkeyup="filterTable('dwTableBody', 'dwSearch')" class="search-box" style="width:200px;" />
+              </div>
+            </div>
+
+            <div class="log-table-wrapper">
+              <table class="log-table">
+                <thead>
+                  <tr id="dwTableHead">
+                    <!-- Dynamic headers injected here -->
+                  </tr>
+                </thead>
+                <tbody id="dwTableBody">
+                  <tr><td colspan="10" style="text-align:center; padding: 20px;">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="salary" class="section">
+          <div data-payroll-scope="self" data-payroll-role-label="DEV"></div>
+        </div>
+
+        <div id="reports" class="section">
+          <h2>Performance Reports</h2>
+
+          <div class="report-grid">
+            <div class="report-card">
+              <h3>Assigned</h3>
+              <h2 id="totalAssigned">0</h2>
+            </div>
+
+            <div class="report-card">
+              <h3>Ongoing</h3>
+              <h2 id="totalOngoing">0</h2>
+            </div>
+
+            <div class="report-card">
+              <h3>Completed</h3>
+              <h2 id="totalCompleted">0</h2>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="reportChart"></canvas>
+          </div>
+        </div>
+
+        <div id="task-management" class="section">
+          <h2 class="tm-heading">Task Management</h2>
+          <style>
+            #task-management { --tm-color: #0f766e; --tm-border: #99f6e4; --tm-focus: rgba(15, 118, 110, 0.15); --tm-grad-1: #0f766e; --tm-grad-2: #14b8a6; }
+            #task-management.theme-red { --tm-color: #dc2626; --tm-border: #fecaca; --tm-focus: rgba(220, 38, 38, 0.15); --tm-grad-1: #dc2626; --tm-grad-2: #ef4444; }
+            #task-management.theme-green { --tm-color: #0f766e; --tm-border: #99f6e4; --tm-focus: rgba(15, 118, 110, 0.15); --tm-grad-1: #0f766e; --tm-grad-2: #14b8a6; }
+            
+            #task-management .tm-heading { color: var(--tm-color); border-bottom: 2px solid var(--tm-border); padding-bottom: 8px; }
+            #task-management .tm-subheading { color: var(--tm-color); font-size: 20px; font-weight: 600; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+            #task-management .tm-subheading-2 { color: var(--tm-color); font-size: 20px; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 8px; }
+            
+            #assignTaskBox input:focus, #assignTaskBox select:focus, #assignTaskBox textarea:focus, #devTasksSearch:focus, #leaderRemarkNote:focus {
+              border-color: var(--tm-color) !important;
+              box-shadow: 0 0 0 3px var(--tm-focus) !important;
+            }
+            #assignTaskBox button.tm-btn {
+              background: linear-gradient(135deg, var(--tm-grad-1) 0%, var(--tm-grad-2) 100%);
+              color: #ffffff; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14.5px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
+            }
+            #assignTaskBox button.tm-btn:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 15px var(--tm-focus);
+            }
+            #devTasksTableBody td {
+              padding: 14px 15px;
+              color: #334155;
+              border-bottom: 1px solid #e2e8f0;
+              font-size: 14px;
+            }
+            #devTasksTableBody tr:hover {
+              background: #f8fafc;
+            }
+            .tm-task-id {
+              color: var(--tm-color); font-weight: 700;
+            }
+          </style>
+
+          <div id="assignTaskBox" class="card" style="display: none; padding: 25px; margin-bottom: 25px;">
+            <h3 class="tm-subheading">
+              <i class="fas fa-plus-circle"></i> Assign New Task
+            </h3>
+            <form id="assignTaskForm" onsubmit="handleAssignTask(event)">
+              <div style="display: flex; gap: 20px; margin-bottom: 18px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px;">
+                  <label style="display: block; font-size: 13.5px; font-weight: 600; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Assign To</label>
+                  <select id="assignTaskUser" required style="width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; color: #1e293b; font-size: 14.5px; outline: none; transition: all 0.2s;">
+                    <option value="">Loading DEVs...</option>
+                  </select>
+                </div>
+                <div style="flex: 2; min-width: 300px;">
+                  <label style="display: block; font-size: 13.5px; font-weight: 600; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Task Title</label>
+                  <input type="text" id="assignTaskTitle" required placeholder="E.g., Build the new UI component" style="width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; color: #1e293b; font-size: 14.5px; outline: none; transition: all 0.2s;">
+                </div>
+              </div>
+              <div style="margin-bottom: 22px;">
+                <label style="display: block; font-size: 13.5px; font-weight: 600; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Description <span style="color: red;">*</span></label>
+                <textarea id="assignTaskDesc" required rows="3" placeholder="Task description and requirements (Mandatory)..." style="width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; color: #1e293b; font-size: 14.5px; outline: none; transition: all 0.2s; resize: vertical;"></textarea>
+              </div>
+              <button type="submit" class="tm-btn">
+                <i class="fab fa-whatsapp" style="font-size: 18px;"></i> Assign & Notify
+              </button>
+            </form>
+          </div>
+
+          <div id="taskListCard" class="card" style="padding: 25px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; flex-wrap: wrap; gap: 15px;">
+              <h3 class="tm-subheading-2">
+                <i class="fas fa-list-check"></i> Tasks List
+              </h3>
+              <div id="devTasksSearchContainer" style="position: relative; width: 300px; max-width: 100%;">
+                <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #64748b;"></i>
+                <input type="text" id="devTasksSearch" placeholder="Filter by Employee Name, Task..." onkeyup="filterTable('devTasksTableBody', 'devTasksSearch')" style="width: 100%; padding: 10px 15px 10px 35px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; color: #1e293b; font-size: 14px; outline: none; transition: all 0.2s;">
+              </div>
+            </div>
+
+            <!-- Task Filter Tabs Bar -->
+            <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
+              <button type="button" class="dev-task-tab-btn active" data-filter="all" onclick="setDevTaskFilter('all')" style="background: var(--tm-color, #0f766e); color: #ffffff; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                <i class="fas fa-th-list"></i> All Tasks
+              </button>
+              <button type="button" id="tabBtnAssignedByMe" class="dev-task-tab-btn" data-filter="assigned_by_me" onclick="setDevTaskFilter('assigned_by_me')" style="display: none; background: #f1f5f9; color: #475569; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                <i class="fas fa-user-check"></i> Assigned by Me
+              </button>
+              <button type="button" class="dev-task-tab-btn" data-filter="incomplete" onclick="setDevTaskFilter('incomplete')" style="background: #f1f5f9; color: #475569; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                <i class="fas fa-spinner"></i> Incomplete / Pending
+              </button>
+              <button type="button" class="dev-task-tab-btn" data-filter="carried_forward" onclick="setDevTaskFilter('carried_forward')" style="background: #f1f5f9; color: #475569; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                <i class="fas fa-calendar-day"></i> Next Day Carried Forward
+              </button>
+              <button type="button" class="dev-task-tab-btn" data-filter="completed" onclick="setDevTaskFilter('completed')" style="background: #f1f5f9; color: #475569; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                <i class="fas fa-check-circle"></i> Completed
+              </button>
+
+              <div style="margin-left: auto; display: flex; gap: 10px; flex-wrap: wrap;">
+                <select id="devTaskAssigneeFilter" onchange="setDevTaskAssigneeFilter(this.value)" style="display: none; background: #ffffff; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; outline: none; cursor: pointer; transition: all 0.2s;">
+                  <option value="all">Filter by DEV (All DEVs)</option>
+                </select>
+                <select id="devTaskAssignerFilter" onchange="setDevTaskAssignerFilter(this.value)" style="background: #ffffff; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; outline: none; cursor: pointer; transition: all 0.2s;">
+                  <option value="all">Filter by Lead (All Leads)</option>
+                </select>
+              </div>
+            </div>
+            <div style="overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+              <table id="devTasksTable" style="width: 100%; border-collapse: collapse; text-align: left; background: #ffffff;">
+                <thead style="background: #f8fafc;">
+                  <tr>
+                    <th style="padding: 14px 15px; font-weight: 600; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0;">ID</th>
+                    <th style="padding: 14px 15px; font-weight: 600; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0;">Title</th>
+                    <th style="padding: 14px 15px; font-weight: 600; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0;">Assigned By</th>
+                    <th style="padding: 14px 15px; font-weight: 600; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0;">Assigned To</th>
+                    <th style="padding: 14px 15px; font-weight: 600; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0;">Status</th>
+                    <th style="padding: 14px 15px; font-weight: 600; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0;">Lead Remark</th>
+                    <th style="padding: 14px 15px; font-weight: 600; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0;">Daily Progress</th>
+                    <th style="padding: 14px 15px; font-weight: 600; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0;">Created At</th>
+                  </tr>
+                </thead>
+                <tbody id="devTasksTableBody">
+                  <tr><td colspan="8" style="text-align: center; padding: 30px; color: #64748b; font-size: 15px;">Loading tasks...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Popup -->
+    <div id="popup" class="popup hidden">
+      <div class="popup-content">
+        <i id="popupIcon"></i>
+        <h3 id="popupTitle"></h3>
+        <p id="popupMessage"></p>
+      </div>
+    </div>
+
+    <div id="statusModal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Update Project Status</h2>
+        <p>Select current status</p>
+
+        <div class="modal-actions">
+          <button
+            class="btn in-progress"
+            onclick="updateProjectStatus('ongoing')"
+          >
+            In Progress
+          </button>
+
+          <button
+            class="btn completed"
+            onclick="updateProjectStatus('completed')"
+          >
+            Completed
+          </button>
+        </div>
+
+        <button class="close-btn" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+
+    <div id="phaseTrackerModal" class="modal phase-tracker-modal hidden">
+      <div class="phase-tracker-dialog">
+        <div class="phase-tracker-header">
+          <div>
+            <span class="phase-tracker-kicker">Project Phase Tracker</span>
+            <h2 id="phaseTrackerTitle">Loading project...</h2>
+            <p id="phaseTrackerSubtitle">
+              Fill every phase with status, dates, blockers and delivery notes.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="phase-tracker-close"
+            onclick="closePhaseTracker()"
+            aria-label="Close phase tracker"
+          >
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+
+        <div id="phaseTrackerOverview" class="phase-tracker-overview">
+          <div class="phase-tracker-loading">Loading project overview...</div>
+        </div>
+
+        <div id="phaseTrackerBody" class="phase-tracker-body">
+          <div class="phase-tracker-loading">Loading phase details...</div>
+        </div>
+
+        <div class="phase-tracker-footer">
+          <span id="phaseTrackerSaveNote">
+            Saving here updates the overall project stage and progress automatically.
+          </span>
+
+          <div class="phase-tracker-actions">
+            <button type="button" class="btn gray" onclick="closePhaseTracker()">
+              Close
+            </button>
+            <button
+              type="button"
+              id="phaseTrackerSaveBtn"
+              class="btn cyan-btn"
+              onclick="savePhaseTracker()"
+            >
+              Save Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="taskProgressModal" class="modal hidden">
+      <div class="modal-content" style="max-width: 540px; padding: 25px; border-radius: 12px; background: #ffffff;">
+        <h3 style="margin-top: 0; color: #0f172a; font-size: 20px; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-clipboard-list" style="color: #0d9488;"></i> Add Task Progress
+        </h3>
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Log your daily task progress. Description is mandatory, URLs and Screenshots are optional.</p>
+        
+        <input type="hidden" id="progressTaskId" value="">
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px;">Progress Description <span style="color: red;">*</span></label>
+          <textarea id="progressTaskNote" required rows="4" placeholder="Describe the work completed today (Mandatory)..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; font-size: 14px; font-family: inherit; resize: vertical;"></textarea>
+        </div>
+
+        <!-- Multiple URLs -->
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px;">Demo / Work Links <span style="color: #64748b; font-weight: normal;">(Optional, Multiple)</span></label>
+          <div id="progressTaskUrlsContainer" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
+          <button type="button" onclick="addDevProgressUrlInput()" style="background: #f1f5f9; color: #0d9488; border: 1px dashed #0d9488; padding: 6px 12px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px;">
+            <i class="fas fa-plus"></i> Add Another Link
+          </button>
+        </div>
+
+        <!-- Multiple Images -->
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px;">Screenshots / Images <span style="color: #64748b; font-weight: normal;">(Optional, Multiple Images)</span></label>
+          <input type="file" id="progressTaskImages" accept="image/*" multiple style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; font-size: 13px;">
+        </div>
+        
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" onclick="closeTaskProgressModal()" style="background: #f1f5f9; color: #475569; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;">Cancel</button>
+          <button type="button" onclick="submitTaskProgress()" id="progressTaskSubmitBtn" style="background: #0d9488; color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;">Save Progress</button>
+        </div>
+      </div>
+    </div>
+    <div id="taskLeaderRemarkModal" class="modal hidden">
+      <div class="modal-content" style="max-width: 540px; padding: 25px; border-radius: 12px; background: #ffffff;">
+        <h3 style="margin-top: 0; color: #0f172a; font-size: 20px; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-calendar-day" style="color: #0f766e;"></i> Next Day Carry Forward & Lead Remark
+        </h3>
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 20px; line-height: 1.4;">Review developer updates and write instructions for remaining work to be completed tomorrow.</p>
+
+        <input type="hidden" id="leaderRemarkTaskId" value="">
+        <textarea id="leaderRemarkNote" rows="5" placeholder="E.g., Remaining API integration & testing left. Complete this by tomorrow 2 PM..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; font-size: 14px; margin-bottom: 20px; font-family: inherit; resize: vertical;"></textarea>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" onclick="closeLeaderRemarkModal(true)" style="background: #f1f5f9; color: #475569; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;">Cancel</button>
+          <button type="button" onclick="submitLeaderRemark()" id="leaderRemarkSubmitBtn" style="background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;">Save Lead Remark</button>
+        </div>
+      </div>
+    </div>
+    <script src="payroll-management.js?v=20260730-responsive-v1"></script>
+    <script src="attendance-face.js?v=20260602-live-face-v1"></script>
+    <script src="dev.js?v=20260822-dev-task-remarks-v2"></script>
+    <script src="attendance-auto-checkout.js"></script>
+    <script src="leave-management.js"></script>
+    <script src="crm-security.js?v=20260601-fetch-scope-v2"></script>
+    <script src="daily-work.js"></script>
+    <script src="profile-sidebar.js"></script>
+</body>
+</html>

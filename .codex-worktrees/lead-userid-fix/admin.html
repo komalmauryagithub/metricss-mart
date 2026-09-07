@@ -1,0 +1,2130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel</title>
+    <link rel="icon" type="image/png" href="logo_.png" />
+
+    <link rel="stylesheet" href="admin.css?v=20260526-mobile-layout" />
+    <link rel="stylesheet" href="payroll-management.css" />
+    <link rel="stylesheet" href="leave-management.css" />
+    <link rel="stylesheet" href="project-tracker.css" />
+    <link rel="stylesheet" href="crm-security.css?v=20260527-proposal-actions-scroll" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-left">
+        <div class="brand-title">
+          <img src="logo_.png" alt="Metrics Mart" class="brand-logo" />
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="welcome">
+          Welcome, <span id="userName">Loading...</span>
+        </div>
+
+        <div class="user-info">
+          <img id="userAvatar" class="avatar" alt="User Avatar" />
+          <span class="role">ADMIN</span>
+        </div>
+
+        <button onclick="logout()" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <ul>
+          <li class="active" onclick="showSection('dashboard')">
+            <i class="fas fa-gauge-high"></i> Dashboard
+          </li>
+          <li onclick="showSection('leads')">
+            <i class="fas fa-users"></i> Leads
+          </li>
+          <li onclick="showSection('appointments')">
+            <i class="fas fa-calendar-check"></i> Appointments
+          </li>
+          <li onclick="showSection('followups')">
+            <i class="fas fa-check-circle"></i> Follow Ups
+          </li>
+          <li onclick="showSection('deals')">
+            <i class="fas fa-handshake"></i> Deals
+          </li>
+          <li onclick="showSection('renewals')">
+            <i class="fas fa-rotate"></i> Renewals
+          </li>
+          <li onclick="showSection('notifications')">
+            <i class="fas fa-bell"></i> Notifications
+          </li>
+          <li onclick="showSection('projects')">
+            <i class="fas fa-tasks"></i> Projects
+          </li>
+
+          <li onclick="showSection('team')">
+            <i class="fas fa-user-group"></i> Team
+          </li>
+
+          <li onclick="showSection('attendance')">
+            <i class="fas fa-calendar-days"></i> Attendance
+          </li>
+          <li onclick="showSection('salary')">
+            <i class="fas fa-wallet"></i> Salary Management
+          </li>
+          <li onclick="showSection('proposals')">
+            <i class="fas fa-file-signature"></i> Proposals
+          </li>
+          <!-- Proposal Templates temporarily hidden from admin panel.
+          <li onclick="showSection('proposalTemplates')">
+            <i class="fas fa-file-lines"></i> Proposal Templates
+          </li>
+          -->
+        </ul>
+      </aside>
+
+      <main class="main-content">
+        <div id="dashboard" class="section active admin-dashboard">
+          <div class="admin-dashboard-top">
+            <div>
+              <h2>Dashboard</h2>
+              <p>Welcome back, Admin! Here is today's CRM command center.</p>
+            </div>
+            <div class="admin-dashboard-actions">
+              <button
+                type="button"
+                class="icon-action-btn"
+                onclick="refreshAdminDashboardView()"
+                title="Refresh dashboard"
+              >
+                <i class="fas fa-rotate-right"></i>
+              </button>
+              <button
+                type="button"
+                class="primary-action-btn"
+                onclick="openAdminTeamRegistration()"
+              >
+                <i class="fas fa-plus"></i> Add User
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-kpi-grid">
+            <button
+              type="button"
+              class="admin-kpi-card blue"
+              onclick="openAdminSection('leads')"
+            >
+              <span class="kpi-icon"><i class="fas fa-users"></i></span>
+              <span>Total Leads</span>
+              <strong id="adminTotalLeads">0</strong>
+              <small id="adminLeadTrend">Live CRM data</small>
+            </button>
+            <button
+              type="button"
+              class="admin-kpi-card green"
+              onclick="openAdminSection('team')"
+            >
+              <span class="kpi-icon"><i class="fas fa-user-check"></i></span>
+              <span>Total Team</span>
+              <strong id="adminTotalTeam">0</strong>
+              <small>Active users except admin</small>
+            </button>
+            <button
+              type="button"
+              class="admin-kpi-card violet"
+              onclick="openAdminSection('deals')"
+            >
+              <span class="kpi-icon"><i class="fas fa-briefcase"></i></span>
+              <span>Open Deals</span>
+              <strong id="adminOpenDeals">0</strong>
+              <small id="adminDealTrend">Closed pipeline</small>
+            </button>
+            <button
+              type="button"
+              class="admin-kpi-card amber"
+              onclick="openAdminSection('deals')"
+            >
+              <span class="kpi-icon"
+                ><i class="fas fa-indian-rupee-sign"></i
+              ></span>
+              <span>Total Revenue</span>
+              <strong id="adminTotalRevenue">Rs. 0</strong>
+              <small>Received payments</small>
+            </button>
+            <button
+              type="button"
+              class="admin-kpi-card rose"
+              onclick="openAdminSection('deals')"
+            >
+              <span class="kpi-icon"><i class="fas fa-bullseye"></i></span>
+              <span>Conversion Rate</span>
+              <strong id="adminConversionRate">0%</strong>
+              <small>Deals from leads</small>
+            </button>
+            <button
+              type="button"
+              class="admin-kpi-card cyan-card"
+              onclick="openAdminSection('followups')"
+            >
+              <span class="kpi-icon"
+                ><i class="fas fa-clipboard-check"></i
+              ></span>
+              <span>Pending Follow Ups</span>
+              <strong id="adminPendingTasks">0</strong>
+              <small>Requires attention</small>
+            </button>
+          </div>
+
+          <div class="admin-dashboard-grid">
+            <section class="admin-panel leads-overview-panel" data-dashboard-section="leads" role="button" tabindex="0">
+              <div class="panel-heading">
+                <div>
+                  <h3>Leads Overview</h3>
+                  <p>This week performance</p>
+                </div>
+                <button type="button" onclick="refreshAdminDashboardView()">
+                  This Week <i class="fas fa-chevron-down"></i>
+                </button>
+              </div>
+              <canvas id="adminLeadsOverviewChart"></canvas>
+            </section>
+
+            <section class="admin-panel source-panel" data-dashboard-section="leads" role="button" tabindex="0">
+              <div class="panel-heading">
+                <div>
+                  <h3>Leads by Source</h3>
+                  <p>Channel distribution</p>
+                </div>
+              </div>
+              <div class="source-chart-wrap">
+                <canvas id="adminLeadSourceChart"></canvas>
+              </div>
+              <div id="adminSourceLegend" class="source-legend"></div>
+            </section>
+
+            <section class="admin-panel funnel-panel-admin" data-dashboard-section="leads" role="button" tabindex="0">
+              <div class="panel-heading">
+                <div>
+                  <h3>Sales Funnel</h3>
+                  <p>Lead to win journey</p>
+                </div>
+              </div>
+              <div class="admin-funnel">
+                <div
+                  id="adminMainFunnelLeadsRow"
+                  class="funnel-row funnel-blue"
+                  role="button"
+                  tabindex="0"
+                  onclick="openAdminSection('leads')"
+                  onkeydown="handleDashboardShortcutKey(event, 'leads')"
+                >
+                  <span>Leads</span><b id="funnelTotalLeads">0</b>
+                </div>
+                <div
+                  id="adminMainFunnelAppointmentsRow"
+                  class="funnel-row funnel-green"
+                  role="button"
+                  tabindex="0"
+                  onclick="openAdminSection('appointments')"
+                  onkeydown="handleDashboardShortcutKey(event, 'appointments')"
+                >
+                  <span>Appointments</span><b id="funnelAppointments">0</b>
+                </div>
+                <div
+                  id="adminMainFunnelFollowupsRow"
+                  class="funnel-row funnel-orange"
+                  role="button"
+                  tabindex="0"
+                  onclick="openAdminSection('followups')"
+                  onkeydown="handleDashboardShortcutKey(event, 'followups')"
+                >
+                  <span>Follow Ups</span><b id="funnelFollowups">0</b>
+                </div>
+                <div
+                  id="adminMainFunnelDealsRow"
+                  class="funnel-row funnel-pink"
+                  role="button"
+                  tabindex="0"
+                  onclick="openAdminSection('deals')"
+                  onkeydown="handleDashboardShortcutKey(event, 'deals')"
+                >
+                  <span>Deals</span><b id="funnelDeals">0</b>
+                </div>
+              </div>
+              <div class="conversion-pill">
+                Overall Conversion Rate:
+                <strong id="funnelConversionRate">0%</strong>
+              </div>
+            </section>
+
+            <aside class="admin-panel activity-panel" data-dashboard-section="notifications" role="button" tabindex="0">
+              <div class="panel-heading">
+                <div>
+                  <h3>Activity Feed</h3>
+                  <p>Latest updates</p>
+                </div>
+              </div>
+              <div id="adminActivityFeed" class="activity-feed"></div>
+            </aside>
+          </div>
+
+          <div class="admin-dashboard-bottom">
+            <section class="admin-panel" data-dashboard-section="leads" role="button" tabindex="0">
+              <div class="panel-heading">
+                <div>
+                  <h3>Recent Leads</h3>
+                  <p>Newest enquiries</p>
+                </div>
+                <button type="button" onclick="openAdminSection('leads')">
+                  View All Leads
+                </button>
+              </div>
+              <div class="table-responsive">
+                <table class="admin-mini-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Source</th>
+                      <th>Phone</th>
+                      <th>Status</th>
+                      <th>Assigned To</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminRecentLeads">
+                    <tr>
+                      <td colspan="6">Loading recent leads...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="admin-panel" data-dashboard-section="followups" role="button" tabindex="0">
+              <div class="panel-heading">
+                <div>
+                  <h3>Upcoming Follow Ups</h3>
+                  <p>Next conversations</p>
+                </div>
+                <button type="button" onclick="openAdminSection('followups')">
+                  View Follow Ups
+                </button>
+              </div>
+              <div class="table-responsive">
+                <table class="admin-mini-table">
+                  <thead>
+                    <tr>
+                      <th>Lead / Contact</th>
+                      <th>Type</th>
+                      <th>Assigned To</th>
+                      <th>Follow Up Date</th>
+                      <th>Priority</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminUpcomingFollowups">
+                    <tr>
+                      <td colspan="5">Loading follow ups...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="admin-panel tasks-panel" data-dashboard-section="followups" role="button" tabindex="0">
+              <div class="panel-heading">
+                <div>
+                  <h3>Tasks Overview</h3>
+                  <p>Workload snapshot</p>
+                </div>
+              </div>
+              <div class="task-list">
+                <div>
+                  <span><i class="fas fa-calendar-day"></i> Due Today</span
+                  ><b id="taskDueToday">0</b>
+                </div>
+                <div>
+                  <span><i class="fas fa-calendar-week"></i> Due This Week</span
+                  ><b id="taskDueWeek">0</b>
+                </div>
+                <div>
+                  <span><i class="fas fa-circle-check"></i> Won Deals</span
+                  ><b id="taskCompletedWeek">0</b>
+                </div>
+                <div>
+                  <span
+                    ><i class="fas fa-triangle-exclamation"></i> Payment
+                    Pending</span
+                  ><b id="taskOverdue">0</b>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="wide-action-btn"
+                onclick="openAdminSection('followups')"
+              >
+                View All Tasks
+              </button>
+            </aside>
+          </div>
+
+          <section class="admin-dashboard-extra">
+            <div class="dashboard-title-row">
+              <div>
+                <h2>Sales Target Snapshot</h2>
+                <p>Extra admin insights synced with your live CRM data.</p>
+              </div>
+            </div>
+
+            <div class="sales-target-strip admin-target-strip">
+              <article class="sales-target-card set">
+                <div class="sales-target-icon">
+                  <i class="fas fa-bullseye"></i>
+                </div>
+                <div>
+                  <span>Monthly Target</span>
+                  <strong id="adminTargetSet">Rs. 0</strong>
+                  <small id="adminTargetSetHint">Current monthly goal</small>
+                </div>
+              </article>
+
+              <article class="sales-target-card achieved">
+                <div class="sales-target-icon">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                  <span>Achieved</span>
+                  <strong id="adminTargetAchieved">Rs. 0</strong>
+                  <small id="adminTargetAchievedHint">Target Rs. 0</small>
+                </div>
+              </article>
+
+              <article class="sales-target-card remaining">
+                <div class="sales-target-icon">
+                  <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div>
+                  <span>Remaining</span>
+                  <strong id="adminTargetRemaining">Rs. 0</strong>
+                  <small id="adminTargetRemainingHint"
+                    >Pending from target</small
+                  >
+                </div>
+              </article>
+            </div>
+
+            <div class="dashboard-panels">
+              <section
+                class="dashboard-panel chart-panel target-progress-panel"
+                data-dashboard-section="deals"
+                role="button"
+                tabindex="0"
+              >
+                <div class="sales-target-header">
+                  <div>
+                    <h3>Target Progress</h3>
+                    <p id="adminTargetProgressLabel">0% achieved</p>
+                  </div>
+                </div>
+                <canvas id="adminTargetProgressChart"></canvas>
+              </section>
+
+              <section class="dashboard-panel chart-panel" data-dashboard-section="deals" role="button" tabindex="0">
+                <div class="panel-heading">
+                  <div>
+                    <h3>Sales Performance</h3>
+                    <span>Leads to deals comparison</span>
+                  </div>
+                </div>
+                <canvas id="adminDashboardChart"></canvas>
+              </section>
+            </div>
+
+            <section class="dashboard-panel team-target-board-panel" data-dashboard-section="team" role="button" tabindex="0">
+              <div class="sales-target-header">
+                <div>
+                  <h3>ME & TME Target Board</h3>
+                  <p id="adminTeamTargetsSummary">
+                    Auto salary targets and monitor live achievement.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  class="refresh-dashboard-btn"
+                  onclick="loadAdminTeamTargetsSummary(true)"
+                  title="Refresh team targets"
+                >
+                  <i class="fas fa-rotate-right"></i>
+                </button>
+              </div>
+              <div id="adminTeamTargetsList" class="team-target-board">
+                <div class="team-target-empty">Loading target board...</div>
+              </div>
+            </section>
+
+            <div class="dashboard-metrics">
+              <button
+                type="button"
+                class="metric-card sales"
+                onclick="openAdminSection('deals')"
+              >
+                <span class="metric-icon"
+                  ><i class="fas fa-indian-rupee-sign"></i
+                ></span>
+                <div>
+                  <span>Closed Revenue</span>
+                  <strong id="adminDashboardSales">Rs. 0</strong>
+                  <small id="adminDashboardSalesHint">From closed deals</small>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                class="metric-card deals"
+                onclick="openAdminSection('deals')"
+              >
+                <span class="metric-icon"><i class="fas fa-star"></i></span>
+                <div>
+                  <span>New Sale</span>
+                  <strong id="adminDashboardNewSale">0</strong>
+                  <small id="adminDashboardNewSaleHint">Fresh client wins</small>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                class="metric-card projects"
+                onclick="openAdminSection('renewals')"
+              >
+                <span class="metric-icon"><i class="fas fa-rotate"></i></span>
+                <div>
+                  <span>Renewal</span>
+                  <strong id="adminDashboardRenewal">0</strong>
+                  <small id="adminDashboardRenewalHint">Repeat client wins</small>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                class="metric-card leads"
+                onclick="openAdminSection('leads')"
+              >
+                <span class="metric-icon"><i class="fas fa-users"></i></span>
+                <div>
+                  <span>Total Leads</span>
+                  <strong id="adminDashboardLeads">0</strong>
+                  <small>All enquiries</small>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                class="metric-card appointments"
+                onclick="openAdminSection('appointments')"
+              >
+                <span class="metric-icon"
+                  ><i class="fas fa-calendar-check"></i
+                ></span>
+                <div>
+                  <span>Appointments</span>
+                  <strong id="adminDashboardAppointments">0</strong>
+                  <small>Scheduled meetings</small>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                class="metric-card followups"
+                onclick="openAdminSection('followups')"
+              >
+                <span class="metric-icon"
+                  ><i class="fas fa-phone-volume"></i
+                ></span>
+                <div>
+                  <span>Follow Ups</span>
+                  <strong id="adminDashboardFollowups">0</strong>
+                  <small>Open conversations</small>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                class="metric-card deals"
+                onclick="openAdminSection('deals')"
+              >
+                <span class="metric-icon"
+                  ><i class="fas fa-handshake"></i
+                ></span>
+                <div>
+                  <span>Deals</span>
+                  <strong id="adminDashboardDeals">0</strong>
+                  <small>Converted clients</small>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                class="metric-card projects"
+                onclick="openAdminSection('projects')"
+              >
+                <span class="metric-icon"
+                  ><i class="fas fa-briefcase"></i
+                ></span>
+                <div>
+                  <span>Projects</span>
+                  <strong id="adminDashboardProjects">0</strong>
+                  <small>Received-payment projects</small>
+                </div>
+              </button>
+            </div>
+
+            <div class="dashboard-panels">
+              <section class="dashboard-panel" data-dashboard-section="leads" role="button" tabindex="0">
+                <div class="panel-heading">
+                  <div>
+                    <h3>Sales Funnel Snapshot</h3>
+                    <span>Quick conversion view</span>
+                  </div>
+                </div>
+
+                <div class="admin-funnel admin-target-funnel">
+                  <div
+                    id="adminFunnelLeadsRow"
+                    class="funnel-row funnel-blue"
+                    role="button"
+                    tabindex="0"
+                    onclick="openAdminSection('leads')"
+                    onkeydown="handleDashboardShortcutKey(event, 'leads')"
+                  >
+                    <span>Leads</span>
+                    <b id="adminFunnelLeads">0</b>
+                  </div>
+                  <div
+                    id="adminFunnelAppointmentsRow"
+                    class="funnel-row funnel-green"
+                    role="button"
+                    tabindex="0"
+                    onclick="openAdminSection('appointments')"
+                    onkeydown="
+                      handleDashboardShortcutKey(event, 'appointments')
+                    "
+                  >
+                    <span>Appointments</span>
+                    <b id="adminFunnelAppointments">0</b>
+                  </div>
+                  <div
+                    id="adminFunnelFollowupsRow"
+                    class="funnel-row funnel-orange"
+                    role="button"
+                    tabindex="0"
+                    onclick="openAdminSection('followups')"
+                    onkeydown="handleDashboardShortcutKey(event, 'followups')"
+                  >
+                    <span>Follow Ups</span>
+                    <b id="adminFunnelFollowups">0</b>
+                  </div>
+                  <div
+                    id="adminFunnelDealsRow"
+                    class="funnel-row funnel-pink"
+                    role="button"
+                    tabindex="0"
+                    onclick="openAdminSection('deals')"
+                    onkeydown="handleDashboardShortcutKey(event, 'deals')"
+                  >
+                    <span>Deals</span>
+                    <b id="adminFunnelDeals">0</b>
+                  </div>
+                </div>
+
+                <div class="conversion-pill">
+                  Overall Conversion:
+                  <strong id="adminDashboardFunnelRate">0% converted</strong>
+                </div>
+              </section>
+
+              <section class="dashboard-panel recent-panel" data-dashboard-section="deals" role="button" tabindex="0">
+                <div class="panel-heading">
+                  <div>
+                    <h3>Recent Deals</h3>
+                    <span>Latest closed pipeline</span>
+                  </div>
+                </div>
+                <div class="table-responsive">
+                  <table class="admin-mini-table compact-table">
+                    <thead>
+                      <tr>
+                        <th>Company</th>
+                        <th>Client</th>
+                        <th>Amount</th>
+                        <th>Payment</th>
+                        <th>Closed Date</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminDashboardRecentDeals">
+                      <tr>
+                        <td colspan="5">Loading recent deals...</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            </div>
+          </section>
+        </div>
+
+        <div id="leads" class="section">
+          <div class="admin-section-row">
+            <h2>All Leads</h2>
+            <button
+              type="button"
+              class="admin-add-lead-btn"
+              id="adminAddLeadBtn"
+            >
+              <i class="fas fa-plus"></i> Add Client
+            </button>
+          </div>
+          <input
+            type="text"
+            id="leadsSearch"
+            placeholder="Search leads..."
+            class="search-box"
+            onkeyup="filterTable('leadsTable', 'leadsSearch')"
+          />
+          <div class="table-responsive admin-section-table">
+            <table
+              border="1"
+              width="100%"
+              style="border-collapse: collapse; text-align: center"
+            >
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Company</th>
+                  <th>Client</th>
+                  <th>Contact</th>
+                  <th>Email</th>
+                  <th>Action Type</th>
+                </tr>
+              </thead>
+              <tbody id="leadsTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="appointments" class="section">
+          <h2>Appointments</h2>
+          <input
+            type="text"
+            id="appointmentsSearch"
+            placeholder="Search appointments..."
+            class="search-box"
+            onkeyup="filterTable('appointmentsTable', 'appointmentsSearch')"
+          />
+          <div class="table-responsive admin-section-table">
+            <table
+              border="1"
+              width="100%"
+              style="border-collapse: collapse; text-align: center"
+            >
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Client</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Assigned To</th>
+                </tr>
+              </thead>
+              <tbody id="appointmentsTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="followups" class="section">
+          <h2>Follow Ups</h2>
+          <input
+            type="text"
+            id="followupsSearch"
+            placeholder="Search followups..."
+            class="search-box"
+            onkeyup="filterTable('followupsTable', 'followupsSearch')"
+          />
+          <div class="table-responsive admin-section-table">
+            <table
+              border="1"
+              width="100%"
+              style="border-collapse: collapse; text-align: center"
+            >
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Client</th>
+                  <th>Follow Date</th>
+                  <th>Follow Time</th>
+                  <th>Employee</th>
+                  <th>Reason</th>
+                </tr>
+              </thead>
+              <tbody id="followupsTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="deals" class="section">
+          <h2>Closed Deals</h2>
+          <input
+            type="text"
+            id="dealsSearch"
+            placeholder="Search deals..."
+            class="search-box"
+            onkeyup="filterTable('dealsTable', 'dealsSearch')"
+          />
+          <div class="table-responsive admin-section-table">
+            <table
+              border="1"
+              width="100%"
+              style="border-collapse: collapse; text-align: center"
+            >
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Client</th>
+                  <th>Deal Amount</th>
+                  <th>Payment Method</th>
+                  <th>Payment Status</th>
+                  <th>Tax Invoice</th>
+                  <th>Proforma Invoice</th>
+                </tr>
+              </thead>
+              <tbody id="dealsTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="renewals" class="section">
+          <div class="admin-section-row renewal-section-heading">
+            <div>
+              <h2>Renewals</h2>
+              <p class="section-subtitle">Annual renewal pipeline</p>
+            </div>
+            <button
+              type="button"
+              class="admin-add-lead-btn"
+              onclick="loadAdminRenewals(true)"
+              title="Refresh renewals"
+            >
+              <i class="fas fa-rotate-right"></i> Refresh
+            </button>
+          </div>
+
+          <div class="renewal-summary-strip">
+            <div class="renewal-summary-card">
+              <span>Total</span>
+              <strong id="adminRenewalTotal">0</strong>
+            </div>
+            <div class="renewal-summary-card overdue">
+              <span>Overdue</span>
+              <strong id="adminRenewalOverdue">0</strong>
+            </div>
+            <div class="renewal-summary-card due-soon">
+              <span>Due Soon</span>
+              <strong id="adminRenewalDueSoon">0</strong>
+            </div>
+            <div class="renewal-summary-card started">
+              <span>Started</span>
+              <strong id="adminRenewalStarted">0</strong>
+            </div>
+          </div>
+
+          <input
+            type="text"
+            id="renewalsSearch"
+            placeholder="Search renewals..."
+            class="search-box"
+            onkeyup="filterTable('renewalsTable', 'renewalsSearch')"
+          />
+
+          <div class="table-responsive">
+            <table
+              class="renewal-table"
+              border="1"
+              width="100%"
+              style="border-collapse: collapse; text-align: center"
+            >
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Client</th>
+                  <th>Contact</th>
+                  <th>Email</th>
+                  <th>Deal Amount</th>
+                  <th>Closed Date</th>
+                  <th>Renewal Date</th>
+                  <th>Days Left</th>
+                  <th>Status</th>
+                  <th>Owner</th>
+                </tr>
+              </thead>
+              <tbody id="renewalsTable">
+                <tr>
+                  <td colspan="10">Loading renewals...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="notifications" class="section">
+          <h2>Notifications</h2>
+          <input
+            type="text"
+            id="notificationsSearch"
+            placeholder="Search downsale requests..."
+            class="search-box"
+            onkeyup="
+              filterTable('downsaleRequestsTable', 'notificationsSearch')
+            "
+          />
+          <div class="table-responsive admin-section-table">
+            <table
+              border="1"
+              width="100%"
+              style="border-collapse: collapse; text-align: center"
+            >
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Client</th>
+                  <th>Scope</th>
+                  <th>Standard</th>
+                  <th>Downsale</th>
+                  <th>ME</th>
+                  <th>Reason</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="downsaleRequestsTable">
+                <tr>
+                  <td colspan="9">Loading notifications...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="projects" class="section">
+          <h2>Projects (Closed Deals)</h2>
+          <input
+            type="text"
+            id="projectsSearch"
+            placeholder="Search projects..."
+            class="search-box"
+            onkeyup="filterTable('projectsTable', 'projectsSearch')"
+          />
+
+          <div class="table-responsive admin-section-table">
+            <table
+              border="1"
+              width="100%"
+              style="border-collapse: collapse; text-align: center"
+            >
+              <thead>
+                <tr>
+                  <th>Project Name</th>
+                  <th>Client</th>
+                  <th>Services</th>
+                  <th>Status</th>
+                  <th>Web</th>
+                  <th>Seo</th>
+                  <th>SMO</th>
+                  <th>Ads</th>
+                  <th>App</th>
+                  <th>ERP/CRM</th>
+                </tr>
+              </thead>
+              <tbody id="projectsTable"></tbody>
+            </table>
+          </div>
+
+          <div class="project-summary">
+            <h3>Project Assignments Summary</h3>
+            <div id="projectSummaryContainer" class="card-grid"></div>
+          </div>
+
+          <div class="project-tracker-shell admin-project-tracker">
+            <div class="project-tracker-header">
+              <div>
+                <h3>Project Assignment Tracker</h3>
+                <p>
+                  Admin can review assigned, ongoing, and completed service work
+                  for every assigned project.
+                </p>
+              </div>
+              <div
+                id="adminProjectTrackerStats"
+                class="project-tracker-stats"
+              ></div>
+            </div>
+            <div class="project-tracker-toolbar">
+              <input
+                type="text"
+                id="adminProjectTrackerSearch"
+                placeholder="Search projects, assignees, services..."
+                class="search-box project-tracker-search"
+                onkeyup="
+                  ProjectTrackerUI.filterCards(
+                    'adminProjectTrackerContainer',
+                    'adminProjectTrackerSearch',
+                  )
+                "
+              />
+            </div>
+            <div id="adminProjectTrackerContainer" class="project-tracker-grid">
+              <div class="project-tracker-empty">
+                Loading project tracker...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="attendance" class="section">
+          <div class="attendance-header">
+            <div>
+              <h2>Attendance</h2>
+              <p class="attendance-admin-subtitle">
+                Review daily attendance, auto absent records, and resolve
+                missing check-outs.
+              </p>
+            </div>
+            <div class="attendance-filters">
+              <input
+                type="date"
+                id="adminAttendanceDate"
+                onchange="loadAdminAttendance()"
+              />
+              <select id="adminAttendanceRole" onchange="loadAdminAttendance()">
+                <option value="">All Roles</option>
+                <option value="tme">TME</option>
+                <option value="me">ME</option>
+                <option value="dev">DEV</option>
+                <option value="seo">SEO</option>
+                <option value="smo">SMO</option>
+              </select>
+              <select
+                id="adminAttendanceStatusFilter"
+                onchange="loadAdminAttendance()"
+              >
+                <option value="">All Status</option>
+                <option value="present">Present</option>
+                <option value="grace">Grace</option>
+                <option value="late">Late</option>
+                <option value="half_day">Half Day</option>
+                <option value="checkout_pending">Pending Checkout</option>
+                <option value="absent">Absent</option>
+              </select>
+              <button
+                type="button"
+                class="icon-action-btn"
+                onclick="loadAdminAttendance()"
+                title="Refresh attendance"
+              >
+                <i class="fas fa-rotate-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <input
+            type="text"
+            id="adminAttendanceSearch"
+            placeholder="Search attendance..."
+            class="search-box"
+            onkeyup="
+              filterTable('adminAttendanceTableBody', 'adminAttendanceSearch')
+            "
+          />
+
+          <div class="table-responsive">
+            <table
+              border="1"
+              width="100%"
+              style="border-collapse: collapse; text-align: center"
+            >
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Shift</th>
+                  <th>Check In</th>
+                  <th>Check Out</th>
+                  <th>Working Hours</th>
+                  <th>Status</th>
+                  <th>Location</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminAttendanceTableBody">
+                <tr>
+                  <td colspan="10">Loading attendance...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="adminAttendanceSummary"></div>
+
+          <div class="attendance-request-panel">
+            <div class="attendance-header attendance-request-header">
+              <div>
+                <h3>Offsite Attendance Requests</h3>
+                <p class="attendance-admin-subtitle">
+                  Approve meeting-based location requests so employees can check
+                  in from client or field locations.
+                </p>
+              </div>
+              <div class="attendance-filters">
+                <select
+                  id="adminAttendanceRequestStatus"
+                  onchange="loadAdminAttendanceLocationRequests()"
+                >
+                  <option value="">All Requests</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <button
+                  type="button"
+                  class="icon-action-btn"
+                  onclick="loadAdminAttendanceLocationRequests()"
+                  title="Refresh offsite requests"
+                >
+                  <i class="fas fa-rotate-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <div
+              id="adminAttendanceRequestSummary"
+              class="attendance-request-summary"
+            ></div>
+
+            <div class="table-responsive">
+              <table
+                border="1"
+                width="100%"
+                style="border-collapse: collapse; text-align: center"
+              >
+                <thead>
+                  <tr>
+                    <th>Requested</th>
+                    <th>Employee</th>
+                    <th>Role</th>
+                    <th>Purpose</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Review</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adminAttendanceRequestTableBody">
+                  <tr>
+                    <td colspan="8">Loading offsite attendance requests...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="team" class="section">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              gap: 15px;
+              flex-wrap: wrap;
+            "
+          >
+            <h2>Team Members</h2>
+            <button type="button" class="add-user-btn" onclick="openUserForm()">
+              <i class="fas fa-user-plus"></i> User Registration
+            </button>
+          </div>
+
+          <div class="role-tabs" style="margin: 20px 0">
+            <button
+              class="tab-btn active"
+              data-role="all"
+              onclick="filterTeamByRole('all')"
+            >
+              All
+            </button>
+            <button
+              class="tab-btn"
+              data-role="hr"
+              onclick="filterTeamByRole('hr')"
+            >
+              HR
+            </button>
+            <button
+              class="tab-btn"
+              data-role="tme"
+              onclick="filterTeamByRole('tme')"
+            >
+              TME
+            </button>
+            <button
+              class="tab-btn"
+              data-role="me"
+              onclick="filterTeamByRole('me')"
+            >
+              ME
+            </button>
+            <button
+              class="tab-btn"
+              data-role="dev"
+              onclick="filterTeamByRole('dev')"
+            >
+              DEV
+            </button>
+            <button
+              class="tab-btn"
+              data-role="seo"
+              onclick="filterTeamByRole('seo')"
+            >
+              SEO
+            </button>
+            <button
+              class="tab-btn"
+              data-role="smo"
+              onclick="filterTeamByRole('smo')"
+            >
+              SMO
+            </button>
+            <button
+              class="tab-btn"
+              data-role="acc"
+              onclick="filterTeamByRole('acc')"
+            >
+              ACC
+            </button>
+          </div>
+
+          <input
+            type="text"
+            id="teamSearch"
+            placeholder="Search team..."
+            class="search-box"
+            onkeyup="filterTable('teamTable', 'teamSearch')"
+          />
+
+          <div class="table-responsive admin-section-table">
+            <table
+              border="1"
+              width="100%"
+              style="
+                margin-top: 10px;
+                text-align: center;
+                border-collapse: collapse;
+              "
+            >
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Total Leads</th>
+                  <th>Appointments</th>
+                  <th>Followups</th>
+                  <th>Action</th>
+                  <th>Update</th>
+                </tr>
+              </thead>
+              <tbody id="teamTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="salary" class="section">
+          <div data-payroll-scope="admin"></div>
+        </div>
+
+        <div id="proposals" class="section">
+          <div class="admin-proposal-shell">
+            <div class="admin-proposal-header">
+              <div>
+                <h2>Proposals</h2>
+                <p>Create, edit, download, email, and share proposal PDFs from admin.</p>
+              </div>
+              <button type="button" class="icon-action-btn" onclick="AdminProposals.load()" title="Refresh proposals">
+                <i class="fas fa-rotate-right"></i>
+              </button>
+            </div>
+
+            <form id="adminProposalForm" class="admin-proposal-form">
+              <div class="admin-proposal-form-grid">
+                <input type="text" id="adminProposalClientName" placeholder="Client Name *" required>
+                <input type="email" id="adminProposalClientEmail" placeholder="Client Email">
+                <input type="text" id="adminProposalCompanyName" placeholder="Company Name *" required>
+                <input type="text" id="adminProposalProjectTopic" placeholder="Project Topic *" required>
+                <input type="text" id="adminProposalBudget" placeholder="Budget (Optional)">
+                <input type="text" id="adminProposalTimeline" placeholder="Timeline (Optional)">
+                <input type="text" id="adminProposalTechnology" placeholder="Technology" value="Core PHP + MySQL">
+                <textarea id="adminProposalRequirementDetails" placeholder="Requirement Details" rows="4"></textarea>
+                <textarea id="adminProposalNotes" placeholder="Notes" rows="4"></textarea>
+              </div>
+              <div class="admin-proposal-actions">
+                <button type="submit" class="primary-action-btn" id="adminGenerateProposalBtn">
+                  <i class="fas fa-wand-magic-sparkles"></i> Generate Proposal
+                </button>
+                <button type="button" class="tab-btn" onclick="AdminProposals.reset()">Reset</button>
+              </div>
+            </form>
+
+            <div class="admin-proposal-editor-panel">
+              <div class="admin-proposal-editor-toolbar">
+                <div>
+                  <h3>Editable Proposal</h3>
+                  <span id="adminProposalEditorStatus">Generate a proposal to start editing.</span>
+                </div>
+                <div class="admin-proposal-toolbar-actions">
+                  <button type="button" class="tab-btn active" onclick="AdminProposals.save('draft')">
+                    <i class="fas fa-floppy-disk"></i> Save
+                  </button>
+                  <button type="button" class="tab-btn" onclick="AdminProposals.save('final')">
+                    <i class="fas fa-check"></i> Final
+                  </button>
+                  <button type="button" class="btn btn-proposal-pdf" onclick="AdminProposals.download('pdf')" title="Download PDF" aria-label="Download proposal PDF">
+                    <i class="fas fa-file-pdf"></i>
+                  </button>
+                  <button type="button" class="btn btn-proposal-png" onclick="AdminProposals.download('png')" title="Download PNG" aria-label="Download proposal PNG">
+                    <i class="fas fa-file-image"></i>
+                  </button>
+                  <button type="button" class="btn btn-whatsapp" onclick="AdminProposals.shareWhatsApp()" title="Share on WhatsApp" aria-label="Share proposal on WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                  </button>
+                  <button type="button" class="btn btn-gmail" onclick="AdminProposals.sendEmail()" title="Send email" aria-label="Send proposal email">
+                    <i class="fas fa-envelope"></i>
+                  </button>
+                </div>
+              </div>
+              <div id="adminProposalEditor" class="admin-proposal-editor" contenteditable="true"></div>
+            </div>
+
+            <div class="admin-proposal-list-panel">
+              <div class="admin-proposal-panel-heading">
+                <h3>Saved Proposals</h3>
+                <span id="adminProposalListCount">0 proposals</span>
+              </div>
+              <div id="adminProposalListContainer"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proposal Templates temporarily hidden from admin panel.
+        <div id="proposalTemplates" class="section">
+          <div class="proposal-template-shell">
+            <div class="proposal-template-header">
+              <div>
+                <h2>Proposal Templates</h2>
+                <p>Add reusable content for Marriage CRM, Hospital CRM, School Management, Inventory Software, and more.</p>
+              </div>
+              <button type="button" class="icon-action-btn" onclick="loadProposalTemplates()" title="Refresh templates">
+                <i class="fas fa-rotate-right"></i>
+              </button>
+            </div>
+
+            <form id="proposalTemplateForm" class="proposal-template-form">
+              <input type="hidden" id="proposalTemplateId">
+              <div class="proposal-template-grid">
+                <input type="text" id="proposalTemplateName" placeholder="Template Name *" required>
+                <input type="text" id="proposalTemplateCategory" placeholder="Category" value="CRM">
+                <select id="proposalTemplateStatus">
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+                <textarea id="proposalTemplateContent" rows="12" placeholder="Template content with placeholders like {{client_name}}, {{company_name}}, {{project_topic}}, {{requirement_details}}, {{budget}}, {{timeline}}, {{technology}}, {{notes}}" required></textarea>
+              </div>
+              <div class="proposal-template-actions">
+                <button type="submit" class="primary-action-btn">
+                  <i class="fas fa-floppy-disk"></i> Save Template
+                </button>
+                <button type="button" class="tab-btn" onclick="resetProposalTemplateForm()">Reset</button>
+              </div>
+            </form>
+
+            <div class="proposal-template-list">
+              <div class="table-responsive">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Template Name</th>
+                      <th>Category</th>
+                      <th>Status</th>
+                      <th>Created</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="proposalTemplatesTableBody">
+                    <tr>
+                      <td colspan="5">Loading templates...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        -->
+
+        <div id="employeeDetails" class="section" style="display: none">
+          <button
+            onclick="backToTeam()"
+            class="back-btn"
+            id="employeeDetailsBackBtn"
+          >
+            <i class="fas fa-arrow-left"></i> Back to Team
+          </button>
+
+          <div class="emp-card">
+            <img
+              id="empPhoto"
+              class="emp-photo"
+              src="https://dummyimage.com/150x150/0f172a/ffffff&text=USER"
+              alt="Employee profile"
+            />
+            <div>
+              <h2 id="empName">Loading...</h2>
+              <p id="empEmail">Loading...</p>
+              <span id="empRole" class="role-badge">Loading...</span>
+            </div>
+          </div>
+
+          <div id="employeeProfileRecord" class="employee-profile-record">
+            <div class="profile-record-empty">Loading employee profile record...</div>
+          </div>
+
+          <div id="meStats" class="stats-row">
+            <div class="stat-box">
+              <h3>Total Leads</h3>
+              <p id="statLeads">0</p>
+            </div>
+            <div class="stat-box">
+              <h3>Appointments</h3>
+              <p id="statAppointments">0</p>
+            </div>
+            <div class="stat-box">
+              <h3>Follow Ups</h3>
+              <p id="statFollowups">0</p>
+            </div>
+          </div>
+
+          <div id="devPerformance" style="display: none">
+            <h2>Performance Report</h2>
+            <div class="project-stats">
+              <div class="project-stat">
+                <span class="stat-label">Assigned Projects</span>
+                <span id="assignedProjects" class="stat-number">0</span>
+              </div>
+              <div class="project-stat">
+                <span class="stat-label">Ongoing Projects</span>
+                <span id="ongoingProjects" class="stat-number">0</span>
+              </div>
+              <div class="project-stat">
+                <span class="stat-label">Completed Projects</span>
+                <span id="completedProjects" class="stat-number">0</span>
+              </div>
+            </div>
+            <div class="meter-container">
+              <h3>Project Status Meter</h3>
+              <div class="meter-wrapper">
+                <div id="devMeter" class="meter"></div>
+              </div>
+              <div class="meter-legend">
+                <div class="legend-item">
+                  <span class="legend-color completed"></span>
+                  <span id="completedLegend">0 Completed (0%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color ongoing"></span>
+                  <span id="ongoingLegend">0 Ongoing (0%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color assigned"></span>
+                  <span id="assignedLegend">0 Assigned (0%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="attendance-header">
+            <h2 id="attendanceDetailTitle">Attendance</h2>
+            <div class="attendance-filters">
+              <select
+                id="attendanceMonth"
+                onchange="updateWeeksAndAttendance()"
+              >
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </select>
+              <select
+                id="attendanceYear"
+                onchange="updateWeeksAndAttendance()"
+              ></select>
+              <select id="attendanceWeek" onchange="filterAttendance()">
+                <option value="all">All Weeks</option>
+              </select>
+            </div>
+          </div>
+
+          <table
+            border="1"
+            style="width: 100%; border-collapse: collapse; text-align: center"
+          >
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>In Time</th>
+                <th>Out Time</th>
+                <th>Status</th>
+                <th>Work Hours</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceBody">
+              <tr>
+                <td colspan="5" style="padding: 20px">Loading...</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 style="margin-top: 25px">Live Location</h2>
+          <div id="empLocation">Loading location...</div>
+          <a
+            id="mapLink"
+            class="location-btn"
+            target="_blank"
+            rel="noopener"
+            style="display: none"
+            >Open in Google Maps</a
+          >
+        </div>
+      </main>
+    </div>
+
+    <div
+      id="userRegistrationModal"
+      class="user-modal hidden"
+      aria-hidden="true"
+      onclick="handleUserModalBackdrop(event)"
+    >
+      <div
+        class="user-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="userRegistrationTitle"
+      >
+        <div class="user-modal-header">
+          <div>
+            <h2 id="userRegistrationTitle">User Registration</h2>
+            <p id="userRegistrationSubtitle">
+              Create new team members (Admin only)
+            </p>
+          </div>
+          <button
+            type="button"
+            class="user-modal-close"
+            onclick="closeUserForm()"
+            aria-label="Close registration modal"
+          >
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+        <div id="userFormBox" class="user-modal-body">
+          <div class="form-card user-form-card">
+            <div class="right-section user-form-panel">
+              <form
+                id="adminRegisterForm"
+                class="user-profile-form"
+                enctype="multipart/form-data"
+              >
+                <section class="form-section-card">
+                  <div class="form-section-head">
+                    <div>
+                      <h3 class="form-section-title">Personal Details</h3>
+                      <p class="form-section-note">
+                        Basic identity details for the employee profile.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="input-group">
+                      <label>Full Name *</label>
+                      <input
+                        type="text"
+                        name="name"
+                        autocomplete="name"
+                        required
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label>Employee Code</label>
+                      <input
+                        type="text"
+                        name="employee_code"
+                        autocomplete="off"
+                        readonly
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label>Date of Birth</label>
+                      <input type="date" name="date_of_birth" />
+                    </div>
+                    <div class="input-group">
+                      <label>Gender</label>
+                      <select name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                        <option value="prefer_not_to_say">
+                          Prefer Not To Say
+                        </option>
+                      </select>
+                    </div>
+                    <div class="input-group">
+                      <label>Nationality</label>
+                      <input type="text" name="nationality" value="Indian" />
+                    </div>
+                  </div>
+                </section>
+
+                <section class="form-section-card">
+                  <div class="form-section-head">
+                    <div>
+                      <h3 class="form-section-title">Contact Details</h3>
+                      <p class="form-section-note">
+                        Phone, email and residential address used for employee
+                        records.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="input-group">
+                      <label>Email *</label>
+                      <input
+                        type="email"
+                        name="email"
+                        autocomplete="username"
+                        required
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label id="userFormPasswordLabel">Password *</label>
+                      <input
+                        type="password"
+                        name="spswd"
+                        id="adminRegisterPassword"
+                        placeholder="Enter password"
+                        required
+                        autocomplete="new-password"
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label id="userFormConfirmPasswordLabel"
+                        >Confirm Password *</label
+                      >
+                      <input
+                        type="password"
+                        name="cpswd"
+                        id="adminRegisterConfirmPassword"
+                        placeholder="Re-enter password"
+                        required
+                        autocomplete="new-password"
+                      />
+                      <small id="userPasswordHint" class="hidden"></small>
+                    </div>
+                    <div class="input-group">
+                      <label>Contact *</label>
+                      <input
+                        type="tel"
+                        name="contact"
+                        autocomplete="tel"
+                        required
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label>Family Number</label>
+                      <input type="tel" name="alt_contact" />
+                    </div>
+                    <div class="input-group form-full-width">
+                      <label>Address</label>
+                      <textarea
+                        name="address"
+                        rows="4"
+                        placeholder="Full residential address"
+                      ></textarea>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="form-section-card">
+                  <div class="form-section-head">
+                    <div>
+                      <h3 class="form-section-title">Employment Details</h3>
+                      <p class="form-section-note">
+                        Role, company and working schedule for internal
+                        operations.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="input-group">
+                      <label>Role *</label>
+                      <select name="role" required>
+                        <option value="">Select Role</option>
+                        <option value="hr">HR</option>
+                        <option value="tme">TME</option>
+                        <option value="me">ME</option>
+                        <option value="dev">DEV</option>
+                        <option value="seo">SEO</option>
+                        <option value="smo">SMO</option>
+                        <option value="accounts">ACC</option>
+                      </select>
+                    </div>
+                    <div class="input-group">
+                      <label>Company *</label>
+                      <select name="comp_name" required>
+                        <option value="">Select Company</option>
+                        <option value="Metrics Mart Infoline Pvt Ltd">
+                          Metrics Mart Infoline Pvt Ltd
+                        </option>
+                        <option value="RedSea">Red Sea Digitals Pvt. Ltd</option>
+                      </select>
+                    </div>
+                    <div class="input-group hidden" id="userCompensationTypeGroup">
+                      <label>Payment Type *</label>
+                      <select name="compensation_type" id="userCompensationType" required>
+                        <option value="salary" selected>Salary</option>
+                        <option value="commission">Commission</option>
+                      </select>
+                    </div>
+                    <div class="input-group" id="userSalaryGroup">
+                      <label>Monthly Salary *</label>
+                      <input
+                        type="number"
+                        name="salary"
+                        min="0"
+                        step="0.01"
+                        required
+                      />
+                    </div>
+                    <div class="input-group hidden" id="userCommissionGroup">
+                      <label>Commission Percent (Fixed)</label>
+                      <input
+                        type="number"
+                        name="commission_percent"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value="10"
+                        readonly
+                        placeholder="10"
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label>Login Time *</label>
+                      <input
+                        type="time"
+                        name="login_time"
+                        value="10:00"
+                        required
+                      />
+                    </div>
+                    <div class="input-group">
+                      <label>Logout Time *</label>
+                      <input
+                        type="time"
+                        name="logout_time"
+                        value="18:00"
+                        required
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                <button type="submit" class="submit-btn" id="registerBtn">
+                  <i class="fas fa-user-plus"></i> Create User
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="adminLeadModal"
+      class="user-modal hidden"
+      aria-hidden="true"
+      onclick="handleAdminLeadModalBackdrop(event)"
+    >
+      <div
+        class="user-modal-dialog admin-lead-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="adminLeadModalTitle"
+      >
+        <div class="user-modal-header">
+          <div>
+            <h2 id="adminLeadModalTitle">Add Client</h2>
+            <p>Use the same client form available in TME leads.</p>
+          </div>
+          <button
+            type="button"
+            class="user-modal-close"
+            onclick="closeAdminLeadForm()"
+            aria-label="Close lead form"
+            title="Cancel"
+          >
+            <i class="fas fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="user-modal-body admin-lead-modal-body">
+          <form id="adminLeadForm" class="admin-lead-form">
+            <h3>Basic Information</h3>
+            <div class="form-grid">
+              <input
+                type="text"
+                placeholder="Company Name"
+                name="company"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Client Name"
+                name="client"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Contact"
+                name="contact"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Alternate Contact"
+                name="alt_contact"
+              />
+              <input type="text" placeholder="Telephone" name="telephone" />
+              <input type="email" placeholder="Email" name="email" />
+              <input type="text" placeholder="GST Number" name="gst_no" />
+            </div>
+
+            <h3>Lead Company</h3>
+            <div class="form-grid">
+              <select name="company_scope" required>
+                <option value="">Select Lead Company</option>
+                <option value="metrics">Metrics Mart Infoline Pvt Ltd</option>
+                <option value="redsea">Red Sea Digitals Pvt. Ltd</option>
+              </select>
+            </div>
+
+            <h3>Full Address</h3>
+            <div class="form-grid">
+              <input
+                type="text"
+                placeholder="Flat/Office No"
+                name="flat_no"
+                onchange="generateAdminLeadMapLink()"
+              />
+              <input
+                type="text"
+                placeholder="Building Name"
+                name="building_name"
+                onchange="generateAdminLeadMapLink()"
+              />
+              <input
+                type="text"
+                placeholder="Locality"
+                name="locality"
+                onchange="generateAdminLeadMapLink()"
+              />
+              <input
+                type="text"
+                placeholder="City"
+                name="city"
+                onchange="generateAdminLeadMapLink()"
+              />
+              <input
+                type="text"
+                placeholder="Pincode"
+                name="pincode"
+                onchange="generateAdminLeadMapLink()"
+              />
+              <input
+                type="text"
+                placeholder="State"
+                name="state"
+                onchange="generateAdminLeadMapLink()"
+              />
+              <input
+                type="text"
+                placeholder="Maps Link (Auto Generated)"
+                name="maps_lnk"
+                id="adminLeadMapsLink"
+                readonly
+              />
+            </div>
+
+            <div class="form-grid">
+              <select name="source_lead" required>
+                <option value="">Select Source Lead</option>
+                <option value="website">Website Inquiry</option>
+                <option value="referral">Referral</option>
+                <option value="coldcall">Cold Call</option>
+                <option value="facebook">Facebook</option>
+                <option value="instagram">Instagram</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="walkin">Walk-in</option>
+                <option value="other">Other</option>
+              </select>
+              <select name="industry_type" required>
+                <option value="">Select Industry Type</option>
+                <option value="retail">Retail</option>
+                <option value="manufacturing">Manufacturing</option>
+                <option value="it">IT &amp; Software</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="education">Education</option>
+                <option value="realestate">Real Estate</option>
+                <option value="ecommerce">E-commerce</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <h3>Services Approach</h3>
+            <div class="service-item">
+              <h4>Web Design &amp; Development</h4>
+              <div class="checkbox-group">
+                <label
+                  ><input type="checkbox" name="web_type[]" value="landing" />
+                  Landing Page</label
+                >
+                <label
+                  ><input type="checkbox" name="web_type[]" value="static" />
+                  Static Website</label
+                >
+                <label
+                  ><input type="checkbox" name="web_type[]" value="dynamic" />
+                  Dynamic Website</label
+                >
+                <label
+                  ><input type="checkbox" name="web_type[]" value="ecommerce" />
+                  Ecommerce Website</label
+                >
+              </div>
+
+              <h4>SEO</h4>
+              <div class="checkbox-group">
+                <label
+                  ><input type="checkbox" name="seo_type[]" value="gmb" /> GMB
+                  SEO</label
+                >
+                <label
+                  ><input type="checkbox" name="seo_type[]" value="web" /> Web
+                  SEO</label
+                >
+              </div>
+
+              <h4>SMO</h4>
+              <div class="checkbox-group">
+                <label
+                  ><input type="checkbox" name="smo_type[]" value="facebook" />
+                  Facebook</label
+                >
+                <label
+                  ><input type="checkbox" name="smo_type[]" value="instagram" />
+                  Instagram</label
+                >
+                <label
+                  ><input type="checkbox" name="smo_type[]" value="linkedin" />
+                  LinkedIn</label
+                >
+                <label
+                  ><input type="checkbox" name="smo_type[]" value="twitter" />
+                  Twitter</label
+                >
+              </div>
+
+              <h4>Google Ads</h4>
+              <div class="checkbox-group">
+                <label
+                  ><input type="checkbox" name="services[]" value="ads" />
+                  Google Ads</label
+                >
+              </div>
+
+              <h4>Application</h4>
+              <div class="checkbox-group">
+                <label
+                  ><input type="checkbox" name="app_type[]" value="android" />
+                  Android</label
+                >
+                <label
+                  ><input type="checkbox" name="app_type[]" value="ios" />
+                  iOS</label
+                >
+              </div>
+
+              <h4>ERP/CRM/Software</h4>
+              <div class="checkbox-group">
+                <label
+                  ><input type="checkbox" name="erp_type[]" value="react" />
+                  React</label
+                >
+                <label
+                  ><input type="checkbox" name="erp_type[]" value="next" />
+                  Next.js</label
+                >
+                <label
+                  ><input type="checkbox" name="erp_type[]" value="php" />
+                  PHP</label
+                >
+                <label
+                  ><input type="checkbox" name="erp_type[]" value="node" /> Node
+                  + Express</label
+                >
+              </div>
+
+              <h4>Other Services</h4>
+              <div class="checkbox-group">
+                <label
+                  ><input type="checkbox" name="services[]" value="Other" />
+                  Other</label
+                >
+              </div>
+
+              <div class="admin-lead-service-notes">
+                <textarea
+                  name="service_notes"
+                  rows="3"
+                  placeholder="Any specific requirements or notes about selected services..."
+                ></textarea>
+              </div>
+            </div>
+
+            <h3>Status &amp; Next Action</h3>
+            <select id="adminLeadActionType" name="actionType">
+              <option value="appointment">Appointment</option>
+              <option value="followup">Follow Up</option>
+            </select>
+
+            <div id="adminLeadAppointmentSection" class="admin-lead-subsection">
+              <h3>Appointment Details</h3>
+              <div class="form-grid">
+                <input type="date" name="app_date" id="adminLeadAppDate" />
+                <input type="time" name="app_time" id="adminLeadAppTime" />
+                <select name="assign_emp" id="adminLeadAssignEmp">
+                  <option value="">Select Employee</option>
+                </select>
+                <input
+                  type="text"
+                  placeholder="Location (Auto from Address)"
+                  name="location"
+                  id="adminLeadLocation"
+                />
+              </div>
+            </div>
+
+            <div
+              id="adminLeadFollowupSection"
+              class="admin-lead-subsection hidden"
+            >
+              <h3>Follow Up Details</h3>
+              <div class="form-grid">
+                <input
+                  type="date"
+                  name="follow_date"
+                  id="adminLeadFollowDate"
+                />
+                <input
+                  type="time"
+                  name="follow_time"
+                  id="adminLeadFollowTime"
+                />
+                <input
+                  type="text"
+                  placeholder="Reason"
+                  name="reason"
+                  id="adminLeadReason"
+                  class="admin-lead-full-width"
+                />
+              </div>
+            </div>
+
+            <h3>Additional Notes</h3>
+            <textarea
+              name="additional_notes"
+              rows="8"
+              placeholder="Any additional notes about the lead..."
+            ></textarea>
+
+            <div class="btn-group admin-lead-actions">
+              <button
+                type="submit"
+                class="submit-btn save-btn"
+                id="adminLeadSubmitBtn"
+              >
+                Add Client
+              </button>
+              <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeAdminLeadForm()"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popup -->
+    <div id="popup" class="popup hidden">
+      <div class="popup-content">
+        <i id="popupIcon"></i>
+        <h3 id="popupTitle"></h3>
+        <p id="popupMessage"></p>
+        <div id="popupActions" class="popup-actions hidden"></div>
+      </div>
+    </div>
+    <script src="project-tracker.js"></script>
+    <script src="payroll-management.js?v=20260524-fixed-commission"></script>
+    <script src="admin.js?v=20260703-attendance-radius-v1"></script>
+    <script src="admin-proposals.js?v=20260527-company-proposals"></script>
+    <script src="leave-management.js"></script>
+    <script src="crm-security.js?v=20260527-section-scroll"></script>
+  </body>
+
+</html>

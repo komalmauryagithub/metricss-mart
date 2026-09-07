@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ACC Dashboard</title>
+    <link rel="icon" type="image/png" href="logo_.png" />
+
+    <link rel="stylesheet" href="attendance-face.css?v=20260602-live-face-v1" />
+    <link rel="stylesheet" href="dev.css?v=20260702-attendance-month-v1" />
+    <link rel="stylesheet" href="accounts.css" />
+    <link rel="stylesheet" href="payroll-management.css?v=20260730-responsive-v1" />
+    <link rel="stylesheet" href="leave-management.css" />
+    <link rel="stylesheet" href="crm-security.css?v=20260527-proposal-actions-scroll" />
+    <link rel="stylesheet" href="panel-layout.css?v=20260607-fixed-sidebar-v1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="profile-sidebar.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-left">
+        <div class="brand-title">
+          <img src="logo_.png" alt="Metrics Mart" class="brand-logo" />
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="welcome">
+          Welcome, <span id="userName">Loading...</span>
+        </div>
+
+        <div class="user-info">
+          <img id="userAvatar" class="avatar" alt="User Avatar" onclick="toggleProfileSidebar()" style="cursor: pointer;" title="View Profile Progress" />
+          <span class="role">ACC</span>
+        </div>
+
+        
+        
+        
+        <div class="header-action-btns" style="display: flex; flex-direction: column; gap: 8px;">
+          <button onclick="logout()" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+          
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <ul>
+          <li class="active" data-section-link="dashboard" onclick="showSection('dashboard')">
+            <i class="fas fa-chart-line"></i> Dashboard
+          </li>
+          <li data-section-link="invoices" onclick="showSection('invoices')">
+            <i class="fas fa-file-invoice-dollar"></i> Invoice Center
+          </li>
+          <li data-section-link="daily-work" onclick="showSection('daily-work')">
+            <i class="fas fa-calendar-check"></i> Daily Work
+          </li>
+          <li data-section-link="attendance" onclick="showSection('attendance')">
+            <i class="fas fa-user-check"></i> Attendance
+          </li>
+          <li data-section-link="salary" onclick="showSection('salary')">
+            <i class="fas fa-wallet"></i> Salary
+          </li>
+        </ul>
+      </aside>
+
+      <main class="main-content accounts-main">
+        <div id="dashboard" class="section active">
+          <div class="dashboard-title-row">
+            <div>
+              <h2>Accounts Control Panel</h2>
+              <p>Payments, invoice readiness, and follow-up work in one place</p>
+            </div>
+            <button
+              type="button"
+              class="refresh-dashboard-btn"
+              onclick="refreshAccountsPanel()"
+            >
+              <i class="fas fa-rotate-right"></i>
+            </button>
+          </div>
+
+          <div class="dashboard-metrics dashboard-metrics-4">
+            <div
+              class="metric-card collections"
+              role="button"
+              tabindex="0"
+              onclick="showSection('invoices')"
+              onkeydown="handleDashboardShortcutKey(event, 'invoices')"
+            >
+              <div class="metric-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+              <div>
+                <span>Received Revenue</span>
+                <strong id="receivedRevenueMetric">Rs. 0</strong>
+                <small id="receivedRevenueHint">0 deals received</small>
+              </div>
+            </div>
+            <div
+              class="metric-card pending"
+              role="button"
+              tabindex="0"
+              onclick="showSection('invoices')"
+              onkeydown="handleDashboardShortcutKey(event, 'invoices')"
+            >
+              <div class="metric-icon"><i class="fas fa-hourglass-half"></i></div>
+              <div>
+                <span>Pending Payments</span>
+                <strong id="pendingRevenueMetric">Rs. 0</strong>
+                <small id="pendingRevenueHint">0 deals need follow-up</small>
+              </div>
+            </div>
+            <div
+              class="metric-card invoice-ready"
+              role="button"
+              tabindex="0"
+              onclick="showSection('invoices')"
+              onkeydown="handleDashboardShortcutKey(event, 'invoices')"
+            >
+              <div class="metric-icon"><i class="fas fa-file-circle-check"></i></div>
+              <div>
+                <span>Tax Invoices Ready</span>
+                <strong id="invoiceReadyMetric">0</strong>
+                <small id="invoiceReadyHint">Payment received deals</small>
+              </div>
+            </div>
+            <div
+              class="metric-card risk"
+              role="button"
+              tabindex="0"
+              onclick="showSection('invoices')"
+              onkeydown="handleDashboardShortcutKey(event, 'invoices')"
+            >
+              <div class="metric-icon"><i class="fas fa-triangle-exclamation"></i></div>
+              <div>
+                <span>Failed Payments</span>
+                <strong id="failedPaymentsMetric">0</strong>
+                <small id="failedPaymentsHint">Need recovery follow-up</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-panels accounts-panels">
+            <div class="dashboard-panel chart-panel">
+              <div class="panel-heading">
+                <h3>Payment Funnel</h3>
+                <span id="collectionFunnelRate">0% realized revenue</span>
+              </div>
+              <div class="admin-funnel accounts-funnel">
+                <div class="funnel-row funnel-blue" role="button" tabindex="0" onclick="showSection('invoices')" onkeydown="handleDashboardShortcutKey(event, 'invoices')">
+                  <span>Total Closed Deals</span>
+                  <b id="closedDealsCount">0</b>
+                </div>
+                <div class="funnel-row funnel-green" role="button" tabindex="0" onclick="showSection('invoices')" onkeydown="handleDashboardShortcutKey(event, 'invoices')">
+                  <span>Received</span>
+                  <b id="receivedDealsCount">0</b>
+                </div>
+                <div class="funnel-row funnel-orange" role="button" tabindex="0" onclick="showSection('invoices')" onkeydown="handleDashboardShortcutKey(event, 'invoices')">
+                  <span>Pending</span>
+                  <b id="pendingDealsCount">0</b>
+                </div>
+                <div class="funnel-row funnel-pink" role="button" tabindex="0" onclick="showSection('invoices')" onkeydown="handleDashboardShortcutKey(event, 'invoices')">
+                  <span>Failed</span>
+                  <b id="failedDealsCount">0</b>
+                </div>
+              </div>
+              <div class="conversion-pill">Collection Rate: <strong id="collectionRateValue">0%</strong></div>
+            </div>
+
+            <div class="dashboard-panel chart-panel">
+              <div class="panel-heading">
+                <h3>Payment Status Mix</h3>
+                <span>Live split across all closed deals</span>
+              </div>
+              <div class="chart-shell">
+                <canvas id="accountsStatusChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-panels accounts-panels">
+            <div class="dashboard-panel chart-panel">
+              <div class="panel-heading">
+                <h3>Payment Method Trends</h3>
+                <span>How clients are paying right now</span>
+              </div>
+              <div class="chart-shell">
+                <canvas id="accountsMethodChart"></canvas>
+              </div>
+            </div>
+
+            <div class="dashboard-panel insights-panel">
+              <div class="panel-heading">
+                <h3>Priority Follow-ups</h3>
+                <span>Pending and failed payments to chase next</span>
+              </div>
+              <div id="priorityCollectionsList" class="insight-list">
+                <p class="empty-state">Loading payment priorities...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="invoices" class="section">
+          <div class="section-intro">
+            <div>
+              <h2>Payment & Invoice Center</h2>
+              <p>Track payment status, proof, notes, and invoice actions from one queue</p>
+            </div>
+            <button type="button" class="refresh-dashboard-btn" onclick="loadAccountsDeals()">
+              <i class="fas fa-rotate-right"></i>
+            </button>
+          </div>
+
+          <div class="table-toolbar accounts-toolbar">
+            <input
+              type="text"
+              id="collectionsSearch"
+              placeholder="Search company, client, email, contact..."
+              class="search-box"
+            />
+            <select id="collectionsMethodFilter" class="accounts-filter">
+              <option value="">All Methods</option>
+            </select>
+          </div>
+
+          <div id="collectionsMiniKpis" class="accounts-mini-kpis"></div>
+
+          <div class="invoice-summary-grid" id="invoiceSummaryGrid"></div>
+
+          <div class="table-responsive">
+            <table class="summary-table accounts-table">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Client</th>
+                  <th>Amount</th>
+                  <th>Method</th>
+                  <th>Status</th>
+                  <th>Paid On</th>
+                  <th>Tax Invoice</th>
+                  <th>Proforma</th>
+                  <th>Proof</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="invoiceTableBody">
+                <tr>
+                  <td colspan="10">Loading invoices...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+                <div id="daily-work" class="section">
+          <div class="log-table-container">
+            <div class="log-table-header">
+              <h2><i class="fas fa-calendar-check"></i> Daily Work Log</h2>
+              <button class="action-btn" onclick="openDailyWorkModal()" style="background:var(--admin-accent, #0f766e); color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:bold;"><i class="fas fa-plus"></i> Add Work</button>
+            </div>
+            
+            <div class="log-table-filters">
+              <div>
+                <label>Month</label><br>
+                <input type="month" id="dwMonthFilter" onchange="loadDailyWork()" />
+              </div>
+              <div>
+                <label>Date</label><br>
+                <input type="date" id="dwDateFilter" onchange="loadDailyWork()" />
+              </div>
+              <div class="log-table-filter-sep"></div>
+              <div>
+                <label>Search</label><br>
+                <input type="text" id="dwSearch" placeholder="Search..." onkeyup="filterTable('dwTableBody', 'dwSearch')" class="search-box" style="width:200px;" />
+              </div>
+            </div>
+
+            <div class="log-table-wrapper">
+              <table class="log-table">
+                <thead>
+                  <tr id="dwTableHead">
+                    <!-- Dynamic headers injected here -->
+                  </tr>
+                </thead>
+                <tbody id="dwTableBody">
+                  <tr><td colspan="10" style="text-align:center; padding: 20px;">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="attendance" class="section">
+          <h2>Attendance</h2>
+          <div class="attendance-filter-bar">
+            <label for="attendanceMonthFilter">
+              <i class="fas fa-calendar-days"></i>
+              <span>Month</span>
+            </label>
+            <input
+              type="month"
+              id="attendanceMonthFilter"
+              onchange="fetchAttendance()"
+              title="Filter attendance by month"
+            />
+          </div>
+          <input
+            type="text"
+            id="attendanceSearch"
+            placeholder="Search attendance..."
+            onkeyup="filterAttendanceTable()"
+            class="search-box"
+          />
+          <div class="attendance-actions" id="attendanceActions"></div>
+          <div class="table-responsive" id="attendanceContainer">
+            <table class="summary-table attendance-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Check In</th>
+                  <th>Check Out</th>
+                  <th>Check-in Location</th>
+                  <th>Working Hours</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceTableBody">
+                <tr>
+                  <td colspan="6">No attendance records found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="salary" class="section">
+          <div data-payroll-scope="self" data-payroll-role-label="ACC"></div>
+        </div>
+      </main>
+    </div>
+
+    <div id="popup" class="popup hidden">
+      <div class="popup-content">
+        <i id="popupIcon"></i>
+        <h3 id="popupTitle"></h3>
+        <p id="popupMessage"></p>
+      </div>
+    </div>
+
+    <script src="payroll-management.js?v=20260730-responsive-v1"></script>
+    <script src="attendance-face.js?v=20260602-live-face-v1"></script>
+    <script src="accounts.js?v=20260710-attendance-all-panels-v1"></script>
+    <script src="attendance-auto-checkout.js"></script>
+    <script src="leave-management.js"></script>
+    <script src="crm-security.js?v=20260601-fetch-scope-v2"></script>
+    <script src="profile-sidebar.js"></script>
+</body>
+</html>

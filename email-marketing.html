@@ -1,0 +1,1540 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Marketing Dashboard</title>
+    <link rel="icon" type="image/png" href="logo_.png" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="tme.css?v=20260702-attendance-month-v1"
+    />
+    <link rel="stylesheet" href="payroll-management.css?v=20260730-responsive-v1" />
+    <link rel="stylesheet" href="leave-management.css" />
+    <link
+      rel="stylesheet"
+      href="crm-security.css?v=20260527-proposal-actions-scroll"
+    />
+    <link rel="stylesheet" href="attendance-face.css?v=20260602-live-face-v1" />
+    <link
+      rel="stylesheet"
+      href="panel-layout.css?v=20260607-fixed-sidebar-v1"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <link rel="stylesheet" href="profile-sidebar.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="brand-title">
+          <img src="logo_.png" alt="Metrics Mart" class="brand-logo" />
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="welcome">
+          Welcome, <span id="userName">Loading...</span>
+        </div>
+        <div class="user-info">
+          <img
+            id="userAvatar"
+            src="https://dummyimage.com/150x150/000/fff&text=EM"
+            alt="Profile"
+            class="avatar"
+           onclick="toggleProfileSidebar()" style="cursor: pointer;" title="View Profile"/>
+          <span id="userRole" class="role">EMAIL MARKETING</span>
+        </div>
+        <button onclick="logout()" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <ul>
+          <li class="active" onclick="showSection('dashboard')">
+            <i class="fas fa-gauge-high"></i> Dashboard
+          </li>
+          <li onclick="showSection('leads')">
+            <i class="fas fa-users"></i> Leads
+          </li>
+          <li onclick="showSection('appointments')">
+            <i class="fas fa-calendar-check"></i> Appointments
+          </li>
+          <li onclick="showSection('followed')">
+            <i class="fas fa-check-circle"></i> Followups
+          </li>
+          <li onclick="showSection('deals')">
+            <i class="fas fa-handshake"></i> Deals
+          </li>
+          <li onclick="showSection('attendance')">
+            <i class="fas fa-user-check"></i> Attendance
+          </li>
+          <li onclick="showSection('salary')">
+            <i class="fas fa-wallet"></i> Salary
+          </li>
+          <li onclick="showSection('daily-work')">
+            <i class="fas fa-calendar-day"></i> Daily Work
+          </li>
+
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div id="dashboard" class="section active">
+          <div class="dashboard-title-row">
+            <div>
+              <h2>Dashboard</h2>
+              <p>Today overview and sales performance</p>
+            </div>
+            <div class="dashboard-title-actions">
+              <div class="dashboard-month-picker-wrap">
+                <label for="dashboardMonthFilterTME"><i class="fas fa-calendar-alt"></i></label>
+                <input
+                  type="month"
+                  id="dashboardMonthFilterTME"
+                  title="Filter dashboard by month"
+                  onchange="handleDashboardMonthChange()"
+                />
+              </div>
+              <button
+                type="button"
+                class="refresh-dashboard-btn"
+                onclick="loadTmeDashboard()"
+              >
+                <i class="fas fa-rotate-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="appointment-status-board">
+            <div class="panel-heading">
+              <h3>Appointment Status</h3>
+              <span id="tmeAppointmentStatusHint">0 tracked meetings</span>
+            </div>
+            <div class="appointment-status-layout">
+              <div class="appointment-status-cards">
+                <div class="appointment-status-card generated" onclick="filterAndGoToAppointments('all')">
+                  <span>Total Generated Meetings</span>
+                  <strong id="tmeAppointmentsGenerated">0</strong>
+                  <small id="tmeAppointmentsGeneratedHint"
+                    >All appointment requests</small
+                  >
+                </div>
+                <div class="appointment-status-card confirmed" onclick="filterAndGoToAppointments('confirmed')">
+                  <span>Confirmed Meetings</span>
+                  <strong id="tmeAppointmentsConfirmed">0</strong>
+                  <small id="tmeAppointmentsConfirmedHint"
+                    >Client confirmed meetings</small
+                  >
+                </div>
+                <div class="appointment-status-card not-confirmed" onclick="filterAndGoToAppointments('not_confirmed')">
+                  <span>Not Confirmed</span>
+                  <strong id="tmeAppointmentsNotConfirmed">0</strong>
+                  <small id="tmeAppointmentsNotConfirmedHint"
+                    >Needs another push</small
+                  >
+                </div>
+                <div class="appointment-status-card closed" onclick="filterAndGoToAppointments('deal_closed')">
+                  <span>Deal Closed</span>
+                  <strong id="tmeAppointmentsClosed">0</strong>
+                  <small id="tmeAppointmentsClosedHint"
+                    >Meetings turned into deals</small
+                  >
+                </div>
+              </div>
+              <div class="appointment-status-chart-shell">
+                <canvas id="tmeAppointmentStatusChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="sales-target-header">
+            <div>
+              <h3>Monthly Sales Target</h3>
+              <p>Admin-assigned goal with live achieved vs remaining sales.</p>
+            </div>
+            <div class="target-header-actions">
+              <button
+                type="button"
+                class="target-set-btn"
+                disabled
+                title="Monthly target is assigned by admin"
+              >
+                <i class="fas fa-shield-halved"></i> Assigned by Admin
+              </button>
+            </div>
+          </div>
+
+          <div class="sales-target-strip">
+            <div class="sales-target-card set">
+              <div class="sales-target-icon">
+                <i class="fas fa-flag-checkered"></i>
+              </div>
+              <div>
+                <span>Target Set</span>
+                <strong id="tmeTargetSet">Rs. 0</strong>
+                <small id="tmeTargetSetHint">Current monthly goal</small>
+              </div>
+            </div>
+            <div class="sales-target-card contract">
+              <div class="sales-target-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+              </div>
+              <div>
+                <span>Total Contract Value</span>
+                <strong id="tmeTargetContract">Rs. 0</strong>
+                <small id="tmeTargetContractHint">Total value of closed deals</small>
+              </div>
+            </div>
+            <div class="sales-target-card achieved">
+              <div class="sales-target-icon">
+                <i class="fas fa-bullseye"></i>
+              </div>
+              <div>
+                <span>Total received payment</span>
+                <strong id="tmeTargetAchieved">Rs. 0</strong>
+                <small id="tmeTargetAchievedHint">Completed sales amount</small>
+              </div>
+            </div>
+            <div class="sales-target-card without-gst">
+              <div class="sales-target-icon">
+                <i class="fas fa-calculator"></i>
+              </div>
+              <div>
+                <span>Without GST</span>
+                <strong id="tmeTargetWithoutGst">Rs. 0</strong>
+                <small id="tmeTargetWithoutGstHint">Paid amount excluding GST</small>
+              </div>
+            </div>
+            <div class="sales-target-card remaining">
+              <div class="sales-target-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div>
+                <span>Remaining Target</span>
+                <strong id="tmeTargetRemaining">Rs. 0</strong>
+                <small id="tmeTargetRemainingHint">Pending from target</small>
+              </div>
+            </div>
+            
+          </div>
+
+          <div
+            class="target-progress-panel"
+            data-dashboard-section="deals"
+            role="button"
+            tabindex="0"
+          >
+            <div class="panel-heading">
+              <h3>Target Progress</h3>
+              <span id="tmeTargetProgressLabel">0% achieved</span>
+            </div>
+            <div class="target-progress-layout">
+              <div class="target-chart-shell">
+                <canvas id="tmeTargetProgressChart"></canvas>
+              </div>
+              <div class="target-progress-insights">
+                <div class="target-progress-callout">
+                  <span class="target-progress-eyebrow">Monthly momentum</span>
+                  <strong id="tmeTargetHeroValue">Rs. 0 achieved</strong>
+                  <p id="tmeTargetHeroText">
+                    Start closing deals to build momentum for your monthly
+                    target.
+                  </p>
+                </div>
+                <div class="target-progress-mini-grid">
+                  <div class="target-progress-mini achieved">
+                    <span>Achieved</span>
+                    <strong id="tmeTargetInsightAchieved">Rs. 0</strong>
+                    <small id="tmeTargetInsightAchievedHint"
+                      >0% completed</small
+                    >
+                  </div>
+                  <div class="target-progress-mini remaining">
+                    <span>Remaining</span>
+                    <strong id="tmeTargetInsightRemaining">Rs. 0</strong>
+                    <small id="tmeTargetInsightRemainingHint"
+                      >Still left to hit target</small
+                    >
+                  </div>
+                  <div class="target-progress-mini deals">
+                    <span>Closed Deals</span>
+                    <strong id="tmeTargetInsightDeals">0</strong>
+                    <small id="tmeTargetInsightDealsHint"
+                      >No closed deals yet</small
+                    >
+                  </div>
+                  <div class="target-progress-mini new-sale">
+                    <span>New Sale</span>
+                    <strong id="tmeTargetInsightNewSale">0</strong>
+                    <small id="tmeTargetInsightNewSaleHint"
+                      >Fresh client wins</small
+                    >
+                  </div>
+                  <div class="target-progress-mini renewal">
+                    <span>Renewal</span>
+                    <strong id="tmeTargetInsightRenewal">0</strong>
+                    <small id="tmeTargetInsightRenewalHint"
+                      >Repeat client wins</small
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-metrics">
+            <div
+              class="metric-card sales"
+              role="button"
+              tabindex="0"
+              onclick="showSection('deals')"
+              onkeydown="handleDashboardShortcutKey(event, 'deals')"
+            >
+              <div class="metric-icon">
+                <i class="fas fa-indian-rupee-sign"></i>
+              </div>
+              <div>
+                <span>Total Sales</span>
+                <strong id="dashboardTotalSales">Rs. 0</strong>
+                <small id="dashboardSalesHint">Closed deals amount</small>
+              </div>
+            </div>
+            <div
+              class="metric-card contract-value"
+              role="button"
+              tabindex="0"
+              onclick="showSection('deals')"
+              onkeydown="handleDashboardShortcutKey(event, 'deals')"
+            >
+              <div class="metric-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+              </div>
+              <div>
+                <span>Total Contract Value</span>
+                <strong id="dashboardTotalContractValue">Rs. 0</strong>
+                <small>Total deal value</small>
+              </div>
+            </div>
+            <div
+              class="metric-card paid-without-gst"
+              role="button"
+              tabindex="0"
+              onclick="showSection('deals')"
+              onkeydown="handleDashboardShortcutKey(event, 'deals')"
+            >
+              <div class="metric-icon">
+                <i class="fas fa-calculator"></i>
+              </div>
+              <div>
+                <span>Paid Without GST</span>
+                <strong id="dashboardPaidWithoutGst">Rs. 0</strong>
+                <small>Excluding GST</small>
+              </div>
+            </div>
+            <div
+              class="metric-card deals"
+              role="button"
+              tabindex="0"
+              onclick="showSection('deals')"
+              onkeydown="handleDashboardShortcutKey(event, 'deals')"
+            >
+              <div class="metric-icon"><i class="fas fa-handshake"></i></div>
+              <div>
+                <span>Deals</span>
+                <strong id="dashboardDeals">0</strong>
+                <small>Closed conversions</small>
+              </div>
+            </div>
+            <div
+              class="metric-card leads"
+              role="button"
+              tabindex="0"
+              onclick="showSection('leads')"
+              onkeydown="handleDashboardShortcutKey(event, 'leads')"
+            >
+              <div class="metric-icon"><i class="fas fa-users"></i></div>
+              <div>
+                <span>Total Leads</span>
+                <strong id="dashboardLeads">0</strong>
+                <small id="dashboardConversionRate">0% conversion</small>
+              </div>
+            </div>
+            <div
+              class="metric-card appointments"
+              role="button"
+              tabindex="0"
+              onclick="showSection('appointments')"
+              onkeydown="handleDashboardShortcutKey(event, 'appointments')"
+            >
+              <div class="metric-icon">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div>
+                <span>Appointments</span>
+                <strong id="dashboardAppointments">0</strong>
+                <small>Scheduled visits</small>
+              </div>
+            </div>
+            <div
+              class="metric-card followups"
+              role="button"
+              tabindex="0"
+              onclick="showSection('followed')"
+              onkeydown="handleDashboardShortcutKey(event, 'followed')"
+            >
+              <div class="metric-icon"><i class="fas fa-phone-volume"></i></div>
+              <div>
+                <span>Follow Ups</span>
+                <strong id="dashboardFollowups">0</strong>
+                <small>Pending conversations</small>
+              </div>
+            </div>
+            <div
+              class="metric-card attendance"
+              role="button"
+              tabindex="0"
+              onclick="showSection('attendance')"
+              onkeydown="handleDashboardShortcutKey(event, 'attendance')"
+            >
+              <div class="metric-icon"><i class="fas fa-user-check"></i></div>
+              <div>
+                <span>Attendance</span>
+                <strong id="dashboardAttendance">Not marked</strong>
+                <small id="dashboardAttendanceTime">Check in pending</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-panels">
+            <div
+              class="dashboard-panel chart-panel"
+              data-dashboard-section="deals"
+              role="button"
+              tabindex="0"
+            >
+              <div class="panel-heading">
+                <h3>Performance Overview</h3>
+                <span>This account</span>
+              </div>
+              <canvas id="tmeDashboardChart"></canvas>
+            </div>
+            <div
+              class="dashboard-panel funnel-panel-dashboard"
+              data-dashboard-section="leads"
+              role="button"
+              tabindex="0"
+            >
+              <div class="panel-heading">
+                <h3>Sales Funnel</h3>
+                <span id="dashboardFunnelRate">0% converted</span>
+              </div>
+              <div class="admin-funnel">
+                <div
+                  id="funnelLeadsRow"
+                  class="funnel-row funnel-blue"
+                  role="button"
+                  tabindex="0"
+                  onclick="showSection('leads')"
+                  onkeydown="handleDashboardShortcutKey(event, 'leads')"
+                >
+                  <span>Leads</span><b id="funnelLeads">0</b>
+                </div>
+                <div
+                  id="funnelAppointmentsRow"
+                  class="funnel-row funnel-green"
+                  role="button"
+                  tabindex="0"
+                  onclick="showSection('appointments')"
+                  onkeydown="handleDashboardShortcutKey(event, 'appointments')"
+                >
+                  <span>Appointments</span><b id="funnelAppointments">0</b>
+                </div>
+                <div
+                  id="funnelFollowupsRow"
+                  class="funnel-row funnel-orange"
+                  role="button"
+                  tabindex="0"
+                  onclick="showSection('followed')"
+                  onkeydown="handleDashboardShortcutKey(event, 'followed')"
+                >
+                  <span>Follow Ups</span><b id="funnelFollowups">0</b>
+                </div>
+                <div
+                  id="funnelDealsRow"
+                  class="funnel-row funnel-pink"
+                  role="button"
+                  tabindex="0"
+                  onclick="showSection('deals')"
+                  onkeydown="handleDashboardShortcutKey(event, 'deals')"
+                >
+                  <span>Deals</span><b id="funnelDeals">0</b>
+                </div>
+              </div>
+              <div class="conversion-pill">
+                Overall Conversion Rate:
+                <strong id="tmeFunnelConversionRate">0%</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-panel monthly-history-panel">
+            <div class="panel-heading">
+              <div class="monthly-history-title">
+                <h3>Monthly Target Performance</h3>
+                <span class="monthly-history-subtitle">Last 6 months — Target vs Achieved</span>
+              </div>
+              <div class="monthly-history-legend">
+                <span class="legend-dot achieved-dot"></span><span>Total Received Payment</span>
+                <span class="legend-dot pending-dot"></span><span>Below Target</span>
+                <span class="legend-dot target-dot"></span><span>Target Set</span>
+              </div>
+            </div>
+            <div class="monthly-history-chart-wrap">
+              <canvas id="tmeMonthlyHistoryChart"></canvas>
+            </div>
+          </div>
+
+          <div
+            class="dashboard-panel recent-panel"
+            data-dashboard-section="deals"
+            role="button"
+            tabindex="0"
+          >
+            <div class="panel-heading">
+              <h3>Recent Deals</h3>
+              <button type="button" onclick="showSection('deals')">
+                View Deals
+              </button>
+            </div>
+            <div class="table-responsive">
+              <table class="leads-table compact-table">
+                <thead>
+                  <tr>
+                    <th>Company</th>
+                    <th>Client</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Closed Date</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardRecentDeals">
+                  <tr>
+                    <td colspan="5">Loading recent deals...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="leads" class="section">
+          <div class="section-heading-row">
+            <h2>My Leads</h2>
+            <button
+              type="button"
+              class="add-btn section-add-btn"
+              id="addLeadBtn"
+            >
+              <i class="fas fa-plus"></i> Add Client
+            </button>
+          </div>
+          <input
+            type="text"
+            id="leadsSearchTME"
+            placeholder="Search leads..."
+            class="search-box"
+            onkeyup="filterTable('leadsTableBody', 'leadsSearchTME')"
+          />
+
+          <div class="table-responsive">
+            <table id="leadsTable" class="leads-table">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Date</th>
+                  <th>Client Name</th>
+                  <th>Client Email</th>
+                  <th>Client Website</th>
+                  <th>Phone No</th>
+                  <th>Mobile No</th>
+                  <th>Follow up</th>
+                  <th>Country Name</th>
+                  <th>Client Reply</th>
+                  <th>Source</th>
+                  <th>Service</th>
+                  <th>Reply ID</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="leadsTableBody">
+                <!-- JS se dynamically fill hoga -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- No data message -->
+          <div id="noDataMessage" class="no-data hidden">
+            <p>No leads found. Click "Add Client" to create one.</p>
+          </div>
+        </div>
+
+        <div id="appointments" class="section">
+          <div class="section-heading-row appointments-heading-row" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Appointments</h2>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input
+                type="month"
+                id="appointmentsMonthFilterTME"
+                class="deals-type-filter"
+                onchange="handleTmeMonthFilterChange(this.value)"
+                style="margin: 0;"
+              />
+              <select
+                id="appointmentsStatusFilterTME"
+                class="appointments-filter-select"
+                onchange="applyAppointmentsFilters()"
+                style="margin: 0;"
+              >
+                <option value="all">Total Generated Meetings</option>
+                <option value="confirmed">Confirmed Meetings</option>
+                <option value="not_confirmed">Not Confirmed</option>
+                <option value="not_interested">Not Interested</option>
+                <option value="deal_closed">Deal Closed</option>
+              </select>
+            </div>
+          </div>
+          <input
+            type="text"
+            id="appointmentsSearchTME"
+            placeholder="Search appointments..."
+            class="search-box"
+            onkeyup="applyAppointmentsFilters()"
+          />
+          <div class="table-responsive">
+            <table class="leads-table" id="appointmentsTable">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Company</th>
+                  <th>Client</th>
+                  <th>Contact</th>
+                  <th>App Date</th>
+                  <th>App Time</th>
+                  <th>Employee</th>
+                  <th>Meeting Type</th>
+                  <th>Location</th>
+                  <th>Meeting Status</th>
+                  <th>Update</th>
+                  <th>Reschedule</th>
+                </tr>
+              </thead>
+              <tbody id="appointmentsTableBody"></tbody>
+            </table>
+          </div>
+          <div id="noAppointments" class="no-data hidden">
+            No appointments found.
+          </div>
+        </div>
+        <div id="followed" class="section">
+          <div class="section-heading-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">Followups</h2>
+            <input
+              type="month"
+              id="followedMonthFilterTME"
+              class="deals-type-filter"
+              onchange="handleTmeMonthFilterChange(this.value)"
+              style="margin: 0;"
+            />
+          </div>
+          <input
+            type="text"
+            id="followedSearchTME"
+            placeholder="Search followups..."
+            class="search-box"
+            onkeyup="filterTable('followedTableBody', 'followedSearchTME')"
+          />
+          <div class="table-responsive">
+            <table class="leads-table" id="followedTable">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Company</th>
+                  <th>Client</th>
+                  <th>Contact</th>
+                  <th>City</th>
+
+                  <th>Follow Date</th>
+                  <th>Follow Time</th>
+                  <th>Employee</th>
+                  <th>Reason</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="followedTableBody"></tbody>
+            </table>
+          </div>
+          <div id="noFollowed" class="no-data hidden">
+            No followups found.
+          </div>
+        </div>
+        <div id="deals" class="section">
+          <div class="section-heading-row">
+            <h2>Deals</h2>
+            <button
+              type="button"
+              class="target-set-btn section-add-btn deal-close-launch-btn"
+              onclick="openDealCloseModal()"
+            >
+              <i class="fas fa-circle-check"></i> Deal Close
+            </button>
+          </div>
+          <div class="deals-filter-toolbar">
+            <input
+              type="text"
+              id="dealsSearchTME"
+              placeholder="Search deals..."
+              class="live-search project-tracker-search"
+              onkeyup="filterTable('dealsTableBody', 'dealsSearchTME')"
+            />
+            <input
+              type="month"
+              id="dealsMonthFilterTME"
+              class="deals-type-filter"
+              onchange="handleTmeMonthFilterChange(this.value)"
+            />
+            <select
+              id="dealsTypeFilterTME"
+              class="deals-type-filter"
+              onchange="loadDeals()"
+            >
+              <option value="all">All Deals</option>
+              <option value="fresh">Fresh</option>
+              <option value="renewal">Renewal</option>
+            </select>
+          </div>
+
+          <div class="table-responsive">
+            <table class="leads-table">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Client</th>
+                  <th>Total Amount</th>
+                  <th>Down Payment</th>
+                  <th>Remaining</th>
+                  <th>GST</th>
+                  <th>Type</th>
+                  <th>Payment Method</th>
+                  <th>Closed Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                  <th>Last Edit</th>
+                </tr>
+              </thead>
+              <tbody id="dealsTableBody"></tbody>
+            </table>
+          </div>
+
+          <div id="noDeals" class="no-data hidden">No deals found.</div>
+        </div>
+
+        <div id="attendance" class="section">
+          <h2>Attendance</h2>
+          <div class="attendance-filter-bar">
+            <label for="attendanceMonthFilter">
+              <i class="fas fa-calendar-days"></i>
+              <span>Month</span>
+            </label>
+            <input
+              type="month"
+              id="attendanceMonthFilter"
+              onchange="loadAttendance()"
+              title="Filter attendance by month"
+            />
+          </div>
+          <input
+            type="text"
+            id="attendanceSearchTME"
+            placeholder="Search attendance..."
+            class="search-box"
+            onkeyup="filterTable('attendanceTableBody', 'attendanceSearchTME')"
+          />
+          <div class="attendance-actions" id="attendanceActions"></div>
+          <div class="table-responsive">
+            <table class="leads-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Check In</th>
+                  <th>Check Out</th>
+                  <th>Check-in Location</th>
+                  <th>Working Hours</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceTableBody">
+                <tr>
+                  <td colspan="6">No attendance records found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        
+                        <div id="daily-work" class="section">
+          <div class="log-table-container">
+            <div class="log-table-header">
+              <h2><i class="fas fa-calendar-check"></i> Daily Work Log</h2>
+              <button class="action-btn" onclick="openDailyWorkModal()" style="background:var(--admin-accent, #0f766e); color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:bold;"><i class="fas fa-plus"></i> Add Work</button>
+            </div>
+            
+            <div class="log-table-filters">
+              <div>
+                <label>Month</label><br>
+                <input type="month" id="dwMonthFilter" onchange="loadDailyWork()" />
+              </div>
+              <div>
+                <label>Date</label><br>
+                <input type="date" id="dwDateFilter" onchange="loadDailyWork()" />
+              </div>
+              <div class="log-table-filter-sep"></div>
+              <div>
+                <label>Search</label><br>
+                <input type="text" id="dwSearch" placeholder="Search..." onkeyup="filterTable('dwTableBody', 'dwSearch')" class="search-box" style="width:200px;" />
+              </div>
+            </div>
+
+            <div class="log-table-wrapper">
+              <table class="log-table">
+                <thead>
+                  <tr id="dwTableHead">
+                    <!-- Dynamic headers injected here -->
+                  </tr>
+                </thead>
+                <tbody id="dwTableBody">
+                  <tr><td colspan="10" style="text-align:center; padding: 20px;">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="salary" class="section">
+          <div data-payroll-scope="self" data-payroll-role-label="EMAIL MARKETING"></div>
+        </div>
+
+        <div id="reports" class="section">
+          <h2>Performance Reports</h2>
+          <div class="report-grid">
+            <div class="report-card">
+              <h3>Total Leads</h3>
+              <h2 id="totalLeads">0</h2>
+            </div>
+            <div class="report-card">
+              <h3>Appointments</h3>
+              <h2 id="totalAppointments">0</h2>
+            </div>
+            <div class="report-card">
+              <h3>Followups</h3>
+              <h2 id="totalFollowed">0</h2>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="reportChart"></canvas>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Popup -->
+    <div id="popup" class="popup hidden">
+      <div class="popup-content">
+        <i id="popupIcon" class="fas fa-check-circle"></i>
+        <h3 id="popupTitle">Title</h3>
+        <p id="popupMessage">Message</p>
+      </div>
+    </div>
+
+    <div id="targetModal" class="modal hidden">
+      <div class="modal-content target-modal-content">
+        <h2>Set Monthly Target</h2>
+        <p class="target-modal-note">
+          Enter the target amount you want to achieve this month.
+        </p>
+        <div class="form-grid target-form-grid">
+          <input
+            type="number"
+            id="monthlyTargetInput"
+            min="0"
+            step="1000"
+            placeholder="Enter monthly target amount"
+          />
+        </div>
+        <div class="btn-group">
+          <button type="button" class="save-btn" onclick="saveMonthlyTarget()">
+            Save Target
+          </button>
+          <button type="button" class="cancel-btn" onclick="closeTargetModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Convert Followup to Appointment Modal -->
+    <div id="appointmentModal" class="modal hidden">
+      <div class="modal-content" style="max-width: 520px">
+        <h2 id="appointmentModalTitle">Set Appointment for Lead</h2>
+        <p id="leadInfo" style="margin-bottom: 15px; font-weight: 500"></p>
+
+        <form id="appointmentForm">
+          <input type="hidden" id="leadIdToUpdate" />
+
+          <div class="form-grid">
+            <label id="appointmentDateLabel">Appointment Date <span style="color: red">*</span></label>
+            <input
+              type="date"
+              id="app_date"
+              required
+              onchange="loadAvailableEmployees()"
+            />
+
+            <label id="appointmentTimeLabel">Appointment Time <span style="color: red">*</span></label>
+            <input
+              type="time"
+              id="app_time"
+              required
+              onchange="loadAvailableEmployees()"
+            />
+
+            <label>Assign Employee <span style="color: red">*</span></label>
+            <select id="assign_emp" required>
+              <option value="">Select Employee</option>
+            </select>
+
+            <label id="appointmentLocationLabel">Location / Meeting Place</label>
+            <input
+              type="text"
+              id="location"
+              placeholder="Office / Zoom / Site Visit"
+            />
+          </div>
+
+          <div class="btn-group" style="margin-top: 20px">
+            <button type="submit" class="save-btn" id="appointmentSaveBtn">Save Appointment</button>
+            <button
+              type="button"
+              onclick="closeAppointmentModal()"
+              class="cancel-btn"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="followupModal" class="modal hidden">
+      <div class="modal-content" style="max-width: 520px">
+        <h2>Set Follow Up for Lead</h2>
+        <p
+          id="followupLeadInfo"
+          style="margin-bottom: 15px; font-weight: 500"
+        ></p>
+
+        <form id="leadFollowupForm">
+          <input type="hidden" id="followupLeadIdToUpdate" />
+
+          <div class="form-grid">
+            <label>Follow Up Date <span style="color: red">*</span></label>
+            <input type="date" id="leadFollowDate" required />
+
+            <label>Follow Up Time <span style="color: red">*</span></label>
+            <input type="time" id="leadFollowTime" required />
+
+            <label>Reason / Note</label>
+            <input
+              type="text"
+              id="leadFollowReason"
+              placeholder="Reason or follow-up note"
+            />
+          </div>
+
+          <div class="btn-group" style="margin-top: 20px">
+            <button type="submit" class="save-btn">Save Follow Up</button>
+            <button
+              type="button"
+              onclick="closeFollowupModal()"
+              class="cancel-btn"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div
+      id="dealCloseModal"
+      class="modal hidden"
+      aria-hidden="true"
+      onclick="handleDealCloseModalBackdrop(event)"
+    >
+      <div class="modal-content deal-close-modal-content">
+        <div class="lead-modal-header">
+          <div class="deal-close-header-copy">
+            <h2>Close Lead</h2>
+            <p class="deal-close-modal-note">
+              Select any active lead and products. Final total is calculated by the
+              server before saving.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="lead-modal-close"
+            onclick="closeDealCloseModal()"
+            aria-label="Close deal close form"
+            title="Cancel"
+          >
+            <i class="fas fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="deal-close-toolbar">
+          <select
+            id="dealCloseLeadSelect"
+            onchange="handleDealCloseLeadChange()"
+          >
+            <option value="">Select lead</option>
+          </select>
+          <div id="dealCloseLeadMeta" class="deal-close-lead-meta">
+            Active leads will appear here with assigned ME details.
+          </div>
+        </div>
+
+        <div id="dealCloseProductRows" class="deal-close-products">
+          <div class="deal-close-empty">Loading products...</div>
+        </div>
+        <div id="dealCloseSelectedDescriptions" class="deal-close-descriptions"></div>
+
+        <div id="dealCloseTotal" class="deal-close-total">
+          Select products to calculate final total.
+        </div>
+
+        <div class="form-grid deal-close-payment-grid">
+          <div class="deal-close-payment-field">
+            <label for="dealCloseSalesType">Sale Type</label>
+            <select id="dealCloseSalesType">
+              <option value="fresh">Fresh</option>
+              <option value="renewal">Renewal</option>
+            </select>
+          </div>
+          <div class="deal-close-payment-field">
+            <label for="dealCloseAmount">Total Amount</label>
+            <input
+              type="number"
+              id="dealCloseAmount"
+              placeholder="Total Amount"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              readonly
+            />
+          </div>
+          <div class="deal-close-payment-field">
+            <label for="dealCloseReceivedAmount">Down Payment</label>
+            <input
+              type="number"
+              id="dealCloseReceivedAmount"
+              placeholder="Enter Down Payment"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              oninput="handleDealCloseReceivedInput()"
+            />
+          </div>
+          <div class="deal-close-payment-field">
+            <label for="dealCloseRemainingAmount">Remaining Amount</label>
+            <input
+              type="number"
+              id="dealCloseRemainingAmount"
+              placeholder="Remaining Amount"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              readonly
+            />
+          </div>
+          <div class="deal-close-payment-field">
+            <label for="dealCloseTotalGst">Total GST (18%)</label>
+            <input
+              type="number"
+              id="dealCloseTotalGst"
+              placeholder="Total GST"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              readonly
+            />
+          </div>
+          <div class="deal-close-payment-field">
+            <label for="dealClosePaidGst">Paid GST (on Down Payment)</label>
+            <input
+              type="number"
+              id="dealClosePaidGst"
+              placeholder="Paid GST"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              readonly
+            />
+          </div>
+          <div class="deal-close-payment-field">
+            <label for="dealCloseRemainingGst">Remaining GST</label>
+            <input
+              type="number"
+              id="dealCloseRemainingGst"
+              placeholder="Remaining GST"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              readonly
+            />
+          </div>
+          <div class="deal-close-payment-field">
+            <label for="dealClosePaymentMethod">Payment Method</label>
+            <select
+              id="dealClosePaymentMethod"
+              onchange="renderDealClosePaymentFields()"
+            >
+              <option value="">Select Payment Method</option>
+              <option value="Cash">Cash</option>
+              <option value="Cheque">Cheque</option>
+              <option value="UPI / Net Banking">UPI / Net Banking</option>
+              <option value="Debit/Credit Card">Card</option>
+            </select>
+          </div>
+        </div>
+
+        <div
+          id="dealClosePaymentFields"
+          class="form-grid deal-close-payment-grid"
+        ></div>
+
+        <textarea
+          id="dealCloseNotes"
+          rows="4"
+          placeholder="Payment notes, remarks, reference details..."
+        ></textarea>
+
+        <div class="btn-group">
+          <button
+            type="button"
+            class="save-btn"
+            id="dealCloseSaveBtn"
+            onclick="saveDealClose()"
+          >
+            Save Deal
+          </button>
+          <button
+            type="button"
+            class="cancel-btn"
+            onclick="closeDealCloseModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part Payment Modal for TME -->
+    <div id="dealPartPaymentModal" class="modal hidden" onclick="handleDealPartPaymentModalBackdrop(event)">
+      <div class="modal-content deal-close-modal-content">
+        <div class="lead-modal-header">
+          <div class="deal-close-header-copy">
+            <h2>Set up Part Payment Schedule</h2>
+            <p class="deal-close-modal-note">Choose installment options for the remaining amount.</p>
+          </div>
+          <button type="button" class="lead-modal-close" onclick="closePartPaymentModal()" aria-label="Close form">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+
+        <div style="padding: 15px; background: #f8fafc; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="color: #64748b; font-weight: 500;">Total Amount:</span>
+            <span id="ppTotalAmount" style="font-weight: 600; color: #0f172a;">Rs. 0</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="color: #64748b; font-weight: 500;">Paid Amount:</span>
+            <span id="ppPaidAmount" style="font-weight: 600; color: #16a34a;">Rs. 0</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: #64748b; font-weight: 500;">Remaining Balance:</span>
+            <span id="ppRemainingAmount" style="font-weight: 700; color: #dc2626;">Rs. 0</span>
+          </div>
+        </div>
+
+        <div class="form-grid deal-close-payment-grid">
+          <div class="deal-close-payment-field">
+            <label for="dealPartPaymentTerm">Part Payment Option</label>
+            <select id="dealPartPaymentTerm" onchange="calculateInstallmentSchedule()">
+              <option value="">Select Option</option>
+              <option value="1 Month">1 Month</option>
+              <option value="2 Months">2 Months</option>
+              <option value="Quarterly">Quarterly</option>
+              <option value="Half Year">Half Year</option>
+              <option value="Year">Yearly</option>
+            </select>
+          </div>
+          <div class="deal-close-payment-field">
+            <label for="dealPartPaymentInstallments">No. of Installments</label>
+            <input type="number" id="dealPartPaymentInstallments" readonly />
+          </div>
+          <div class="deal-close-payment-field">
+            <label for="dealPartPaymentPerAmount">Amount Per Installment</label>
+            <input type="number" id="dealPartPaymentPerAmount" readonly />
+          </div>
+          <div class="deal-close-payment-field">
+            <label for="dealPartPaymentStartDate">First Installment Date</label>
+            <input type="date" id="dealPartPaymentStartDate" onchange="calculateInstallmentSchedule()" />
+          </div>
+        </div>
+
+        <div id="dealInstallmentSchedulePreview" style="margin-top: 15px; max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; display: none;">
+          <h4 style="margin: 0 0 10px 0; color: #475569; font-size: 14px;">Estimated Payment Schedule</h4>
+          <div id="installmentList"></div>
+        </div>
+
+        <div class="btn-group" style="margin-top: 20px;">
+          <button type="button" class="save-btn" onclick="submitPartPayment()">
+            Save Schedule
+          </button>
+          <button type="button" class="cancel-btn" onclick="closePartPaymentModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OTP & Review Modal for TME -->
+    <div id="dealOtpModal" class="modal hidden" onclick="handleDealOtpModalBackdrop(event)">
+      <div class="modal-content deal-close-modal-content" style="max-width: 600px;">
+        <div class="lead-modal-header">
+          <div class="deal-close-header-copy">
+            <h2>Acknowledge & Verify</h2>
+            <p class="deal-close-modal-note">Lead must verify details and provide the OTP sent to their phone.</p>
+          </div>
+          <button type="button" class="lead-modal-close" onclick="closeDealOtpModal()" aria-label="Close form">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+
+        <div id="dealOtpReviewContent" style="padding: 15px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 20px;">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <div class="deal-close-payment-field" style="margin-bottom: 15px;">
+          <label for="dealOtpInput" style="font-weight: 600; display: block; margin-bottom: 8px;">Enter Verification OTP</label>
+          <input type="text" id="dealOtpInput" maxlength="6" placeholder="Enter 6-digit OTP" style="font-size: 20px; text-align: center; letter-spacing: 5px; height: 50px; font-weight: bold;" />
+        </div>
+
+        <!-- Simulated SMS Panel -->
+        <div id="tmeSimulatedSms" style="background: #eff6ff; border: 1px dashed #3b82f6; border-radius: 8px; padding: 12px; margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; color: #1e40af; font-size: 13px; font-weight: 600; margin-bottom: 4px;">
+            <i class="fas fa-mobile-screen-button"></i> Simulated Client SMS
+          </div>
+          <p id="tmeSimulatedSmsText" style="margin: 0; color: #1e3a8a; font-size: 13px; font-family: monospace;">Waiting for OTP generation...</p>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="save-btn" onclick="verifyDealOtp()">
+            Verify & Confirm Deal
+          </button>
+          <button type="button" class="cancel-btn" onclick="resendDealOtp()">
+            Resend OTP
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full-page Acknowledgement Overlay for TME -->
+    <div id="dealAckOverlay" class="deal-ack-overlay hidden">
+      <div class="deal-ack-card">
+        <div class="deal-ack-header">
+          <div class="deal-ack-logo" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <p style="color: #64748b; font-size: 13px; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">DEAL ACKNOWLEDGMENT PROFORMA</p>
+            <img src="acknowledge_img.png" alt="METRICS MART" style="width: 100%; height: auto; object-fit: contain; margin-bottom: 10px;">
+          </div>
+        </div>
+
+        <div class="deal-ack-body">
+          <div class="deal-ack-section">
+            <h3>Client Details</h3>
+            <div class="deal-ack-grid">
+              <div><strong>Company:</strong> <span id="ackCompany"></span></div>
+              <div><strong>Client Name:</strong> <span id="ackClient"></span></div>
+              <div><strong>Phone Number:</strong> <span id="ackPhone"></span></div>
+              <div><strong>Email Address:</strong> <span id="ackEmail"></span></div>
+              <div style="grid-column: 1 / -1;"><strong>Address:</strong> <span id="ackAddress"></span></div>
+              <div><strong>Closed Date:</strong> <span id="ackDate"></span></div>
+            </div>
+          </div>
+
+          <div class="deal-ack-section">
+            <h3>Services Purchased</h3>
+            <table class="deal-ack-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th style="text-align: right;">Price</th>
+                </tr>
+              </thead>
+              <tbody id="ackProductsList"></tbody>
+            </table>
+          </div>
+
+          <div class="deal-ack-section">
+            <h3>Payment Summary</h3>
+            <div class="deal-ack-grid">
+              <div><strong>Total Amount:</strong> <span id="ackTotal"></span></div>
+              <div><strong>Amount Paid (Down Payment):</strong> <span id="ackPaid"></span></div>
+              <div><strong>Payment Method:</strong> <span id="ackMethod"></span></div>
+              <div><strong>Total GST (18% Incl.):</strong> <span id="ackGst"></span></div>
+              <div><strong>Paid GST:</strong> <span id="ackPaidGst"></span></div>
+              <div><strong>Remaining GST:</strong> <span id="ackRemainingGst"></span></div>
+            </div>
+          </div>
+
+          <div class="deal-ack-section" id="ackScheduleSection" style="display: none;">
+            <h3>Remaining Payment Schedule (<span id="ackOptionLabel"></span>)</h3>
+            <table class="deal-ack-table">
+              <thead>
+                <tr>
+                  <th>Installment No.</th>
+                  <th>Due Date</th>
+                  <th style="text-align: right;">Amount</th>
+                </tr>
+              </thead>
+              <tbody id="ackScheduleList"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="deal-ack-footer">
+          <button type="button" class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> Print Receipt</button>
+          <button type="button" class="btn-close-ack" onclick="finalizeTmeDealClose()">Finish</button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="leadModal"
+      class="modal hidden"
+      aria-hidden="true"
+      onclick="handleLeadModalBackdrop(event)"
+    >
+      <div class="modal-content">
+        <div class="lead-modal-header">
+          <h2 id="leadModalTitle">Add Client</h2>
+          <button
+            type="button"
+            class="lead-modal-close"
+            onclick="closeLeadForm()"
+            aria-label="Close lead form"
+            title="Cancel"
+          >
+            <i class="fas fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+        <form id="leadForm">
+          <input type="hidden" name="company_scope" />
+          <input type="hidden" name="company" />
+          <input type="hidden" name="sales_type" value="new" />
+          <input type="hidden" name="industry_type" value="email_marketing" />
+          <select id="actionType" class="hidden" aria-hidden="true" tabindex="-1">
+            <option value="lead" selected>Lead</option>
+          </select>
+          <h3>Email Marketing Lead</h3>
+          <div class="form-grid">
+            <input
+              type="text"
+              placeholder="S. No"
+              name="serial_no"
+            />
+            <input
+              type="date"
+              name="lead_date"
+              title="Date"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Client Name"
+              name="client"
+              required
+            />
+            <input
+              type="email"
+              placeholder="Client Email"
+              name="email"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Client Website"
+              name="client_website"
+            />
+            <input
+              type="tel"
+              placeholder="Phone No"
+              name="phone_no"
+            />
+            <input
+              type="tel"
+              placeholder="Mobile No"
+              name="mobile_no"
+            />
+            <input
+              type="text"
+              placeholder="Follow up"
+              name="follow_up"
+            />
+            <input
+              type="text"
+              placeholder="Country Name"
+              name="country_name"
+            />
+            <input
+              type="text"
+              placeholder="Source"
+              name="source_lead"
+            />
+            <input type="text" placeholder="Service" name="service" />
+            <input type="text" placeholder="Reply ID" name="reply_id" />
+          </div>
+          <textarea
+            placeholder="Client Reply"
+            name="client_reply"
+            rows="5"
+          ></textarea>
+
+          <div class="btn-group">
+            <button type="submit" class="save-btn" id="leadSubmitBtn">
+              Add Client
+            </button>
+            <button type="button" onclick="closeLeadForm()" class="cancel-btn">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div
+      id="tmeLeadDetailsModal"
+      class="modal hidden"
+      onclick="handleTmeLeadDetailsBackdrop(event)"
+    >
+      <div class="modal-content me-lead-details-modal-content">
+        <button
+          type="button"
+          class="me-lead-cancel-btn"
+          onclick="closeTmeLeadDetailsModal()"
+          title="Close"
+          aria-label="Close lead details"
+        >
+          <i class="fas fa-xmark" aria-hidden="true"></i>
+        </button>
+        <h2>Lead Details</h2>
+        <div id="tmeLeadDetailsContent" class="me-lead-details-content">
+          <p class="no-data">Loading lead details...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Deal Modal for TME -->
+    <div
+      id="tmeEditDealModal"
+      class="tme-modal hidden"
+      onclick="handleTmeEditDealBackdrop(event)"
+    >
+      <div class="tme-modal-dialog">
+        <div class="tme-modal-header">
+          <h2>Edit Deal</h2>
+          <button
+            type="button"
+            class="tme-modal-close"
+            onclick="closeTmeEditDealModal()"
+            aria-label="Close"
+          >
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+        <div class="tme-modal-body">
+          <form id="tmeEditDealForm" class="tme-edit-deal-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="tmeeditDealAmount">Deal Amount</label>
+                <input type="number" id="tmeEditDealAmount" step="0.01" min="0" required />
+              </div>
+              <div class="form-group">
+                <label for="tmeEditReceivedAmount">Received Amount</label>
+                <input type="number" id="tmeEditReceivedAmount" step="0.01" min="0" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="tmeEditPaymentMethod">Payment Method</label>
+                <input type="text" id="tmeEditPaymentMethod" placeholder="e.g., Cash, Cheque" />
+              </div>
+              <div class="form-group">
+                <label for="tmeEditPaymentStatus">Payment Status</label>
+                <select id="tmeEditPaymentStatus" required>
+                  <option value="pending">Pending</option>
+                  <option value="received">Received</option>
+                  <option value="failed">Failed</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="tmeEditPaymentDate">Payment Date</label>
+                <input type="date" id="tmeEditPaymentDate" />
+              </div>
+              <div class="form-group">
+                <label for="tmeEditClosedDate">Closed Date</label>
+                <input type="date" id="tmeEditClosedDate" />
+              </div>
+            </div>
+            <div class="form-row form-actions">
+              <button type="button" class="cancel-btn" onclick="closeTmeEditDealModal()">Cancel</button>
+              <button type="submit" class="submit-btn">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="payroll-management.js?v=20260730-responsive-v1"></script>
+
+    <script src="attendance-face.js?v=20260602-live-face-v1"></script>
+    <script src="email-marketing.js?v=20260710-attendance-all-panels-v1"></script>
+    <script src="attendance-auto-checkout.js"></script>
+    <script src="leave-management.js?v=20260704-email-marketing-panel-v1"></script>
+    <script src="crm-security.js?v=20260608-v3"></script>
+    <script src="daily-work.js"></script>
+      <script src="profile-sidebar.js"></script>
+  </body>
+</html>

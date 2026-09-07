@@ -1,0 +1,51 @@
+# Node Modules
+node_modules/
+
+# Environment Files
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+error.log
+
+# Uploads
+uploads/
+
+# Database Backups
+db_backups/
+*.sql
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Temporary Files
+tmp/
+temp/
+
+# Cache
+.cache/
+
+# Build Files
+dist/
+build/
+
+# Runtime Data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+
+# npm cache
+.npm/
+
+# Optional history
+.history/

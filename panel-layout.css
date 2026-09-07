@@ -1,0 +1,107 @@
+/* Shared panel shell: keep navigation visible and scroll only panel content. */
+@media (min-width: 769px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  body > .header {
+    flex: 0 0 auto;
+  }
+
+  body > .dashboard-container {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0 !important;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .dashboard-container > .sidebar {
+    align-self: stretch;
+    flex: 0 0 auto;
+    height: 100%;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  .dashboard-container > .main-content {
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  .dashboard-container > .sidebar,
+  .dashboard-container > .main-content {
+    scrollbar-color: #94a3b8 transparent;
+    scrollbar-width: thin;
+  }
+}
+
+/* Admin dashboard cards need enough room for values and labels to stay readable. */
+.admin-dashboard .admin-kpi-grid {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.admin-dashboard .dashboard-metrics {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.admin-dashboard .metric-card {
+  min-width: 0;
+  width: 100%;
+}
+
+.admin-dashboard .metric-card > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.admin-dashboard .metric-card strong,
+.admin-dashboard .metric-card small,
+.admin-dashboard .metric-card > div > span {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.admin-dashboard .metric-card strong {
+  font-size: clamp(21px, 1.8vw, 26px);
+}
+
+@media (max-width: 768px) {
+  html,
+  body {
+    height: auto;
+    overflow: visible;
+  }
+
+  body {
+    display: block;
+  }
+
+  body > .dashboard-container,
+  .dashboard-container > .main-content {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .admin-dashboard .admin-kpi-grid,
+  .admin-dashboard .dashboard-metrics {
+    grid-template-columns: 1fr;
+  }
+}

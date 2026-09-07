@@ -9418,14 +9418,14 @@ app.get("/api/leads/:id/acknowledgment-data", async (req, res) => {
     const [products] = await getDealProductsForInvoice(leadId);
 
     const [installments] = await dbPromise.query(`
-      SELECT sequence_no AS installmentNo, amount, due_date AS dueDate, payment_status AS status
+      SELECT sequence_no AS installmentNo, amount, payment_date AS dueDate, payment_status AS status
       FROM deal_payments
       WHERE lead_id = ? AND payment_type = 'part_payment'
       ORDER BY sequence_no ASC
     `, [leadId]);
 
     const [renewals] = await dbPromise.query(`
-      SELECT service_name AS service, renewal_basis AS basis, first_start_date AS firstRenewalDate, renewal_amount AS amount
+      SELECT service_name AS service, renewal_basis AS basis, first_start_date AS firstRenewalDate, 0 AS amount
       FROM deal_service_renewals
       WHERE lead_id = ?
     `, [leadId]);

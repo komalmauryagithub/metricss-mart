@@ -3479,30 +3479,31 @@ body.modal-open {
 .admin-attendance-actions {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 5px;
     align-items: stretch;
-    min-width: 210px;
+    min-width: 160px;
 }
 
 .attendance-override-select {
     width: 100%;
     border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    padding: 8px 10px;
+    border-radius: 6px;
+    padding: 5px 6px;
     background: #ffffff;
     color: #0f172a;
+    font-size: 12px;
 }
 
 .admin-attendance-time-editor {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
+    gap: 4px;
 }
 
 .admin-attendance-time-editor-title {
     grid-column: 1 / -1;
     text-align: left;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
     color: #0f172a;
 }
@@ -6794,6 +6795,201 @@ table th, table td {
     max-width: 120px !important;
     white-space: normal !important;
     word-wrap: break-word !important;
+    .admin-deal-payment-form .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .deal-payments-table .invoice-row-status {
+        min-width: 110px;
+    }
+}
+
+/* ====== DEAL ACKNOWLEDGEMENT RECEIPT OVERLAY STYLES ====== */
+.deal-ack-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.95);
+    z-index: 100000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+    backdrop-filter: blur(8px);
+}
+
+.deal-ack-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 700px;
+    padding: 40px;
+    box-sizing: border-box;
+    position: relative;
+    animation: slideIn 0.3s ease-out;
+    font-family: 'Inter', sans-serif;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.deal-ack-header {
+    text-align: center;
+    border-bottom: 2px dashed #e2e8f0;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+}
+
+.deal-ack-logo h2 {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: #0f172a;
+    margin: 0;
+}
+
+.deal-ack-section {
+    margin-bottom: 25px;
+}
+
+.deal-ack-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #0f766e;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 8px;
+    margin: 0 0 12px 0;
+    letter-spacing: 0.05em;
+}
+
+.deal-ack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    font-size: 14px;
+    color: #334155;
+}
+
+.deal-ack-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.deal-ack-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 700;
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.deal-ack-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+.deal-ack-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+    margin-top: 30px;
+}
+
+.btn-print {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-print:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.btn-close-ack {
+    background: #0f766e;
+    border: 0;
+    color: #ffffff;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(15, 118, 110, 0.2);
+}
+
+.btn-close-ack:hover {
+    background: #0d5c56;
+    box-shadow: 0 10px 15px -3px rgba(15, 118, 110, 0.3);
+}
+
+@media print {
+    @page {
+        margin: 0;
+    }
+    body {
+        margin: 1.5cm;
+    }
+    body > *:not(.deal-ack-overlay) {
+        display: none !important;
+    }
+    .modal, .action-form, .sidebar, .top-header, .me-modal {
+        display: none !important;
+    }
+    .deal-ack-overlay {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        background: white !important;
+        backdrop-filter: none !important;
+        padding: 0 !important;
+        z-index: 999999 !important;
+    }
+    .deal-ack-card {
+        box-shadow: none !important;
+        max-width: 100% !important;
+        padding: 24px !important;
+        animation: none !important;
+    }
+    .deal-ack-footer {
+        display: none !important;
+    }
+}
+
+/* User Requested Table Styles */
+table th, table td {
+    font-size: 14px !important;
+    text-align: left !important;
+    max-width: 120px !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
     overflow-wrap: break-word !important;
 }
 
@@ -6809,3 +7005,42 @@ table td input, table td select, table th input, table th select {
 .sidebar-nav { width: 220px !important; }
 .sidebar-link { font-size: 14px !important; }
 
+/* ── Attendance Table Horizontal Scrollbar ── */
+
+/* Wrapper: horizontal scroll */
+#attendance .table-responsive {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+}
+
+/* Table itself: natural width, no squishing */
+#attendance .table-responsive table {
+    min-width: 1100px !important;
+    width: max-content !important;
+    table-layout: auto !important;
+    border-collapse: collapse !important;
+}
+
+/* Override global max-width:120px for attendance table cells */
+#attendance .table-responsive table th,
+#attendance .table-responsive table td {
+    max-width: none !important;
+    min-width: 80px !important;
+    white-space: nowrap !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    text-align: left !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+}
+
+/* Action column can be a bit wider */
+#attendance .table-responsive table td:last-child,
+#attendance .table-responsive table th:last-child {
+    min-width: 90px !important;
+    white-space: nowrap !important;
+}

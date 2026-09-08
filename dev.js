@@ -1004,7 +1004,9 @@ function loadUser() {
       const pathWithFolder = normalized.includes("/") ? normalized : `uploads/${normalized}`;
       avatarUrl = `${BASE_URL}/${pathWithFolder}`;
     }
-    document.getElementById("userAvatar").src = avatarUrl;
+    const avatarEl = document.getElementById("userAvatar");
+    avatarEl.onerror = function() { this.onerror = null; this.src = ''; this.style.display = 'none'; };
+    avatarEl.src = avatarUrl;
   }
 
   // User load hone ke baad hi data fetch karo
@@ -2333,6 +2335,12 @@ function createProjectCard(project, sectionStatus) {
   const buttonLabel =
     cardStatus === "completed" ? "View Details" : "Manage Phases";
 
+  // Show assignee name if team lead view
+  const assigneeName = project.assignee_name || project.assigneeName || null;
+  const assigneeBadge = assigneeName
+    ? `<p style="margin-top:4px;"><i class="fas fa-user-tag" style="color:#0284c7;"></i> <strong style="color:#0284c7;">${escapeHtml(assigneeName)}</strong></p>`
+    : '';
+
   return `
     <div class="project-card ${cardStatus}" data-assignment-id="${assignmentId || ""}">
         <div class="card-header">
@@ -2351,6 +2359,8 @@ function createProjectCard(project, sectionStatus) {
                 ${escapeHtml(formatServiceLabel(project.serviceType || project.service || project.service_type || "N/A"))}
               </span>
             </p>
+
+            ${assigneeBadge}
 
             ${buildProjectInsights(project)}
         </div>
@@ -4222,7 +4232,9 @@ async function loadDevTasks() {
     if (!userStr) return;
     const user = JSON.parse(userStr);
 
-    const res = await fetch(`${BASE_URL}/api/dev-tasks?userId=${user.id}`);
+    const isLead = user.is_team_lead == 1 || user.is_team_lead === true;
+    const roleParam = isLead ? '&role=lead' : '';
+    const res = await fetch(`${BASE_URL}/api/dev-tasks?userId=${user.id}${roleParam}`);
     if (!res.ok) return;
     const data = await res.json();
 
@@ -4352,7 +4364,7 @@ function getDevTaskStatusLabel(status) {
 
 function isDevTaskReviewerUser(user = {}) {
   const role = String(user?.role || "").trim().toLowerCase();
-  return role === "admin" || (role === "dev" && (Boolean(Number(user?.is_leader || 0)) || Boolean(Number(user?.is_team_lead || 0))));
+  return role === "admin" || (role === "dev" && Boolean(Number(user?.is_team_lead || 0)));
 }
 
 function canCurrentUserReviewDevTask(task = {}, user = {}) {
@@ -4588,20 +4600,24 @@ function renderDevTasks() {
       descriptionHtml += `<div style="margin-top: 5px;"><a href="${escapeHtml(task.task_url)}" target="_blank" style="color: #0284c7; font-size: 12px; font-weight: 600; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;"><i class="fas fa-external-link-alt"></i> Reference Link</a></div>`;
     }
     if (task.task_image) {
-      descriptionHtml += `<div style="margin-top: 5px;"><a href="${escapeHtml(task.task_image)}" target="_blank" title="Click to view attachment"><img src="${escapeHtml(task.task_image)}" alt="Task attachment" style="max-width: 100px; max-height: 60px; border-radius: 6px; border: 1px solid #cbd5e1; object-fit: cover; margin-top: 2px; transition: transform 0.2s;"></a></div>`;
+      const imgUrl = escapeHtml(task.task_image);
+      const displayUrl = imgUrl.startsWith('http') || imgUrl.startsWith('/') || imgUrl.startsWith('uploads/') ? imgUrl : `/uploads/${imgUrl}`;
+      descriptionHtml += `<div style="margin-top: 5px;"><a href="${displayUrl}" target="_blank" title="Click to view attachment"><img src="${displayUrl}" alt="Task attachment" onerror="this.parentElement.style.display='none';" style="max-width: 100px; max-height: 60px; border-radius: 6px; border: 1px solid #cbd5e1; object-fit: cover; margin-top: 2px; transition: transform 0.2s;"></a></div>`;
     }
 
     let logsHtml = `<div style="max-height: 110px; overflow-y: auto; padding-right: 5px;">`;
     if (task.progress_logs) {
       try {
-        const logs = JSON.parse(task.progress_logs);
-        if (logs.length > 0) {
+        const logs = typeof task.progress_logs === 'string' ? JSON.parse(task.progress_logs) : task.progress_logs;
+        if (logs && logs.length > 0) {
           logs.forEach(log => {
-            const d = formatDevTaskDateTime(log.date) || "-";
+            const d = formatDevTaskDateTime(log.created_at || log.date) || "-";
             let mediaItems = '';
             
-            const urls = Array.isArray(log.urls) ? log.urls : (log.url ? [log.url] : []);
-            const validUrls = urls.filter(u => typeof u === 'string' && u.trim() !== '');
+            let parsedUrls = [];
+            try { parsedUrls = typeof log.urls === 'string' ? JSON.parse(log.urls) : (Array.isArray(log.urls) ? log.urls : (log.url ? [log.url] : [])); } catch(e) {}
+            
+            const validUrls = parsedUrls.filter(u => typeof u === 'string' && u.trim() !== '');
             if (validUrls.length > 0) {
               mediaItems += `<div style="margin-top: 4px; display: flex; gap: 4px; flex-wrap: wrap;">`;
               validUrls.forEach((u, idx) => {
@@ -4611,12 +4627,16 @@ function renderDevTasks() {
               mediaItems += `</div>`;
             }
 
-            const images = Array.isArray(log.images) ? log.images : (log.image ? [log.image] : []);
-            const validImages = images.filter(img => typeof img === 'string' && img.trim() !== '');
+            let parsedImages = [];
+            try { parsedImages = typeof log.images === 'string' ? JSON.parse(log.images) : (Array.isArray(log.images) ? log.images : (log.image ? [log.image] : [])); } catch(e) {}
+            
+            const validImages = parsedImages.filter(img => typeof img === 'string' && img.trim() !== '');
             if (validImages.length > 0) {
               mediaItems += `<div style="margin-top: 4px; display: flex; gap: 4px; flex-wrap: wrap;">`;
               validImages.forEach(img => {
-                mediaItems += `<a href="${escapeHtml(img)}" target="_blank" title="Click to view screenshot"><img src="${escapeHtml(img)}" alt="Progress image" style="max-width: 60px; max-height: 42px; border-radius: 4px; border: 1px solid #cbd5e1; object-fit: cover;"></a>`;
+                const imgUrl = escapeHtml(img);
+                const displayUrl = imgUrl.startsWith('http') || imgUrl.startsWith('/') || imgUrl.startsWith('uploads/') ? imgUrl : `/uploads/${imgUrl}`;
+                mediaItems += `<a href="${displayUrl}" target="_blank" title="Click to view screenshot"><img src="${displayUrl}" alt="Progress image" onerror="this.parentElement.style.display='none';" style="max-width: 60px; max-height: 42px; border-radius: 4px; border: 1px solid #cbd5e1; object-fit: cover;"></a>`;
               });
               mediaItems += `</div>`;
             }

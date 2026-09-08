@@ -1157,7 +1157,7 @@
             <input type="date" id="dwAdminDateFrom" class="search-box" style="width:auto; margin:0;" onchange="loadAdminDailyWork()" title="From Date" />
             <input type="date" id="dwAdminDateTo" class="search-box" style="width:auto; margin:0;" onchange="loadAdminDailyWork()" title="To Date" />
             
-            <button class="action-btn" onclick="exportAdminDailyWorkCsv()" style="margin-left: auto;"><i class="fas fa-download"></i> Export</button>
+            <button class="action-btn" onclick="exportDailyWork()" style="margin-left: auto;"><i class="fas fa-download"></i> Export</button>
           </div>
           
           <div class="table-responsive">
@@ -2366,6 +2366,73 @@
       </div>
     </div>
 
+
+    <!-- Edit Deal Modal for Admin -->
+    <div
+      id="adminEditDealModal"
+      class="modal hidden"
+      style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; display:flex; justify-content:center; align-items:center;"
+      onclick="handleAdminEditDealBackdrop(event)"
+    >
+      <div class="modal-content" style="background:white; padding:20px; border-radius:8px; max-width:600px; width:95%; max-height:90vh; overflow-y:auto; position:relative;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid #e2e8f0; padding-bottom:10px; margin-bottom:15px;">
+          <div>
+            <h2 style="margin:0;">Edit Deal</h2>
+            <p style="margin:5px 0 0 0; color:#64748b; font-size:14px;">Modify deal details and amounts.</p>
+          </div>
+          <button
+            type="button"
+            class="close-btn"
+            style="background:none; border:none; font-size:24px; cursor:pointer; color:#64748b;"
+            onclick="closeAdminEditDealModal()"
+          >&times;</button>
+        </div>
+        <form id="adminEditDealForm" onsubmit="handleAdminEditDealSubmit(event)">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+            <div>
+              <label style="display:block; margin-bottom:5px; font-weight:500;">Deal Amount</label>
+              <input type="number" id="editDealAmount" step="0.01" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;" required>
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:5px; font-weight:500;">Received Amount</label>
+              <input type="number" id="editReceivedAmount" step="0.01" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;" required>
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:5px; font-weight:500;">Payment Status</label>
+              <select id="editPaymentStatus" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;" required>
+                <option value="pending">Pending</option>
+                <option value="received">Received</option>
+                <option value="failed">Failed</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:5px; font-weight:500;">Payment Method</label>
+              <input type="text" id="editPaymentMethod" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;">
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:5px; font-weight:500;">Payment Date</label>
+              <input type="date" id="editPaymentDate" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;">
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:5px; font-weight:500;">Closed Date</label>
+              <input type="date" id="editClosedDate" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;">
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:5px; font-weight:500;">ME Name</label>
+              <input type="text" id="editMeName" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;">
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:5px; font-weight:500;">TME Name</label>
+              <input type="text" id="editTmeName" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;">
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; border-top:1px solid #e2e8f0; padding-top:15px;">
+            <button type="button" onclick="closeAdminEditDealModal()" style="padding:8px 16px; border:1px solid #cbd5e1; background:white; border-radius:4px; cursor:pointer;">Cancel</button>
+            <button type="submit" id="adminEditDealSubmitBtn" style="padding:8px 16px; border:none; background:#0f766e; color:white; border-radius:4px; cursor:pointer;">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- Deal Payments Modal for Admin -->
     <div

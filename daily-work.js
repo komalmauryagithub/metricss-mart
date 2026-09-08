@@ -253,11 +253,13 @@ function renderDwMediaHtml(details = {}) {
     const validImages = images.filter(img => typeof img === 'string' && img.trim() !== '');
     if (validImages.length > 0) {
         html += `<div style="margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap;">`;
-        validImages.forEach(img => {
-            const cleanImg = img.trim();
-            html += `<a href="${cleanImg}" target="_blank" title="Click to view image"><img src="${cleanImg}" style="max-width: 60px; max-height: 42px; border-radius: 4px; border: 1px solid #cbd5e1; object-fit: cover;"></a>`;
-        });
-        html += `</div>`;
+        images.forEach(img => {
+            const cleanImg = escapeHtml(String(img).trim());
+            if (cleanImg) {
+                const displayUrl = cleanImg.startsWith('http') || cleanImg.startsWith('/') || cleanImg.startsWith('uploads/') ? cleanImg : `/uploads/${cleanImg}`;
+                html += `<a href="${displayUrl}" target="_blank" title="Click to view image"><img src="${displayUrl}" onerror="this.parentElement.style.display='none';" style="max-width: 60px; max-height: 42px; border-radius: 4px; border: 1px solid #cbd5e1; object-fit: cover;"></a>`;
+            }
+        });html += `</div>`;
     }
 
     return html;
@@ -521,9 +523,10 @@ function openDailyWorkModal(editDataStr = null) {
                 images.forEach(img => {
                     if (img && existingImgContainer) {
                         const safeImg = typeof img === 'string' ? img.replace(/"/g, '&quot;') : '';
+                        const displayUrl = safeImg.startsWith('http') || safeImg.startsWith('/') || safeImg.startsWith('uploads/') ? safeImg : `/uploads/${safeImg}`;
                         existingImgContainer.innerHTML += `
                             <div style="position: relative; display: inline-block;">
-                                <a href="${safeImg}" target="_blank"><img src="${safeImg}" style="width: 50px; height: 40px; border-radius: 4px; border: 1px solid #cbd5e1; object-fit: cover;"></a>
+                                <a href="${displayUrl}" target="_blank"><img src="${displayUrl}" onerror="this.parentElement.style.display='none';" style="width: 50px; height: 40px; border-radius: 4px; border: 1px solid #cbd5e1; object-fit: cover;"></a>
                                 <input type="hidden" class="dw-existing-image-val" value="${safeImg}">
                                 <button type="button" onclick="this.parentElement.remove()" style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Remove Image">&times;</button>
                             </div>

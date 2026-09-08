@@ -806,10 +806,6 @@
                   <span>Joining Date</span>
                   <input type="date" class="payroll-inline-input" data-field="joining-date" value="${escapeHtml((row.joiningDate || "").slice(0, 10))}" />
                 </label>
-                <label class="payroll-inline-check">
-                  <input type="checkbox" class="payroll-checkbox" data-field="team-lead" ${row.isTeamLead ? "checked" : ""} />
-                  <span>Team Lead</span>
-                </label>
               </div>
             </td>
             <td>
@@ -952,7 +948,6 @@
       employeeId,
       department: row.querySelector('[data-field="department"]')?.value || "",
       joiningDate: row.querySelector('[data-field="joining-date"]')?.value || "",
-      isTeamLead: row.querySelector('[data-field="team-lead"]')?.checked || false,
       salary: row.querySelector('[data-field="salary"]')?.value || "0",
       compensationType:
         canUseSalesCompensation(row.dataset.role)
@@ -1008,7 +1003,6 @@
             commissionPercent: payload.commissionPercent,
             department: payload.department,
             joiningDate: payload.joiningDate,
-            isTeamLead: payload.isTeamLead,
             bonusAmount: payload.bonusAmount,
             incentiveAmount: payload.incentiveAmount,
             penaltyAmount: payload.penaltyAmount,

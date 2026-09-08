@@ -7655,7 +7655,8 @@ async function queryLoginUsers(loginId, password) {
     contact,
     role,
     comp_name,
-    prof_img
+    prof_img,
+    is_team_lead
   `;
   const whereClause = `
     FROM users
@@ -8258,6 +8259,7 @@ app.get("/api/admin/users/:id", async (req, res) => {
           TIME_FORMAT(logout_time, '%H:%i') AS logout_time,
           skills,
           salary,
+          is_team_lead,
           DATE_FORMAT(joining_date, '%Y-%m-%d') AS joining_date,
           total_experience,
           pf_enabled,
@@ -16296,8 +16298,6 @@ async function ensurePayrollTables() {
       new_department varchar(100) DEFAULT NULL,
       previous_joining_date date DEFAULT NULL,
       new_joining_date date DEFAULT NULL,
-      previous_is_team_lead tinyint(1) NOT NULL DEFAULT 0,
-      new_is_team_lead tinyint(1) NOT NULL DEFAULT 0,
       changed_by int DEFAULT NULL,
       note text DEFAULT NULL,
       changed_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -17690,10 +17690,6 @@ async function saveUserCompensation(adminId, userId, updates = {}) {
     updates.joiningDate !== undefined
       ? String(updates.joiningDate || "").trim() || null
       : employee.joining_date || null;
-  const nextIsTeamLead =
-    updates.isTeamLead !== undefined
-      ? Number(normalizePayrollBoolean(updates.isTeamLead))
-      : Number(employee.is_team_lead || 0);
 
   if (nextJoiningDate && !parseDateOnlyValue(nextJoiningDate)) {
     const error = new Error("Joining date must be a valid date");
@@ -17707,14 +17703,11 @@ async function saveUserCompensation(adminId, userId, updates = {}) {
     Number(employee.salary || 0) !== Number(nextSalary || 0);
   const joiningDateChanged =
     String(employee.joining_date || "") !== String(nextJoiningDate || "");
-  const teamLeadChanged =
-    Number(employee.is_team_lead || 0) !== Number(nextIsTeamLead || 0);
 
   if (
     !departmentChanged &&
     !salaryChanged &&
-    !joiningDateChanged &&
-    !teamLeadChanged
+    !joiningDateChanged
   ) {
     return employee;
   }
@@ -17725,15 +17718,13 @@ async function saveUserCompensation(adminId, userId, updates = {}) {
       SET
         department = ?,
         salary = ?,
-        joining_date = ?,
-        is_team_lead = ?
+        joining_date = ?
       WHERE id = ?
     `,
     [
       nextDepartment || null,
       Number(nextSalary.toFixed(2)),
       nextJoiningDate,
-      nextIsTeamLead,
       normalizedUserId,
     ],
   );
@@ -17748,12 +17739,10 @@ async function saveUserCompensation(adminId, userId, updates = {}) {
         new_department,
         previous_joining_date,
         new_joining_date,
-        previous_is_team_lead,
-        new_is_team_lead,
         changed_by,
         note
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       normalizedUserId,
@@ -17763,8 +17752,6 @@ async function saveUserCompensation(adminId, userId, updates = {}) {
       nextDepartment || null,
       employee.joining_date || null,
       nextJoiningDate,
-      Number(employee.is_team_lead || 0),
-      nextIsTeamLead,
       adminUser.id,
       "Updated via payroll management",
     ],
@@ -20056,9 +20043,61 @@ async function mapRowsToSharedProjectAssignments(rows = []) {
 }
 
 // ================= DEV PROJECTS =================
-app.get("/api/dev/projects/:userId", (req, res) => {
+app.get("/api/dev/projects/:userId", async (req, res) => {
   const userId = parseInt(req.params.userId, 10);
-  sendProjectAssignmentsByUser(userId, res, "DEV Projects");
+
+  try {
+    // Check if this user is a team lead
+    const [userRows] = await dbPromise.query('SELECT is_team_lead, comp_name FROM users WHERE id = ?', [userId]);
+    if (!userRows.length) return res.status(404).json({ success: false, message: 'User not found' });
+
+    const { is_team_lead, comp_name } = userRows[0];
+
+    if (!is_team_lead) {
+      // Normal DEV — show only their own projects
+      return sendProjectAssignmentsByUser(userId, res, "DEV Projects");
+    }
+
+    // Team Lead — show all DEVs' projects in same company
+    await ensureProjectAssignmentWorkflowColumns();
+    await ensureProjectPhaseDetailsTable();
+    const leadProjectSql = await getLeadProjectSelectSql("l");
+
+    const sql = `
+      SELECT
+        pa.id AS assignment_id,
+        l.id AS project_id,
+        ${leadProjectSql.selectSql},
+        pa.service_type,
+        pa.status,
+        pa.stage,
+        pa.progress,
+        pa.assigned_at,
+        pa.user_id AS assignee_id,
+        u.name AS assignee_name
+      FROM project_assignments pa
+      JOIN leads l ON pa.project_id = l.id
+      JOIN users u ON pa.user_id = u.id
+      WHERE LOWER(TRIM(u.role)) = 'dev'
+        AND u.comp_name = ?
+      ORDER BY pa.assigned_at DESC
+    `;
+
+    const [rows] = await dbPromise.query(sql, [comp_name]);
+    const projects = await mapRowsToSharedProjectAssignments(rows || []);
+
+    return res.json({
+      success: true,
+      isTeamLead: true,
+      assigned: projects.filter(p => p.status === "assigned"),
+      ongoing: projects.filter(p => p.status === "ongoing"),
+      completed: projects.filter(p => p.status === "completed"),
+    });
+
+  } catch (err) {
+    console.error("DEV Projects Fetch Error:", err);
+    return res.status(500).json({ success: false, message: "Database error" });
+  }
 });
 
 // ================= DM PROJECTS =================
@@ -22136,6 +22175,7 @@ app.put("/api/payment-status/:id", (req, res) => {
 function downloadTextInvoice(id) {
   window.location.href = `${BASE_URL}/api/tax-invoice/${id}`;
 }
+
 app.post("/api/razorpay/order", async (req, res) => {
   try {
     const { amount } = req.body;
@@ -22757,6 +22797,175 @@ app.get("/api/admin/daily-log/details", async (req, res) => {
     res.status(500).json({ success: false, message: "Database error: " + err.message });
   }
 });
+
+// --- Dev Users ---
+// --- Dev Users ---
+app.get('/api/dev-users', async (req, res) => {
+  try {
+    let sql = 'SELECT id, name, comp_name, employment_status FROM users WHERE LOWER(TRIM(role)) = "dev"';
+    const [rows] = await dbPromise.query(sql);
+    res.json({ success: true, data: rows });
+  } catch (err) {
+    console.error('GET /api/dev-users error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// --- Generic Upload API ---
+app.post('/api/upload-file', (req, res) => {
+  upload.single('file')(req, res, function (err) {
+    if (err) {
+      console.error('Multer error:', err);
+      return res.status(400).json({ success: false, message: err.message || 'File upload failed' });
+    }
+    try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded' });
+      }
+      res.json({ success: true, url: req.file.filename });
+    } catch (err) {
+      console.error('File upload error:', err);
+      res.status(500).json({ success: false, message: 'Upload failed' });
+    }
+  });
+});
+
+// --- Dev Tasks (DEV Panel) ---
+app.get('/api/dev-tasks', async (req, res) => {
+  try {
+    const { userId, role } = req.query;
+    let sql = `
+      SELECT t.*, 
+             u1.name AS assigned_by_name, 
+             u2.name AS assigned_to_name
+      FROM dev_tasks t
+      LEFT JOIN users u1 ON t.assigned_by = u1.id
+      LEFT JOIN users u2 ON t.assigned_to = u2.id
+    `;
+    let params = [];
+    if (userId) {
+      if (role === 'lead') {
+        // Team lead: show tasks they assigned OR tasks assigned to them
+        sql += ' WHERE (t.assigned_by = ? OR t.assigned_to = ?)';
+        params.push(userId, userId);
+      } else {
+        // Normal DEV: only tasks assigned to them
+        sql += ' WHERE t.assigned_to = ?';
+        params.push(userId);
+      }
+    }
+    sql += ' ORDER BY t.created_at DESC';
+    const [rows] = await dbPromise.query(sql, params);
+
+    // Also fetch progress for each task
+    const [progressRows] = await dbPromise.query('SELECT * FROM dev_task_progress ORDER BY created_at ASC');
+    const tasks = rows.map(t => {
+      t.progress_logs = progressRows.filter(p => p.task_id === t.id);
+      return t;
+    });
+
+    res.json({ success: true, tasks });
+  } catch (err) {
+    console.error('GET /api/dev-tasks error:', err);
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
+});
+
+app.post('/api/dev-tasks', async (req, res) => {
+  try {
+    const { title, description, assigned_by, assigned_to, task_url, task_image } = req.body;
+    const sql = 'INSERT INTO dev_tasks (title, description, assigned_by, assigned_to, task_url, task_image, status) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const [result] = await dbPromise.query(sql, [title, description, assigned_by, assigned_to, task_url, task_image, 'Pending']);
+    res.json({ success: true, id: result.insertId });
+  } catch (err) {
+    console.error('POST /api/dev-tasks error:', err);
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
+});
+
+app.put('/api/dev-tasks/:id', async (req, res) => {
+  try {
+    const { status, leader_remark, leader_remark_by } = req.body;
+    let sql = 'UPDATE dev_tasks SET status = ?';
+    let params = [status];
+    
+    if (leader_remark) {
+      sql += ', leader_remark = ?, leader_remark_by = ?, leader_remark_at = NOW()';
+      params.push(leader_remark, leader_remark_by);
+    }
+    
+    sql += ' WHERE id = ?';
+    params.push(req.params.id);
+    
+    await dbPromise.query(sql, params);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('PUT /api/dev-tasks error:', err);
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
+});
+
+app.post('/api/dev-tasks/:id/progress', async (req, res) => {
+  try {
+    const { userId, note, urls, images } = req.body;
+    const sql = 'INSERT INTO dev_task_progress (task_id, user_id, note, urls, images) VALUES (?, ?, ?, ?, ?)';
+    await dbPromise.query(sql, [req.params.id, userId, note, JSON.stringify(urls || []), JSON.stringify(images || [])]);
+    
+    // Also update task status if passed
+    if (req.body.status) {
+      await dbPromise.query('UPDATE dev_tasks SET status = ? WHERE id = ?', [req.body.status, req.params.id]);
+    }
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error('POST /api/dev-tasks/:id/progress error:', err);
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
+});
+
+// --- Daily Work (Employee Panel) ---
+app.get('/api/daily-work/my', async (req, res) => {
+  try {
+    const { userId, month } = req.query;
+    let sql = 'SELECT * FROM daily_work WHERE user_id = ?';
+    let params = [userId];
+    if (month) {
+      sql += ' AND work_date LIKE ?';
+      params.push(month + '%');
+    }
+    sql += ' ORDER BY work_date DESC, created_at DESC';
+    const [rows] = await dbPromise.query(sql, params);
+    res.json({ success: true, data: rows });
+  } catch (err) {
+    console.error('GET /api/daily-work/my error:', err);
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
+});
+
+app.post('/api/daily-work', async (req, res) => {
+  try {
+    const { userId, role_snapshot, work_date, client_or_project, status, remarks, work_details } = req.body;
+    const sql = 'INSERT INTO daily_work (user_id, role_snapshot, work_date, client_or_project, status, remarks, work_details) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const [result] = await dbPromise.query(sql, [userId, role_snapshot, work_date, client_or_project, status, remarks, JSON.stringify(work_details || {})]);
+    res.json({ success: true, id: result.insertId });
+  } catch (err) {
+    console.error('POST /api/daily-work error:', err);
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
+});
+
+app.put('/api/daily-work/:id', async (req, res) => {
+  try {
+    const { client_or_project, status, remarks, work_details } = req.body;
+    const sql = 'UPDATE daily_work SET client_or_project = ?, status = ?, remarks = ?, work_details = ? WHERE id = ?';
+    await dbPromise.query(sql, [client_or_project, status, remarks, JSON.stringify(work_details || {}), req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('PUT /api/daily-work/:id error:', err);
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

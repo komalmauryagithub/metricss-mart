@@ -802,10 +802,10 @@ function getSalesTargetForRole(role) {
 }
 
 const AUTO_TARGET_INCENTIVE_RATE = 0.07;
-const AUTO_TARGET_INCENTIVE_ROLES = new Set(["me", "tme"]);
+const AUTO_TARGET_INCENTIVE_ROLES = new Set(["me", "tme", "email_marketing"]);
 const SALARY_TARGET_MULTIPLIER = normalizeSalesTarget(
   process.env.SALES_TARGET_SALARY_MULTIPLIER,
-  7,
+  5,
 );
 let cachedProfileInviteTransport = null;
 let cachedProfileInviteTransportSignature = "";
@@ -956,7 +956,7 @@ async function getSalesTargetSummaryData({ role, userId, monthKey } = {}) {
 
     if (shouldUseSalaryTarget && salary > 0) {
       target = roundServerAmount(salary * SALARY_TARGET_MULTIPLIER);
-      targetSource = "salary_7x";
+      targetSource = "salary_5x";
     } else if (monthlyTarget != null && monthlyTarget > 0) {
       target = monthlyTarget;
       targetSource = "monthly_target";

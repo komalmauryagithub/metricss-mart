@@ -1150,6 +1150,7 @@
               <option value="ads">Ads</option>
               <option value="tme">TME</option>
               <option value="me">ME</option>
+              <option value="email_marketing">Email Marketing</option>
             </select>
             <select id="dwAdminEmployee" class="search-box" style="width:auto; margin:0;" onchange="loadAdminDailyWork()">
               <option value="">All Employees</option>
@@ -1272,6 +1273,7 @@
                 <option value="accounts">ACC</option>
                 <option value="seo">SEO</option>
                 <option value="smo">SMO</option>
+                <option value="email_marketing">Email Marketing</option>
               </select>
               <select
                 id="adminAttendanceStatusFilter"
@@ -1472,6 +1474,13 @@
               onclick="filterTeamByRole('acc')"
             >
               ACC
+            </button>
+            <button
+              class="tab-btn"
+              data-role="email_marketing"
+              onclick="filterTeamByRole('email_marketing')"
+            >
+              Email Marketing
             </button>
           </div>
 
@@ -1957,6 +1966,7 @@
                         <option value="seo">SEO</option>
                         <option value="smo">SMO</option>
                         <option value="accounts">ACC</option>
+                        <option value="email_marketing">Email Marketing</option>
                       </select>
                     </div>
                     <div class="input-group">

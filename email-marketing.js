@@ -299,7 +299,7 @@ async function loadDeals() {
           <td>${escapeTmeHtml(d.payment_method || "-")}</td>
           <td>${escapeTmeHtml(formatTmeDisplayDate(d.closed_date))}</td>
           <td><span class="status-badge deal">Deal Closed</span></td>
-          <td>
+          <td style="display:none;">
             <button
               type="button"
               class="btn-renewal ${renewalMeta.className}"
@@ -4869,7 +4869,7 @@ async function loadLeads() {
             <td>${lead.client_website ? `<a href="${escapeTmeHtml(formatExternalWebsiteUrl(lead.client_website))}" target="_blank" rel="noopener noreferrer">${escapeTmeHtml(lead.client_website)}</a>` : "-"}</td>
             <td>${escapeTmeHtml(getEmailMarketingLeadPhone(lead) || "-")}</td>
             <td>${escapeTmeHtml(getEmailMarketingLeadMobile(lead) || "-")}</td>
-            <td>${escapeTmeHtml(lead.follow_up || "-")}</td>
+            <td style="display:none;">${escapeTmeHtml(lead.follow_up || "-")}</td>
             <td>${escapeTmeHtml(lead.country_name || "-")}</td>
             <td>${escapeTmeHtml(lead.client_reply || "-")}</td>
             <td>${escapeTmeHtml(lead.source_lead || "-")}</td>
@@ -4889,7 +4889,7 @@ async function loadLeads() {
                 ${
                   canMoveLead && normalizedStage !== "followup"
                     ? `
-                <button type="button" onclick="openFollowupModal(${Number(lead.id)})" class="btn-followup" title="Set Follow Up">
+                <button type="button" style="display:none;" onclick="openFollowupModal(${Number(lead.id)})" class="btn-followup" title="Set Follow Up">
                     <i class="fas fa-clock"></i><span>Follow Up</span>
                 </button>`
                     : ""

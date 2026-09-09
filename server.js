@@ -19070,7 +19070,8 @@ app.get("/api/reports/counts", (req, res) => {
 });
 
 app.get("/api/projects", (req, res) => {
-  const sql = `
+  const companyScope = normalizeCompanyScopeKey(req.query.companyScope || req.query.company_scope || req.query.company);
+  let sql = `
       SELECT 
         id,
         company_name AS projectName,
@@ -19082,14 +19083,21 @@ app.get("/api/projects", (req, res) => {
         smo_type,
         app_type,
         erp_type,
+        company_scope,
         'Ongoing' AS status
       FROM leads 
       WHERE lead_status = 'deal_closed'
       AND pay_stat = 'received'
-      ORDER BY closed_date DESC
-    `;
+  `;
 
-  db.query(sql, (err, result) => {
+  if (companyScope) {
+    sql += ` AND company_scope = ?`;
+  }
+  sql += ` ORDER BY closed_date DESC`;
+  const queryParams = [];
+  if (companyScope) queryParams.push(companyScope);
+
+  db.query(sql, queryParams, (err, result) => {
     if (err) {
       console.error("Projects Fetch Error:", err);
       return res.status(500).json({ success: false, message: "Server error" });
@@ -19168,6 +19176,7 @@ app.get("/api/projects", (req, res) => {
         smo_type: project.smo_type,
         app_type: project.app_type,
         erp_type: project.erp_type,
+        company_scope: project.company_scope,
       };
     });
 
@@ -20768,7 +20777,8 @@ app.get("/api/projects-summary", async (req, res) => {
 });
 
 app.get("/api/projects", (req, res) => {
-  const sql = `
+  const companyScope = normalizeCompanyScopeKey(req.query.companyScope || req.query.company_scope || req.query.company);
+  let sql = `
     SELECT
       id,
       company_name AS projectName,
@@ -20780,14 +20790,21 @@ app.get("/api/projects", (req, res) => {
       smo_type,
       app_type,
       erp_type,
+      company_scope,
       'Ongoing' AS status
     FROM leads
     WHERE lead_status = 'deal_closed'
     AND pay_stat = 'received'
-    ORDER BY closed_date DESC
   `;
 
-  db.query(sql, (err, result) => {
+  if (companyScope) {
+    sql += ` AND company_scope = ?`;
+  }
+  sql += ` ORDER BY closed_date DESC`;
+  const queryParams = [];
+  if (companyScope) queryParams.push(companyScope);
+
+  db.query(sql, queryParams, (err, result) => {
     if (err) {
       console.error("Projects Fetch Error:", err);
       return res.status(500).json({ success: false, message: "Server error" });
@@ -20814,6 +20831,7 @@ app.get("/api/projects", (req, res) => {
         smo_type: project.smo_type,
         app_type: project.app_type,
         erp_type: project.erp_type,
+        company_scope: project.company_scope,
       };
     });
 

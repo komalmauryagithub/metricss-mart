@@ -69,7 +69,7 @@
           <li onclick="showSection('appointments')">
             <i class="fas fa-calendar-check"></i> Appointments
           </li>
-          <li onclick="showSection('followed')">
+          <li onclick="showSection('followed')" style="display:none;">
             <i class="fas fa-check-circle"></i> Followups
           </li>
           <li onclick="showSection('deals')">
@@ -281,7 +281,7 @@
                       >Fresh client wins</small
                     >
                   </div>
-                  <div class="target-progress-mini renewal">
+                  <div class="target-progress-mini renewal" style="display:none;">
                     <span>Renewal</span>
                     <strong id="tmeTargetInsightRenewal">0</strong>
                     <small id="tmeTargetInsightRenewalHint"
@@ -390,11 +390,12 @@
               class="metric-card followups"
               role="button"
               tabindex="0"
+              style="display:none;"
               onclick="showSection('followed')"
               onkeydown="handleDashboardShortcutKey(event, 'followed')"
             >
-              <div class="metric-icon"><i class="fas fa-phone-volume"></i></div>
-              <div>
+              <div class="icon-wrap"><i class="fas fa-check-circle"></i></div>
+              <div class="metric-info">
                 <span>Follow Ups</span>
                 <strong id="dashboardFollowups">0</strong>
                 <small>Pending conversations</small>
@@ -463,6 +464,7 @@
                 <div
                   id="funnelFollowupsRow"
                   class="funnel-row funnel-orange"
+                  style="display:none;"
                   role="button"
                   tabindex="0"
                   onclick="showSection('followed')"
@@ -568,7 +570,7 @@
                   <th>Client Website</th>
                   <th>Phone No</th>
                   <th>Mobile No</th>
-                  <th>Follow up</th>
+                  <th style="display:none;">Follow up</th>
                   <th>Country Name</th>
                   <th>Client Reply</th>
                   <th>Source</th>
@@ -720,7 +722,7 @@
             >
               <option value="all">All Deals</option>
               <option value="fresh">Fresh</option>
-              <option value="renewal">Renewal</option>
+              <option value="renewal" style="display:none;">Renewal</option>
             </select>
           </div>
 
@@ -738,7 +740,7 @@
                   <th>Payment Method</th>
                   <th>Closed Date</th>
                   <th>Status</th>
-                  <th>Action</th>
+                  <th style="display:none;">Action</th>
                   <th>Last Edit</th>
                 </tr>
               </thead>
@@ -1038,7 +1040,7 @@
             <label for="dealCloseSalesType">Sale Type</label>
             <select id="dealCloseSalesType">
               <option value="fresh">Fresh</option>
-              <option value="renewal">Renewal</option>
+              <option value="renewal" style="display:none;">Renewal</option>
             </select>
           </div>
           <div class="deal-close-payment-field">

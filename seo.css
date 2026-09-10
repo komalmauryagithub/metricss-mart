@@ -1032,3 +1032,50 @@ table th {
     font-weight: 700;
     white-space: nowrap !important;
 }
+
+/* ========================================================
+   MOBILE RESPONSIVENESS (Media Queries for SEO)
+   ======================================================== */
+@media (max-width: 1024px) {
+  .dashboard-metrics-4,
+  .seo-projects-grid,
+  .vault-stats-strip,
+  .vault-reports-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-metrics-4,
+  .seo-projects-grid,
+  .vault-stats-strip,
+  .vault-reports-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .seo-basic-row.two, 
+  .seo-basic-row.three {
+    grid-template-columns: 1fr !important;
+  }
+  .seo-project-card, .ads-project-card {
+    padding: 16px !important;
+  }
+  .seo-header-content {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .seo-toolbar-filters {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .seo-filter-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .seo-metrics-card {
+    padding: 12px !important;
+  }
+}

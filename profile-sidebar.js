@@ -118,7 +118,90 @@ function renderSidebarContent(user) {
   if (user.profile_setup_status === "completed") {
     percent = 100;
   }
-  
+
+  // Inject modal container for full-size profile picture (CIRCLE style)
+  if (!document.getElementById('profilePicModal')) {
+    const modalHtml = `
+      <div id="profilePicModal" style="
+        display:none; position:fixed; inset:0; z-index:100000;
+        background:rgba(0,0,0,0.75); backdrop-filter:blur(6px);
+        align-items:center; justify-content:center;
+        opacity:0; transition:opacity 0.3s ease;
+      ">
+        <div style="position:relative; display:flex; flex-direction:column; align-items:center; gap:16px;">
+          <div id="modalImgWrapper" style="
+            width:280px; height:280px; border-radius:50%; overflow:hidden;
+            border:4px solid rgba(255,255,255,0.3);
+            box-shadow:0 0 40px rgba(59,130,246,0.3), 0 8px 32px rgba(0,0,0,0.4);
+            transform:scale(0.8); transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+          ">
+            <img id="modalImg" src="" alt="Profile Picture" style="
+              width:100%; height:100%; object-fit:cover;
+            " />
+          </div>
+          <span id="modalUserName" style="
+            color:#fff; font-size:18px; font-weight:600;
+            text-shadow:0 2px 8px rgba(0,0,0,0.5);
+          "></span>
+          <button id="closeModalBtn" style="
+            position:absolute; top:-12px; right:-12px;
+            background:rgba(255,255,255,0.95); border:none; border-radius:50%;
+            width:36px; height:36px; cursor:pointer; font-size:16px; font-weight:bold;
+            color:#334155; box-shadow:0 2px 8px rgba(0,0,0,0.2);
+            display:flex; align-items:center; justify-content:center;
+            transition:transform 0.2s, background 0.2s;
+          " onmouseover="this.style.transform='scale(1.1)';this.style.background='#fff'" onmouseout="this.style.transform='scale(1)';this.style.background='rgba(255,255,255,0.95)'">✕</button>
+        </div>
+      </div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    // Close handlers
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+      closeProfileImageModal();
+    });
+    document.getElementById('profilePicModal').addEventListener('click', (e) => {
+      if (e.target.id === 'profilePicModal') closeProfileImageModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeProfileImageModal();
+    });
+
+    // Open modal helper
+    window.openProfileImageModal = function(src, name) {
+      const modal = document.getElementById('profilePicModal');
+      const img = document.getElementById('modalImg');
+      const wrapper = document.getElementById('modalImgWrapper');
+      const nameEl = document.getElementById('modalUserName');
+      img.src = src;
+      nameEl.textContent = name || '';
+      modal.style.display = 'flex';
+      requestAnimationFrame(() => {
+        modal.style.opacity = '1';
+        wrapper.style.transform = 'scale(1)';
+      });
+    };
+
+    // Close modal helper
+    window.closeProfileImageModal = function() {
+      const modal = document.getElementById('profilePicModal');
+      const wrapper = document.getElementById('modalImgWrapper');
+      if (!modal) return;
+      modal.style.opacity = '0';
+      wrapper.style.transform = 'scale(0.8)';
+      setTimeout(() => { modal.style.display = 'none'; }, 300);
+    };
+
+    // Global click handler — catches header avatars + sidebar avatar
+    document.addEventListener('click', function(e) {
+      const target = e.target;
+      if (target && (target.matches('img.avatar') || target.matches('img.ps-avatar-lg')) && target.src) {
+        e.stopPropagation();
+        const userName = document.querySelector('.ps-user-details h4');
+        openProfileImageModal(target.src, userName ? userName.textContent : '');
+      }
+    });
+  }
+
   const isCompleted = user.profile_setup_status === "completed";
   
   let missingHtml = "";
@@ -151,7 +234,7 @@ function renderSidebarContent(user) {
 
   psBody.innerHTML = `
     <div class="ps-user-info" style="margin-bottom: 20px;">
-      <img src="${avatarSrc}" class="ps-avatar-lg" onerror="this.src='https://ui-avatars.com/api/?name=User&background=e2e8f0&color=475569'" alt="User">
+      <img src="${avatarSrc}" class="ps-avatar-lg" onerror="this.src='https://ui-avatars.com/api/?name=User&background=e2e8f0&color=475569'" alt="User" style="cursor:pointer;" title="Click to view profile picture">
       <div class="ps-user-details">
         <h4>${user.name || "Employee"}</h4>
         <p>${user.role ? user.role.toUpperCase() : "STAFF"} &bull; ${user.profile_type === 'experience' ? 'Experienced' : 'Fresher'}</p>

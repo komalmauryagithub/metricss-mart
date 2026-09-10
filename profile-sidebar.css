@@ -241,3 +241,81 @@
   text-align: right;
   word-break: break-word;
 }
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 380px) {
+  .ps-header {
+    padding: 16px 20px;
+  }
+  .ps-body {
+    padding: 16px 20px;
+    gap: 16px;
+  }
+  .ps-progress-section {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 320px) {
+  .ps-header {
+    padding: 12px 16px;
+  }
+  .ps-header h3 {
+    font-size: 16px !important;
+  }
+  .ps-body {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  .ps-user-info {
+    gap: 12px;
+  }
+  .ps-avatar-lg {
+    width: 48px !important;
+    height: 48px !important;
+  }
+  .ps-user-details h4 {
+    font-size: 14px !important;
+  }
+  .ps-user-details p {
+    font-size: 12px !important;
+  }
+  .ps-progress-circle {
+    width: 90px !important;
+    height: 90px !important;
+  }
+  .ps-progress-inner {
+    width: 74px !important;
+    height: 74px !important;
+  }
+  .ps-percent-text {
+    font-size: 18px !important;
+  }
+  .ps-missing-list h5 {
+    font-size: 12px !important;
+  }
+  .ps-missing-item {
+    font-size: 12px !important;
+  }
+  .ps-action-btn {
+    padding: 10px !important;
+    font-size: 13px !important;
+  }
+  .ps-section h5 {
+    font-size: 12px !important;
+  }
+  .ps-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    margin-bottom: 12px;
+  }
+  .ps-field-label {
+    padding-right: 0;
+    font-size: 12px !important;
+  }
+  .ps-field-val {
+    text-align: left;
+    font-size: 12px !important;
+  }
+}

@@ -28,6 +28,85 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <link rel="stylesheet" href="profile-sidebar.css" />
+    <style>
+      /* Mobile Responsive Overrides */
+      @media (max-width: 768px) {
+        .modal-content, .deal-close-modal-content {
+          width: 95% !important;
+          max-width: 100% !important;
+          margin: 10px auto !important;
+          padding: 15px !important;
+        }
+        
+        #dwSearch, .search-box, .deals-type-filter, .appointments-filter-select, .live-search {
+          width: 100% !important;
+          max-width: 100% !important;
+          box-sizing: border-box;
+          margin-bottom: 10px;
+        }
+
+        .table-responsive {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          width: 100%;
+        }
+
+        .dashboard-metrics, .appointment-status-cards, .target-progress-mini-grid, .sales-target-strip {
+          grid-template-columns: 1fr !important;
+          display: flex !important;
+          flex-direction: column !important;
+        }
+        
+        .appointment-status-layout, .target-progress-layout {
+          flex-direction: column !important;
+        }
+
+        .dashboard-title-row, .section-heading-row, .appointments-heading-row, .deals-filter-toolbar {
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          gap: 10px;
+        }
+        
+        .dashboard-title-actions, .appointments-heading-row > div, .deals-filter-toolbar {
+          width: 100%;
+          flex-wrap: wrap;
+        }
+        
+        .form-row, .deal-form-row {
+          flex-direction: column !important;
+          gap: 10px !important;
+        }
+        
+        .form-group, .deal-form-group {
+          width: 100% !important;
+        }
+        
+        .add-btn, .target-set-btn, .submit-btn, .refresh-dashboard-btn {
+          width: 100%;
+          text-align: center;
+          justify-content: center;
+        }
+        
+        .dashboard-panel, .appointment-status-board, .target-progress-panel {
+          padding: 10px !important;
+          margin-bottom: 15px !important;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .brand-title h1 {
+          font-size: 1.2rem;
+        }
+        
+        .metric-card, .sales-target-card, .appointment-status-card {
+          padding: 10px;
+        }
+        
+        .dashboard-title-row h2 {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
   </head>
   <body>
     <!-- Header -->

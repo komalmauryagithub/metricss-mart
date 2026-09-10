@@ -9401,7 +9401,7 @@ app.get("/api/leads", (req, res) => {
   let values = [];
 
   if (role === "admin") {
-    sql = "SELECT * FROM leads ORDER BY id ASC";
+    sql = "SELECT * FROM leads ORDER BY id DESC";
   } else if (role === "tme") {
     if (!userId) {
       return res

@@ -3363,6 +3363,18 @@ async function ensureUserProfileSetupColumns() {
       await runSchemaChange(sql, "ER_DUP_FIELDNAME");
     }
 
+    // Ensure the profile_setup_links table exists (used to track link status)
+    await dbPromise.query(`
+      CREATE TABLE IF NOT EXISTS profile_setup_links (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        token_hash VARCHAR(128) DEFAULT NULL,
+        expires_at DATETIME DEFAULT NULL,
+        sent_at DATETIME DEFAULT NULL,
+        completed_at DATETIME DEFAULT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
     userProfileSetupSchemaReady = true;
   })().finally(() => {
     userProfileSetupSchemaPromise = null;
@@ -7580,6 +7592,125 @@ app.post("/api/profile-setup/:token", (req, res) => {
         message: "Failed to submit profile details",
       });
     }
+  });
+});
+/* ---------- Shared profile setup handler ---------- */
+async function handleProfileSetup(req, res, user) {
+  try {
+    const statusDetails = getProfileSetupStatusDetails(user);
+    if (statusDetails.status === "completed") {
+      return res.status(409).json({ success: false, message: "This profile form has already been submitted" });
+    }
+    if (statusDetails.isExpired) {
+      return res.status(410).json({ success: false, message: "This profile form link has expired. Please ask admin for a new link." });
+    }
+
+    const aadharNo = String(req.body.aadhar_no || "").trim();
+    const panNumber = String(req.body.pan_number || "").trim() || null;
+    const accountNo = String(req.body.account_no || "").trim() || null;
+    const bankName = String(req.body.bank_name || "").trim() || null;
+    const ifscCode = (String(req.body.ifsc_code || "").trim().toUpperCase()) || null;
+    const beneficiaryName = String(req.body.beneficiary_name || "").trim() || null;
+    const joiningDate = normalizeDateOnlyValue(req.body.joining_date) || null;
+    const totalExperience = String(req.body.total_experience || "").trim() || null;
+    const pfEnabled = normalizePayrollBoolean(req.body.pf_enabled) ? 1 : 0;
+    const pfNumber = String(req.body.pf_number || "").trim() || null;
+    const uanNumber = String(req.body.uan_number || "").trim() || null;
+    const employeePfAmount = normalizeOptionalPayrollAmount(req.body.employee_pf_amount);
+    const employerPfAmount = normalizeOptionalPayrollAmount(req.body.employer_pf_amount);
+    const pfJoiningDate = normalizeDateOnlyValue(req.body.pf_joining_date) || null;
+    const skills = parseProfileSkillsInput(req.body.skills ?? req.body["skills[]"] ?? []);
+
+    if (!aadharNo) {
+      return res.status(400).json({ success: false, message: "Aadhar number is required" });
+    }
+    if (pfEnabled && (!pfNumber || !uanNumber || employeePfAmount == null || employerPfAmount == null || !pfJoiningDate)) {
+      return res.status(400).json({ success: false, message: "PF number, UAN number, PF amounts and PF joining date are required when PF is enabled" });
+    }
+
+    const profImg = getUploadedFilePath(req.files, "prof_img") || user.prof_img || null;
+    const aadharImg = getUploadedFilePath(req.files, "aadhar_img") || user.aadhar_img || null;
+    const panImg = getUploadedFilePath(req.files, "pan_img") || user.pan_img || null;
+    const cancelledCheque = getUploadedFilePath(req.files, "cancelled_cheque") || user.cancelled_cheque || null;
+    const resumeFile = getUploadedFilePath(req.files, "resume_file") || user.resume_file || null;
+    const experienceFile = getUploadedFilePath(req.files, "experience_file") || user.experience_file || null;
+    const certificationFile = getUploadedFilePath(req.files, "certification_file") || user.certification_file || null;
+
+    await ensureUserProfileSetupColumns();
+    await ensureUserRegistrationColumns();
+
+    await dbPromise.query(
+      `
+        UPDATE users
+        SET
+          prof_img = ?, aadhar_no = ?, aadhar_img = ?, pan_number = ?, pan_img = ?, account_no = ?, bank_name = ?, ifsc_code = ?, beneficiary_name = ?, cancelled_cheque = ?, joining_date = ?, total_experience = ?, pf_enabled = ?, pf_number = ?, uan_number = ?, employee_pf_amount = ?, employer_pf_amount = ?, pf_joining_date = ?, resume_file = ?, experience_file = ?, certification_file = ?, skills = ?, profile_setup_status = 'completed', profile_setup_token_hash = NULL, profile_setup_expires_at = NULL, profile_setup_completed_at = NOW()
+        WHERE id = ?
+        LIMIT 1
+      `,
+      [
+        profImg,
+        aadharNo,
+        aadharImg,
+        panNumber,
+        panImg,
+        accountNo,
+        bankName,
+        ifscCode,
+        beneficiaryName,
+        cancelledCheque,
+        joiningDate,
+        totalExperience,
+        pfEnabled,
+        pfEnabled ? pfNumber : null,
+        pfEnabled ? uanNumber : null,
+        pfEnabled ? employeePfAmount : null,
+        pfEnabled ? employerPfAmount : null,
+        pfEnabled ? pfJoiningDate : null,
+        resumeFile,
+        experienceFile,
+        certificationFile,
+        JSON.stringify(skills),
+        user.id,
+      ]
+    );
+
+    await dbPromise.query(
+      "UPDATE profile_setup_links SET completed_at = NOW() WHERE user_id = ?",
+      [user.id]
+    );
+
+    res.json({ success: true, message: "Profile details submitted successfully" });
+  } catch (e) {
+    console.error("Profile Setup Submit Error:", e);
+    res.status(500).json({ success: false, message: "Failed to submit profile details" });
+  }
+}
+/* ---------- Employee endpoint ---------- */
+app.post("/api/employee/profile-setup/:id", (req, res) => {
+  userRegistrationUpload(req, res, async (uploadErr) => {
+    if (uploadErr) {
+      const message =
+        uploadErr instanceof multer.MulterError
+          ? uploadErr.code === "LIMIT_FILE_SIZE"
+            ? "Each registration file must be 15 MB or smaller."
+            : uploadErr.message
+          : uploadErr.message || "Failed to upload profile files";
+
+      return res.status(400).json({
+        success: false,
+        message,
+      });
+    }
+
+    const userId = String(req.params.id || "").trim();
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "Missing employee ID" });
+    }
+    const user = await getUserRecordById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "Employee not found" });
+    }
+    await handleProfileSetup(req, res, user);
   });
 });
 

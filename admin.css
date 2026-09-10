@@ -7000,7 +7000,9 @@ table td input, table td select, table th input, table th select {
 }
 
 /* Global Sidebar Override */
-.sidebar { width: 220px !important; }
+@media (min-width: 769px) {
+  .sidebar { width: 220px !important; }
+}
 .sidebar li { font-size: 14px !important; }
 .sidebar-nav { width: 220px !important; }
 .sidebar-link { font-size: 14px !important; }

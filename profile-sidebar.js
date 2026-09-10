@@ -194,10 +194,11 @@ function renderSidebarContent(user) {
     // Global click handler — catches header avatars + sidebar avatar
     document.addEventListener('click', function(e) {
       const target = e.target;
-      if (target && (target.matches('img.avatar') || target.matches('img.ps-avatar-lg')) && target.src) {
+      if (target && (target.matches('img.avatar') || target.matches('img.ps-avatar-lg') || target.matches('#userAvatar') || target.classList.contains('avatar')) && target.src) {
         e.stopPropagation();
-        const userName = document.querySelector('.ps-user-details h4');
-        openProfileImageModal(target.src, userName ? userName.textContent : '');
+        const userNameEl = document.querySelector('.ps-user-details h4') || document.querySelector('#userName') || document.querySelector('.welcome span');
+        const name = userNameEl ? userNameEl.textContent.replace(/^Welcome,?\s*/i, '').trim() : '';
+        openProfileImageModal(target.src, name);
       }
     });
   }

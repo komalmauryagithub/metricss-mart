@@ -1014,14 +1014,7 @@ function loadUser() {
   updateTaskBadge();
 
   // Show Task Management initially from localStorage
-  const taskManagementNav = document.getElementById("taskManagementNav");
-  if (taskManagementNav) {
-    if (Number(currentUser.is_team_lead || 0) === 1) {
-      taskManagementNav.style.display = "flex";
-    } else {
-      taskManagementNav.style.display = "none";
-    }
-  }
+  syncTaskManagementNavVisibility();
 
   // Refresh user data from server to catch role/team-lead updates
   if (currentUser && currentUser.id) {
@@ -1031,17 +1024,23 @@ function loadUser() {
         if (data && data.success && data.data) {
           currentUser = { ...currentUser, ...data.data };
           localStorage.setItem("currentUser", JSON.stringify(currentUser));
-          
-          if (taskManagementNav) {
-            if (Number(currentUser.is_team_lead || 0) === 1) {
-              taskManagementNav.style.display = "flex";
-            } else {
-              taskManagementNav.style.display = "none";
-            }
-          }
+          syncTaskManagementNavVisibility();
         }
       })
       .catch(err => console.error("Failed to refresh user data:", err));
+  }
+}
+
+function syncTaskManagementNavVisibility() {
+  const taskManagementNav = document.getElementById("taskManagementNav");
+  if (!taskManagementNav) return;
+  const isLead = Number(currentUser?.is_team_lead || 0) === 1 || String(currentUser?.role || '').toLowerCase() === 'lead_dev';
+  if (isLead) {
+    taskManagementNav.style.display = "flex";
+    taskManagementNav.classList.remove("hidden");
+  } else {
+    taskManagementNav.style.display = "none";
+    taskManagementNav.classList.add("hidden");
   }
 }
 

@@ -243,7 +243,11 @@
 }
 
 /* Mobile Responsive Adjustments */
-@media (max-width: 380px) {
+@media (max-width: 480px) {
+  .profile-sidebar-container {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
   .ps-header {
     padding: 16px 20px;
   }
@@ -254,68 +258,111 @@
   .ps-progress-section {
     padding: 16px;
   }
+  .ps-avatar-lg {
+    width: 56px !important;
+    height: 56px !important;
+  }
+  .ps-user-details h4 {
+    font-size: 15px !important;
+  }
+  .ps-progress-circle {
+    width: 105px !important;
+    height: 105px !important;
+  }
+  .ps-progress-inner {
+    width: 88px !important;
+    height: 88px !important;
+  }
+  .ps-percent-text {
+    font-size: 20px !important;
+  }
+  #modalImgWrapper {
+    width: 220px !important;
+    height: 220px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .ps-header {
+    padding: 14px 16px;
+  }
+  .ps-body {
+    padding: 14px 16px;
+    gap: 14px;
+  }
+  .ps-progress-section {
+    padding: 14px;
+  }
+  #modalImgWrapper {
+    width: 190px !important;
+    height: 190px !important;
+  }
 }
 
 @media (max-width: 320px) {
   .ps-header {
-    padding: 12px 16px;
+    padding: 12px 14px;
   }
   .ps-header h3 {
-    font-size: 16px !important;
+    font-size: 15px !important;
   }
   .ps-body {
-    padding: 12px 16px;
+    padding: 12px 14px;
     gap: 12px;
   }
   .ps-user-info {
-    gap: 12px;
+    gap: 10px;
   }
   .ps-avatar-lg {
-    width: 48px !important;
-    height: 48px !important;
+    width: 44px !important;
+    height: 44px !important;
   }
   .ps-user-details h4 {
-    font-size: 14px !important;
+    font-size: 13px !important;
   }
   .ps-user-details p {
-    font-size: 12px !important;
+    font-size: 11px !important;
   }
   .ps-progress-circle {
-    width: 90px !important;
-    height: 90px !important;
+    width: 85px !important;
+    height: 85px !important;
   }
   .ps-progress-inner {
-    width: 74px !important;
-    height: 74px !important;
+    width: 70px !important;
+    height: 70px !important;
   }
   .ps-percent-text {
-    font-size: 18px !important;
+    font-size: 17px !important;
   }
   .ps-missing-list h5 {
     font-size: 12px !important;
   }
   .ps-missing-item {
-    font-size: 12px !important;
+    font-size: 11px !important;
   }
   .ps-action-btn {
-    padding: 10px !important;
-    font-size: 13px !important;
+    padding: 9px !important;
+    font-size: 12px !important;
   }
   .ps-section h5 {
-    font-size: 12px !important;
+    font-size: 11px !important;
   }
   .ps-field {
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   .ps-field-label {
     padding-right: 0;
-    font-size: 12px !important;
+    font-size: 11px !important;
   }
   .ps-field-val {
     text-align: left;
-    font-size: 12px !important;
+    font-size: 11px !important;
+  }
+  #modalImgWrapper {
+    width: 160px !important;
+    height: 160px !important;
   }
 }

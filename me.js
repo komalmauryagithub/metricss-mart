@@ -1108,14 +1108,8 @@ function isDealMatchingMonth(deal, monthKey) {
     document.body.classList.remove("modal-open");
   }
 
-  function openMePendingWhatsAppWindow(shouldOpen) {
-    if (!shouldOpen) return null;
-
-    try {
-      return window.open("about:blank", "_blank", "noopener,noreferrer");
-    } catch (_err) {
-      return null;
-    }
+  function openMePendingWhatsAppWindow(_shouldOpen) {
+    return null;
   }
 
   function closeMePendingWhatsAppWindow(targetWindow) {

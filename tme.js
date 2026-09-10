@@ -5317,65 +5317,8 @@ function getSelectedEmployeeMeta(selectOrId) {
   };
 }
 
-function openPendingWhatsAppWindow(shouldOpen) {
-  if (!shouldOpen) return null;
-
-  const pendingWindow = window.open("", "_blank");
-  if (!pendingWindow) return null;
-
-  try {
-    pendingWindow.document.write(`
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="utf-8" />
-          <title>Preparing WhatsApp Draft</title>
-          <style>
-            body {
-              margin: 0;
-              min-height: 100vh;
-              display: grid;
-              place-items: center;
-              background: #f8fafc;
-              color: #0f172a;
-              font-family: Arial, sans-serif;
-            }
-            .whatsapp-loading-card {
-              width: min(420px, calc(100vw - 40px));
-              padding: 28px 24px;
-              border-radius: 20px;
-              background: #ffffff;
-              border: 1px solid #d1d5db;
-              box-shadow: 0 18px 38px rgba(15, 23, 42, 0.12);
-              text-align: center;
-            }
-            .whatsapp-loading-card strong {
-              display: block;
-              margin-bottom: 10px;
-              color: #0f766e;
-              font-size: 18px;
-            }
-            .whatsapp-loading-card p {
-              margin: 0;
-              color: #475569;
-              line-height: 1.5;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="whatsapp-loading-card">
-            <strong>Preparing WhatsApp draft</strong>
-            <p>The client has been saved. Your ME briefing message is opening now.</p>
-          </div>
-        </body>
-      </html>
-    `);
-    pendingWindow.document.close();
-  } catch (err) {
-    console.warn("Unable to render WhatsApp loading state:", err);
-  }
-
-  return pendingWindow;
+function openPendingWhatsAppWindow(_shouldOpen) {
+  return null;
 }
 
 function closePendingWhatsAppWindow(targetWindow) {
